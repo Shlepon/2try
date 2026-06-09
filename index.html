@@ -7,14 +7,9 @@
         @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400&display=swap');
 
         :root {
-            --bg: #000;
             --fg: #ececec;
             --muted: rgba(180,180,180,0.55);
             --line: rgba(255,255,255,0.12);
-            --edge-pad: 2px;
-            --carousel-top: 46px;
-            --carousel-bottom: 46px;
-            --carousel-side: 2px;
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,76 +22,58 @@
         }
 
         .sketch-layer {
-            position: fixed; inset: 0; z-index: 1; pointer-events: none;
-            opacity: 0.38;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; pointer-events: none; opacity: 0.34;
             background:
                 repeating-linear-gradient(0deg, transparent, transparent 47px, rgba(255,255,255,0.05) 47px, rgba(255,255,255,0.05) 48px),
                 repeating-linear-gradient(90deg, transparent, transparent 47px, rgba(255,255,255,0.04) 47px, rgba(255,255,255,0.04) 48px);
         }
 
         .flash-layer {
-            position: fixed; inset: 0; z-index: 2;
-            pointer-events: none; overflow: hidden;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2; pointer-events: none;
             transition: opacity 1.5s ease;
         }
         .flash-layer.exit-fade { opacity: 0; }
 
         .flash-red, .flash-blue {
-            position: absolute; top: 0; bottom: 0;
-            width: 62%;
+            position: absolute; top: 0; height: 100%;
+            width: 50%;
             opacity: 0;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.45s ease;
         }
-        .flash-red { left: 0; }
-        .flash-blue { right: 0; }
-        .flash-red.on {
-            opacity: 1;
-            background:
-                linear-gradient(90deg,
-                    rgba(255, 35, 35, 0.82) 0%,
-                    rgba(220, 15, 15, 0.55) 18%,
-                    rgba(140, 0, 0, 0.22) 42%,
-                    rgba(60, 0, 0, 0.06) 62%,
-                    transparent 78%);
-        }
-        .flash-blue.on {
-            opacity: 1;
-            background:
-                linear-gradient(270deg,
-                    rgba(35, 75, 255, 0.82) 0%,
-                    rgba(15, 45, 220, 0.55) 18%,
-                    rgba(0, 20, 140, 0.22) 42%,
-                    rgba(0, 8, 60, 0.06) 62%,
-                    transparent 78%);
-        }
+        .flash-red { left: 0; background: #b81818; }
+        .flash-blue { right: 0; background: #1838c8; }
+        .flash-red.on { opacity: 0.58; }
+        .flash-blue.on { opacity: 0.58; }
 
         .scene-frame {
-            position: fixed; inset: 0; z-index: 3;
-            pointer-events: none;
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 3; pointer-events: none;
+            border: 1px solid rgba(255,255,255,0.08);
             transition: opacity 1.5s ease;
         }
         .scene-frame.exit-fade { opacity: 0; }
 
         #glassCanvas {
-            position: fixed; inset: 0; z-index: 4; pointer-events: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 8; pointer-events: none;
             transition: opacity 1.5s ease;
         }
         #glassCanvas.exit-fade { opacity: 0; }
 
-        .noise {
-            position: fixed; inset: 0; z-index: 5; opacity: 0.04; pointer-events: none;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-        }
-
         .vignette {
-            position: fixed; inset: 0; z-index: 6; pointer-events: none;
-            background: radial-gradient(ellipse, transparent 42%, rgba(0,0,0,0.4) 100%);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 4; pointer-events: none;
+            background: rgba(0,0,0,0.18);
             transition: opacity 1.5s ease;
         }
         .vignette.exit-fade { opacity: 0; }
 
-        .hud-frame { position: fixed; inset: 14px; z-index: 20; pointer-events: none; }
+        .hud-frame {
+            position: fixed; top: 14px; left: 14px; right: 14px; bottom: 14px;
+            z-index: 20; pointer-events: none;
+        }
         .hud-bracket {
             position: absolute; width: 28px; height: 28px;
             border-color: rgba(255,255,255,0.22); border-style: solid; border-width: 0;
@@ -106,28 +83,6 @@
         .hud-bracket.bl { bottom: 0; left: 0; border-bottom-width: 1px; border-left-width: 1px; }
         .hud-bracket.br { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px; }
 
-        .hud-top {
-            position: fixed;
-            top: 16px; left: 0; right: 0;
-            z-index: 24; text-align: center;
-            font-family: 'JetBrains Mono', monospace; font-size: 9px;
-            letter-spacing: 0.28em; color: var(--muted); text-transform: uppercase;
-        }
-        .hud-dot {
-            display: inline-block; width: 4px; height: 4px; border-radius: 50%;
-            background: #fff; margin-right: 8px; vertical-align: middle;
-            animation: dotBlink 2s ease-in-out infinite;
-        }
-        @keyframes dotBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
-
-        .hud-bottom {
-            position: fixed;
-            bottom: 32px; left: 0; right: 0;
-            z-index: 24; text-align: center;
-            font-family: 'JetBrains Mono', monospace; font-size: 8px;
-            letter-spacing: 0.18em; color: rgba(255,255,255,0.2);
-        }
-
         .edge-marquee {
             position: fixed; z-index: 22; pointer-events: none; overflow: hidden;
             font-family: 'JetBrains Mono', monospace;
@@ -136,10 +91,10 @@
             color: rgba(255,255,255,0.34);
             text-transform: uppercase;
         }
-        .edge-marquee.top { top: 40px; left: 2px; right: 2px; height: 20px; }
-        .edge-marquee.bottom { bottom: 2px; left: 2px; right: 2px; height: 20px; }
-        .edge-marquee.left { left: 2px; top: 36px; bottom: 28px; width: 20px; }
-        .edge-marquee.right { right: 2px; top: 36px; bottom: 28px; width: 20px; }
+        .edge-marquee.top { top: 0; left: 0; right: 0; height: 18px; line-height: 18px; }
+        .edge-marquee.bottom { bottom: 0; left: 0; right: 0; height: 18px; line-height: 18px; }
+        .edge-marquee.left { left: 0; top: 20px; bottom: 20px; width: 18px; }
+        .edge-marquee.right { right: 0; top: 20px; bottom: 20px; width: 18px; }
 
         .edge-track-h {
             display: inline-block; white-space: nowrap;
@@ -147,8 +102,8 @@
         }
         .edge-track-h.rev { animation-direction: reverse; animation-duration: 62s; }
         @keyframes scrollH {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+            0% { margin-left: 0; }
+            100% { margin-left: -50%; }
         }
 
         .edge-track-v {
@@ -160,49 +115,88 @@
         }
         .edge-track-v.rev { animation-direction: reverse; animation-duration: 58s; }
         @keyframes scrollV {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-50%); }
+            0% { margin-top: 0; }
+            100% { margin-top: -50%; }
+        }
+
+        .hud-top {
+            position: fixed; top: 22px; left: 0; width: 100%;
+            z-index: 25; text-align: center;
+            font-family: 'JetBrains Mono', monospace; font-size: 9px;
+            letter-spacing: 0.28em; color: var(--muted); text-transform: uppercase;
+        }
+        .hud-dot {
+            display: inline-block; width: 4px; height: 4px; border-radius: 50%;
+            background: #fff; margin-right: 8px; vertical-align: middle;
+            animation: dotBlink 2s ease-in-out infinite;
+        }
+        @keyframes dotBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+        .hud-bottom {
+            position: fixed; bottom: 24px; left: 0; width: 100%;
+            z-index: 25; text-align: center;
+            font-family: 'JetBrains Mono', monospace; font-size: 8px;
+            letter-spacing: 0.18em; color: rgba(255,255,255,0.22);
         }
 
         body.mode-intro .phrase-zone { display: none !important; }
         body:not(.mode-intro) .intro-stack { display: none !important; }
-        body:not(.mode-intro) .enter-btn { display: none !important; }
+        body:not(.mode-intro) .enter-wrap { display: none !important; }
 
         .logo-zone {
-            position: fixed; inset: 0; z-index: 30;
-            text-align: center; padding-top: 38vh;
-            pointer-events: none; transition: opacity 1s ease;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 30; pointer-events: none;
+            transition: opacity 1s ease;
         }
-        body.mode-intro .logo-zone { padding-top: 24vh; }
         .logo-zone.exit-fade { opacity: 0; }
 
-        .logo-block { position: relative; display: inline-block; }
+        .logo-anchor {
+            position: absolute;
+            top: 30%;
+            left: 0;
+            width: 100%;
+            text-align: center;
+        }
+        body.mode-intro .logo-anchor { top: 16%; }
+
+        .logo-block {
+            display: inline-block;
+            text-align: center;
+        }
 
         .logo-container {
-            position: relative; z-index: 2;
-            transition: transform 1.4s cubic-bezier(0.68,-0.55,0.27,1.55), opacity 1s ease;
+            position: relative;
+            transition: opacity 1s ease, margin-top 1.4s ease;
         }
-        .logo-container.fly-up { transform: translateY(-120%); opacity: 0; }
+        .logo-container.fly-up { margin-top: -200px; opacity: 0; }
 
         .logo {
             font-family: 'Oswald', sans-serif;
             font-size: clamp(44px, 7.5vw, 88px);
             font-weight: 600; letter-spacing: 0.14em; color: #fafafa;
-            line-height: 1; text-align: center;
-            display: inline-flex; flex-wrap: nowrap; justify-content: center;
+            line-height: 1.1; text-align: center;
+            white-space: nowrap;
         }
-        .logo-char { display: inline-block; will-change: margin; position: relative; }
-        .logo-char.space { width: 0.35em; }
+        .logo-char {
+            display: inline-block;
+            position: relative;
+        }
         .logo-line {
             width: min(180px, 36vw); height: 1px; margin: 16px auto 0;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
         }
 
         .phrase-zone {
-            position: fixed;
-            top: calc(50% + 6vh);
-            left: 0; right: 0; margin: 0 auto;
-            z-index: 28; width: min(640px, 90vw);
+            position: absolute;
+            top: 52%;
+            left: 0; width: 100%;
+            text-align: center;
+            z-index: 28;
+        }
+        .phrase-inner {
+            display: inline-block;
+            width: min(640px, 90vw);
+            text-align: center;
         }
 
         .glass-card {
@@ -212,10 +206,6 @@
             border: 1px solid var(--line);
             box-shadow: 0 0 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.04);
             text-align: center;
-        }
-        .glass-card::after {
-            content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
         }
         .card-tag {
             font-family: 'JetBrains Mono', monospace;
@@ -235,19 +225,24 @@
         }
 
         .intro-stack {
-            position: fixed;
-            left: 0; right: 0; margin: 0 auto;
-            width: min(680px, 92vw);
-            top: 44%;
+            position: absolute;
+            top: 46%;
+            left: 0; width: 100%;
+            text-align: center;
             z-index: 55;
+        }
+        .intro-inner {
+            display: inline-block;
+            width: min(680px, 92vw);
+            text-align: center;
         }
 
         .disclaimer {
             width: 100%; opacity: 0;
-            transform: translateY(18px);
-            transition: opacity 0.7s ease, transform 0.7s ease;
+            margin-top: 12px;
+            transition: opacity 0.7s ease;
         }
-        .disclaimer.show { opacity: 1; transform: translateY(0); }
+        .disclaimer.show { opacity: 1; }
 
         .disclaimer-title {
             font-family: 'Oswald', sans-serif;
@@ -267,49 +262,52 @@
             font-size: 11px; color: rgba(130,130,130,0.7); font-weight: 300;
         }
 
-        .enter-btn {
+        .enter-wrap {
             position: fixed;
-            left: 0; right: 0;
-            margin-left: auto; margin-right: auto;
-            width: min(240px, 38vw);
-            height: 56px;
-            bottom: 62px;
+            bottom: 58px;
+            left: 0;
+            width: 100%;
+            text-align: center;
             z-index: 65;
+        }
+
+        .enter-btn {
+            display: inline-block;
+            position: relative;
+            width: 220px;
+            height: 56px;
             padding: 0;
             background: transparent;
             border: none;
             cursor: pointer;
             opacity: 0;
             pointer-events: none;
+            vertical-align: top;
             transition: opacity 0.65s ease;
-            display: block;
         }
         .enter-btn.show { opacity: 1; pointer-events: auto; }
 
         .enter-btn-inner {
-            position: absolute; inset: 0;
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(8,8,10,0.95);
             border: 1px solid rgba(255,255,255,0.22);
-            transition: border-color 0.3s;
         }
         .enter-btn:hover .enter-btn-inner { border-color: rgba(255,255,255,0.5); }
 
         .enter-btn-label {
-            position: absolute; z-index: 1;
-            top: 0; left: 0; right: 0; bottom: 0;
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             font-family: 'Oswald', sans-serif;
-            font-size: clamp(18px, 2.2vw, 24px);
+            font-size: 22px;
             font-weight: 500; color: #f0f0f0;
             line-height: 56px; text-align: center;
             white-space: nowrap;
-            letter-spacing: 0.22em;
+            letter-spacing: 0.2em;
         }
         .enter-arrow {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 15px; opacity: 0.65; margin-left: 12px;
+            font-size: 15px; opacity: 0.65; margin-left: 10px;
             letter-spacing: 0;
         }
-        .enter-btn:hover .enter-arrow { opacity: 1; }
 
         .enter-btn-corners span {
             position: absolute; width: 10px; height: 10px;
@@ -332,10 +330,9 @@
     </div>
 
     <div class="scene-frame" id="sceneFrame"></div>
+    <div class="vignette" id="vignette"></div>
 
     <canvas id="glassCanvas"></canvas>
-    <div class="noise"></div>
-    <div class="vignette" id="vignette"></div>
 
     <div class="hud-frame">
         <div class="hud-bracket tl"></div>
@@ -343,51 +340,60 @@
         <div class="hud-bracket bl"></div>
         <div class="hud-bracket br"></div>
     </div>
-    <div class="hud-top"><span class="hud-dot"></span>Z-CITY NET // SECURE CHANNEL</div>
-    <div class="hud-bottom" id="hudCoords">X:0000 Y:0000 // SYNC</div>
 
     <div class="edge-marquee top" id="edgeTop"></div>
     <div class="edge-marquee bottom" id="edgeBottom"></div>
     <div class="edge-marquee left" id="edgeLeft"></div>
     <div class="edge-marquee right" id="edgeRight"></div>
 
+    <div class="hud-top"><span class="hud-dot"></span>Z-CITY NET // SECURE CHANNEL</div>
+    <div class="hud-bottom" id="hudCoords">X:0000 Y:0000 // SYNC</div>
+
     <div class="logo-zone" id="logoZone">
-        <div class="logo-block">
-            <div class="logo-container" id="logo">
-                <div class="logo" id="logoText">Z-CITY RPH</div>
-                <div class="logo-line"></div>
+        <div class="logo-anchor">
+            <div class="logo-block">
+                <div class="logo-container" id="logo">
+                    <div class="logo" id="logoText">Z-CITY RPH</div>
+                    <div class="logo-line"></div>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="phrase-zone" id="phrasePanel">
-        <div class="glass-card">
-            <div class="card-tag">// Системное предупреждение</div>
-            <div class="phrase-text" id="phraseText"></div>
-            <div class="phrase-num" id="phraseNum">01 / 10</div>
+        <div class="phrase-inner">
+            <div class="glass-card">
+                <div class="card-tag">// Системное предупреждение</div>
+                <div class="phrase-text" id="phraseText"></div>
+                <div class="phrase-num" id="phraseNum">01 / 10</div>
+            </div>
         </div>
     </div>
 
     <div class="intro-stack" id="introStack">
-        <div class="disclaimer glass-card" id="disclaimer">
-            <div class="card-tag">// Протокол необратимости</div>
-            <div class="disclaimer-title">ВЫ ВХОДИТЕ В Z-CITY</div>
-            <div class="disclaimer-body">
-                В этом городе <strong>смерть — не ошибка и не откат</strong>. Это конец. Ваш персонаж перестаёт существовать навсегда — без исключений, без возврата.<br><br>
-                Новая жизнь — <strong>другой человек</strong>: другое имя, другая история, другая одежда. Всё, что вы построили, исчезает с последним вдохом.<br><br>
-                Каждое решение — ваша ответственность. <strong>Город не прощает.</strong>
+        <div class="intro-inner">
+            <div class="disclaimer glass-card" id="disclaimer">
+                <div class="card-tag">// Протокол необратимости</div>
+                <div class="disclaimer-title">ВЫ ВХОДИТЕ В Z-CITY</div>
+                <div class="disclaimer-body">
+                    В этом городе <strong>смерть — не ошибка и не откат</strong>. Это конец. Ваш персонаж перестаёт существовать навсегда — без исключений, без возврата.<br><br>
+                    Новая жизнь — <strong>другой человек</strong>: другое имя, другая история, другая одежда. Всё, что вы построили, исчезает с последним вдохом.<br><br>
+                    Каждое решение — ваша ответственность. <strong>Город не прощает.</strong>
+                </div>
+                <div class="disclaimer-divider"></div>
+                <div class="disclaimer-foot">Нажимая кнопку, вы принимаете условия permadeath-сервера.</div>
             </div>
-            <div class="disclaimer-divider"></div>
-            <div class="disclaimer-foot">Нажимая кнопку, вы принимаете условия permadeath-сервера.</div>
         </div>
     </div>
 
-    <button class="enter-btn" id="enterBtn" onclick="onEnterClick()">
-        <div class="enter-btn-inner">
-            <div class="enter-btn-corners"><span></span><span></span><span></span><span></span></div>
-            <div class="enter-btn-label">ВОЙТИ<span class="enter-arrow">→</span></div>
-        </div>
-    </button>
+    <div class="enter-wrap" id="enterWrap">
+        <button class="enter-btn" id="enterBtn" onclick="onEnterClick()">
+            <div class="enter-btn-inner">
+                <div class="enter-btn-corners"><span></span><span></span><span></span><span></span></div>
+                <div class="enter-btn-label">ВОЙТИ<span class="enter-arrow">→</span></div>
+            </div>
+        </button>
+    </div>
 
     <div class="load-panel" id="loadPanel" style="display:none"></div>
 
@@ -430,11 +436,53 @@
             setInterval(function() {
                 showRed = !showRed;
                 if (showRed) {
-                    red.classList.add('on'); blue.classList.remove('on');
+                    red.className = 'flash-red on';
+                    blue.className = 'flash-blue';
                 } else {
-                    red.classList.remove('on'); blue.classList.add('on');
+                    red.className = 'flash-red';
+                    blue.className = 'flash-blue on';
                 }
-            }, 650);
+            }, 600);
+        }
+
+        function drawWaterDrop(ctx, x, y, r) {
+            var hl = r * 0.35;
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, 6.28318);
+            ctx.fillStyle = 'rgba(140, 170, 200, 0.25)';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(x, y + r * 0.15, r * 0.92, 0, 6.28318);
+            ctx.fillStyle = 'rgba(80, 110, 140, 0.35)';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(x, y, r * 0.88, 0, 6.28318);
+            ctx.fillStyle = 'rgba(180, 210, 235, 0.45)';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(x - r * 0.28, y - r * 0.28, hl, 0, 6.28318);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(x + r * 0.15, y + r * 0.2, r * 0.18, 0, 6.28318);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.fill();
+        }
+
+        function drawStreak(ctx, x, y, len, w) {
+            ctx.lineCap = 'round';
+            ctx.lineWidth = w;
+            ctx.strokeStyle = 'rgba(200, 220, 240, 0.35)';
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x - w * 0.8, y + len);
+            ctx.stroke();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx.lineWidth = w * 0.4;
+            ctx.beginPath();
+            ctx.moveTo(x - w * 0.3, y + len * 0.1);
+            ctx.lineTo(x - w, y + len * 0.85);
+            ctx.stroke();
         }
 
         function initGlassDrops() {
@@ -443,87 +491,87 @@
             var ctx = c.getContext('2d');
             if (!ctx) return;
 
-            var beads = [], streaks = [];
+            var staticDrops = [], streaks = [], slideDrops = [];
 
             function resize() {
                 c.width = window.innerWidth || 800;
                 c.height = window.innerHeight || 600;
+                buildStatic();
             }
+
+            function buildStatic() {
+                staticDrops = [];
+                var w = c.width, h = c.height;
+                var count = Math.floor((w * h) / 4500);
+                if (count < 120) count = 120;
+                if (count > 320) count = 320;
+                for (var i = 0; i < count; i++) {
+                    var yRand = Math.random();
+                    var y = yRand * yRand * h * 0.85;
+                    staticDrops.push({
+                        x: Math.random() * w,
+                        y: y,
+                        r: Math.random() * 5.5 + 1.5
+                    });
+                }
+            }
+
             resize();
 
-            for (var i = 0; i < 90; i++) {
-                beads.push({
-                    x: Math.random() * c.width,
-                    y: Math.random() * c.height,
-                    r: Math.random() * 3.5 + 1.2,
-                    a: Math.random() * 0.35 + 0.12,
-                    vy: Math.random() * 0.4 + 0.15,
-                    vx: Math.random() * 0.2 - 0.1
-                });
-            }
-            for (var j = 0; j < 55; j++) {
+            for (var s = 0; s < 140; s++) {
                 streaks.push({
                     x: Math.random() * c.width,
                     y: Math.random() * c.height,
-                    h: Math.random() * 28 + 12,
-                    w: Math.random() * 1.2 + 0.4,
-                    a: Math.random() * 0.18 + 0.06,
-                    vy: Math.random() * 2.5 + 1.2,
-                    vx: Math.random() * 0.3 - 0.15
+                    len: Math.random() * 35 + 18,
+                    w: Math.random() * 1.8 + 0.6,
+                    vy: Math.random() * 9 + 6,
+                    vx: Math.random() * 0.6 - 0.3
+                });
+            }
+            for (var d = 0; d < 45; d++) {
+                slideDrops.push({
+                    x: Math.random() * c.width,
+                    y: Math.random() * c.height * 0.5,
+                    r: Math.random() * 4 + 2.5,
+                    vy: Math.random() * 1.2 + 0.4,
+                    vx: Math.random() * 0.15 - 0.075,
+                    trail: 0
                 });
             }
 
-            function drawBead(b) {
-                var g = ctx.createRadialGradient(b.x - b.r * 0.3, b.y - b.r * 0.3, 0, b.x, b.y, b.r);
-                g.addColorStop(0, 'rgba(220, 235, 255, ' + (b.a * 0.9) + ')');
-                g.addColorStop(0.45, 'rgba(160, 190, 220, ' + (b.a * 0.5) + ')');
-                g.addColorStop(1, 'rgba(100, 130, 160, 0)');
-                ctx.fillStyle = g;
-                ctx.beginPath();
-                ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = 'rgba(255,255,255,' + (b.a * 0.35) + ')';
-                ctx.beginPath();
-                ctx.arc(b.x - b.r * 0.35, b.y - b.r * 0.35, b.r * 0.25, 0, Math.PI * 2);
-                ctx.fill();
-            }
-
-            function drawStreak(s) {
-                var g = ctx.createLinearGradient(s.x, s.y, s.x + s.vx * 4, s.y + s.h);
-                g.addColorStop(0, 'rgba(200, 220, 240, ' + (s.a * 0.5) + ')');
-                g.addColorStop(0.6, 'rgba(160, 190, 220, ' + s.a + ')');
-                g.addColorStop(1, 'rgba(120, 150, 180, 0)');
-                ctx.strokeStyle = g;
-                ctx.lineWidth = s.w;
-                ctx.lineCap = 'round';
-                ctx.beginPath();
-                ctx.moveTo(s.x, s.y);
-                ctx.lineTo(s.x + s.vx * 3, s.y + s.h);
-                ctx.stroke();
-            }
-
             function draw() {
-                ctx.clearRect(0, 0, c.width, c.height);
+                var w = c.width, h = c.height;
+                ctx.clearRect(0, 0, w, h);
 
-                for (var i = 0; i < streaks.length; i++) {
-                    var s = streaks[i];
-                    drawStreak(s);
-                    s.y += s.vy;
-                    s.x += s.vx;
-                    if (s.y > c.height + 40) {
-                        s.y = -s.h - 10;
-                        s.x = Math.random() * c.width;
+                for (var i = 0; i < staticDrops.length; i++) {
+                    var sd = staticDrops[i];
+                    drawWaterDrop(ctx, sd.x, sd.y, sd.r);
+                }
+
+                for (var j = 0; j < streaks.length; j++) {
+                    var st = streaks[j];
+                    drawStreak(ctx, st.x, st.y, st.len, st.w);
+                    st.y += st.vy;
+                    st.x += st.vx;
+                    if (st.y > h + 50) {
+                        st.y = -st.len - Math.random() * 80;
+                        st.x = Math.random() * w;
                     }
                 }
 
-                for (var k = 0; k < beads.length; k++) {
-                    var b = beads[k];
-                    drawBead(b);
-                    b.y += b.vy;
-                    b.x += b.vx;
-                    if (b.y > c.height + 10) {
-                        b.y = -5;
-                        b.x = Math.random() * c.width;
+                for (var k = 0; k < slideDrops.length; k++) {
+                    var sl = slideDrops[k];
+                    if (sl.trail > 0) {
+                        drawStreak(ctx, sl.x, sl.y - sl.trail * 0.5, sl.trail, sl.r * 0.35);
+                    }
+                    drawWaterDrop(ctx, sl.x, sl.y, sl.r);
+                    sl.y += sl.vy;
+                    sl.x += sl.vx;
+                    sl.trail = Math.min(sl.trail + sl.vy * 0.8, sl.r * 6);
+                    if (sl.y > h + 20) {
+                        sl.y = -10;
+                        sl.x = Math.random() * w;
+                        sl.trail = 0;
                     }
                 }
 
@@ -543,7 +591,6 @@
             }
             var sep = '  ///  ';
             var line = buildLine(EDGE_ITEMS, sep);
-
             document.getElementById('edgeTop').innerHTML = '<div class="edge-track-h">' + line + '</div>';
             document.getElementById('edgeBottom').innerHTML = '<div class="edge-track-h rev">' + line + '</div>';
             document.getElementById('edgeLeft').innerHTML = '<div class="edge-track-v">' + line + '</div>';
@@ -555,15 +602,16 @@
             var logo = document.getElementById('logoText');
             if (!logo) return;
             var text = (logo.textContent || 'Z-CITY RPH').replace(/\s+/g, ' ').trim();
-            logo.textContent = '';
-            logoChars = [];
+            var html = '';
             for (var i = 0; i < text.length; i++) {
-                var ch = document.createElement('span');
-                ch.className = 'logo-char' + (text[i] === ' ' ? ' space' : '');
-                ch.textContent = text[i] === ' ' ? '\u00A0' : text[i];
-                ch._ox = 0; ch._oy = 0;
-                logo.appendChild(ch);
-                logoChars.push(ch);
+                html += '<span class="logo-char" data-i="' + i + '">' +
+                    (text[i] === ' ' ? '&nbsp;' : text[i]) + '</span>';
+            }
+            logo.innerHTML = html;
+            logoChars = logo.getElementsByTagName('span');
+            for (var j = 0; j < logoChars.length; j++) {
+                logoChars[j]._ox = 0;
+                logoChars[j]._oy = 0;
             }
             logoLettersReady = true;
         }
@@ -575,17 +623,17 @@
                 var my = smoothY * (window.innerHeight || 600);
                 for (var i = 0; i < logoChars.length; i++) {
                     var ch = logoChars[i];
-                    if (ch.classList.contains('space')) continue;
+                    if (ch.innerHTML === '&nbsp;' || ch.textContent === ' ') continue;
                     var rect = ch.getBoundingClientRect();
                     var dx = mx - (rect.left + rect.width * 0.5);
                     var dy = my - (rect.top + rect.height * 0.5);
                     var dist = Math.sqrt(dx * dx + dy * dy);
-                    var t = Math.max(0, 1 - dist / 360);
-                    t = t * t * (3 - 2 * t);
-                    ch._ox += (dx * t * 0.2 - ch._ox) * 0.11;
-                    ch._oy += (dy * t * 0.2 - ch._oy) * 0.11;
-                    ch.style.marginLeft = ch._ox.toFixed(1) + 'px';
-                    ch.style.marginTop = ch._oy.toFixed(1) + 'px';
+                    var t = Math.max(0, 1 - dist / 320);
+                    t = t * t;
+                    ch._ox += (dx * t * 0.14 - ch._ox) * 0.1;
+                    ch._oy += (dy * t * 0.14 - ch._oy) * 0.1;
+                    ch.style.left = ch._ox.toFixed(1) + 'px';
+                    ch.style.top = ch._oy.toFixed(1) + 'px';
                 }
             }
             requestAnimationFrame(tickLogoMagnet);
@@ -619,12 +667,12 @@
             el.textContent = PHRASES[idx];
             num.textContent = (idx + 1 < 10 ? '0' : '') + (idx + 1) + ' / ' + PHRASES.length;
             setInterval(function() {
-                el.classList.add('fade-out');
+                el.className = 'phrase-text fade-out';
                 setTimeout(function() {
                     idx = (idx + 1) % PHRASES.length;
                     el.textContent = PHRASES[idx];
                     num.textContent = (idx + 1 < 10 ? '0' : '') + (idx + 1) + ' / ' + PHRASES.length;
-                    el.classList.remove('fade-out');
+                    el.className = 'phrase-text';
                 }, 600);
             }, 5600);
         }
@@ -632,7 +680,7 @@
         function initIntro() {
             if (isIntro) return;
             isIntro = true;
-            document.body.classList.add('mode-intro');
+            document.body.className = 'mode-intro';
 
             var disclaimer = document.getElementById('disclaimer');
             var btn = document.getElementById('enterBtn');
@@ -641,28 +689,24 @@
             function revealBtn() {
                 if (btnReady) return;
                 btnReady = true;
-                btn.classList.add('show');
+                btn.className = 'enter-btn show';
             }
 
-            requestAnimationFrame(function() { disclaimer.classList.add('show'); });
-            disclaimer.addEventListener('transitionend', function(e) {
-                if (e.propertyName !== 'opacity') return;
-                setTimeout(revealBtn, READ_DELAY_MS);
-            }, { once: true });
-            setTimeout(revealBtn, READ_DELAY_MS + 700);
+            setTimeout(function() { disclaimer.className = 'disclaimer glass-card show'; }, 30);
+            setTimeout(revealBtn, READ_DELAY_MS + 800);
         }
 
         function triggerExit() {
-            document.getElementById('logo').classList.add('fly-up');
-            document.getElementById('logoZone').classList.add('exit-fade');
+            document.getElementById('logo').className = 'logo-container fly-up';
+            document.getElementById('logoZone').className = 'logo-zone exit-fade';
             var fl = document.getElementById('flashLayer');
-            if (fl) fl.classList.add('exit-fade');
+            if (fl) fl.className = 'flash-layer exit-fade';
             var sf = document.getElementById('sceneFrame');
-            if (sf) sf.classList.add('exit-fade');
+            if (sf) sf.className = 'scene-frame exit-fade';
             var glass = document.getElementById('glassCanvas');
-            if (glass) glass.classList.add('exit-fade');
+            if (glass) glass.className = 'exit-fade';
             var vig = document.getElementById('vignette');
-            if (vig) vig.classList.add('exit-fade');
+            if (vig) vig.className = 'vignette exit-fade';
             document.getElementById('disclaimer').style.opacity = '0';
             document.getElementById('enterBtn').style.opacity = '0';
         }
