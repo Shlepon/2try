@@ -4,254 +4,300 @@
     <meta charset="UTF-8">
     <title>Z-CITY RPH</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Exo+2:wght@300;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@300;400&family=Syncopate:wght@700&display=swap');
 
-        *, *::before, *::after { box-sizing: border-box; }
-
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
-            background: #030303; font-family: 'Exo 2', sans-serif; color: #e8e8e8;
-            cursor: default; user-select: none;
+        :root {
+            --bg: #030303;
+            --fg: #ececec;
+            --muted: rgba(180,180,180,0.55);
+            --glass: rgba(10,10,12,0.82);
+            --line: rgba(255,255,255,0.12);
+            --glow: rgba(255,255,255,0.06);
         }
 
-        .parallax-root {
-            position: relative; width: 100%; height: 100%;
-            perspective: 900px; perspective-origin: 50% 45%;
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            width: 100%; height: 100%; overflow: hidden;
+            background: var(--bg); color: var(--fg);
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            cursor: default; user-select: none;
         }
 
         .viewport {
             position: relative; width: 100%; height: 100%;
-            background: radial-gradient(ellipse at 50% 40%, #141414 0%, #030303 55%, #000 100%);
-            display: flex; justify-content: center; align-items: center;
+            background:
+                radial-gradient(ellipse 90% 70% at 50% 35%, #161616 0%, transparent 55%),
+                radial-gradient(ellipse 60% 40% at 80% 80%, rgba(255,255,255,0.02) 0%, transparent 50%),
+                linear-gradient(180deg, #050505 0%, #000 100%);
             overflow: hidden;
         }
 
-        .layer { position: absolute; inset: 0; pointer-events: none; will-change: transform; }
+        .layer { position: absolute; inset: 0; pointer-events: none; }
 
         .sketch-bg {
-            z-index: 1; opacity: 0.18;
+            z-index: 1; opacity: 0.14;
             background:
-                repeating-linear-gradient(0deg, transparent, transparent 47px, rgba(255,255,255,0.03) 47px, rgba(255,255,255,0.03) 48px),
-                repeating-linear-gradient(90deg, transparent, transparent 47px, rgba(255,255,255,0.02) 47px, rgba(255,255,255,0.02) 48px);
-            animation: sketchDrift 18s linear infinite;
+                repeating-linear-gradient(0deg, transparent, transparent 47px, rgba(255,255,255,0.025) 47px, rgba(255,255,255,0.025) 48px),
+                repeating-linear-gradient(90deg, transparent, transparent 47px, rgba(255,255,255,0.018) 47px, rgba(255,255,255,0.018) 48px);
+            animation: sketchDrift 22s linear infinite;
         }
-        @keyframes sketchDrift {
-            from { transform: translate(0, 0) rotate(0deg); }
-            to   { transform: translate(-24px, 24px) rotate(0.3deg); }
-        }
-
-        .depth-fog {
-            z-index: 2;
-            background:
-                radial-gradient(ellipse 80% 50% at 50% 100%, rgba(255,255,255,0.04) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 40% at 20% 20%, rgba(255,255,255,0.02) 0%, transparent 50%);
-        }
+        @keyframes sketchDrift { to { transform: translate(-30px, 30px) rotate(0.4deg); } }
 
         .grid-plane {
-            z-index: 3; width: 420%; height: 420%; top: -160%; left: -160%;
+            z-index: 2; width: 440%; height: 440%; top: -170%; left: -170%;
             background-image:
-                linear-gradient(to right, rgba(255,255,255,0.07) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px);
-            background-size: 64px 64px;
-            transform: perspective(420px) rotateX(62deg);
-            animation: moveGrid 5s linear infinite;
-            opacity: 0.55;
+                linear-gradient(rgba(255,255,255,0.055) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.055) 1px, transparent 1px);
+            background-size: 56px 56px;
+            transform: perspective(380px) rotateX(64deg);
+            animation: gridMove 6s linear infinite;
+            opacity: 0.45;
+            mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, #000 20%, transparent 75%);
         }
-        @keyframes moveGrid { from { background-position: 0 0; } to { background-position: 0 64px; } }
+        @keyframes gridMove { to { background-position: 0 56px; } }
 
         .horizon-glow {
-            z-index: 4; width: 140%; height: 40%; bottom: 18%; left: -20%; top: auto;
-            background: radial-gradient(ellipse, rgba(255,255,255,0.07) 0%, transparent 70%);
+            z-index: 3; bottom: 0; top: auto; height: 45%;
+            background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(255,255,255,0.05) 0%, transparent 65%);
         }
 
         .wire-ring {
-            z-index: 5; display: flex; align-items: center; justify-content: center;
+            z-index: 4; display: flex; align-items: center; justify-content: center;
         }
         .wire-ring svg {
-            width: min(520px, 75vw); height: min(520px, 75vw);
-            opacity: 0.12; animation: ringSpin 48s linear infinite;
+            width: min(580px, 82vw); height: min(580px, 82vw);
+            opacity: 0.1; animation: ringSpin 60s linear infinite;
         }
-        @keyframes ringSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes ringSpin { to { transform: rotate(360deg); } }
 
-        #particleCanvas {
-            position: absolute; inset: 0; z-index: 6; opacity: 0.55;
+        .pulse-ring {
+            position: absolute; border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.08);
+            animation: pulseExpand 4s ease-out infinite;
         }
+        .pulse-ring:nth-child(1) { width: 280px; height: 280px; animation-delay: 0s; }
+        .pulse-ring:nth-child(2) { width: 280px; height: 280px; animation-delay: 1.3s; }
+        .pulse-ring:nth-child(3) { width: 280px; height: 280px; animation-delay: 2.6s; }
+        @keyframes pulseExpand {
+            0%   { transform: scale(0.85); opacity: 0.35; }
+            100% { transform: scale(1.35); opacity: 0; }
+        }
+
+        #particleCanvas { position: absolute; inset: 0; z-index: 5; opacity: 0.5; }
 
         .film-scratch {
-            position: absolute; top: 0; width: 1px; height: 100%;
-            background: rgba(255,255,255,0.08); z-index: 100;
-            animation: scratch 4.5s infinite;
+            position: absolute; top: 0; width: 1px; height: 100%; z-index: 100;
+            background: rgba(255,255,255,0.07); animation: scratch 5s infinite;
         }
         @keyframes scratch {
-            0%   { left: 8%;  opacity: 0; }
-            4%   { opacity: 0.6; }
-            8%   { left: 14%; opacity: 0; }
-            14%  { left: 72%; opacity: 0.25; }
-            18%  { opacity: 0; }
-            100% { left: 90%; opacity: 0; }
+            0% { left: 5%; opacity: 0; } 5% { opacity: 0.5; } 10% { left: 12%; opacity: 0; }
+            16% { left: 78%; opacity: 0.2; } 20% { opacity: 0; } 100% { left: 95%; opacity: 0; }
         }
 
         .scanline {
-            position: absolute; width: 100%; height: 3px;
-            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.06), transparent);
-            z-index: 50; top: -8px;
-            animation: scan 7s linear infinite; pointer-events: none;
+            position: absolute; width: 100%; height: 2px; z-index: 50;
+            background: linear-gradient(transparent, rgba(255,255,255,0.05), transparent);
+            animation: scan 8s linear infinite;
         }
-        @keyframes scan { 0% { top: -8%; } 100% { top: 108%; } }
+        @keyframes scan { from { top: -5%; } to { top: 105%; } }
 
         .noise {
-            position: absolute; inset: 0; z-index: 25; opacity: 0.07; pointer-events: none;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-            animation: noiseFlicker 0.12s steps(2) infinite;
+            position: absolute; inset: 0; z-index: 25; opacity: 0.06; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            animation: noiseTick 0.15s steps(2) infinite;
         }
-        @keyframes noiseFlicker {
-            0%   { opacity: 0.05; transform: translate(0,0); }
-            50%  { opacity: 0.09; transform: translate(-1px,1px); }
-            100% { opacity: 0.06; transform: translate(1px,-1px); }
-        }
+        @keyframes noiseTick { 50% { opacity: 0.09; transform: translate(-1px,1px); } }
 
         .vignette {
             position: absolute; inset: 0; z-index: 30; pointer-events: none;
-            background: radial-gradient(ellipse at center, transparent 25%, rgba(0,0,0,0.92) 100%);
+            background: radial-gradient(ellipse, transparent 30%, rgba(0,0,0,0.88) 100%);
         }
 
         .static-burst {
             position: absolute; inset: 0; z-index: 95; pointer-events: none;
-            opacity: 0; background: rgba(255,255,255,0.04);
-            animation: staticBurst 8s infinite;
+            background: rgba(255,255,255,0.03); opacity: 0;
+            animation: burst 9s infinite;
         }
-        @keyframes staticBurst {
-            0%, 92%, 100% { opacity: 0; }
-            93% { opacity: 0.15; }
-            93.5% { opacity: 0; }
-            96% { opacity: 0.08; }
+        @keyframes burst {
+            0%,91%,100% { opacity: 0; } 92% { opacity: 0.12; } 93% { opacity: 0; } 96% { opacity: 0.06; }
         }
 
         .glitch-bar {
-            position: absolute; left: 0; width: 100%; height: 0;
-            background: rgba(255,255,255,0.06); z-index: 90;
-            pointer-events: none; opacity: 0;
+            position: absolute; left: 0; width: 100%; z-index: 90;
+            background: rgba(255,255,255,0.05); opacity: 0; pointer-events: none;
         }
 
-        .logo-wrap {
-            position: absolute; z-index: 20;
-            top: 28%; left: 50%; transform: translate(-50%, -50%);
-            display: flex; flex-direction: column; align-items: center;
-            will-change: transform;
+        .hud-frame {
+            position: absolute; inset: 18px; z-index: 40; pointer-events: none;
+        }
+        .hud-bracket {
+            position: absolute; width: 32px; height: 32px;
+            border-color: rgba(255,255,255,0.25); border-style: solid; border-width: 0;
+            animation: bracketPulse 3s ease-in-out infinite;
+        }
+        .hud-bracket.tl { top: 0; left: 0; border-top-width: 1px; border-left-width: 1px; }
+        .hud-bracket.tr { top: 0; right: 0; border-top-width: 1px; border-right-width: 1px; }
+        .hud-bracket.bl { bottom: 0; left: 0; border-bottom-width: 1px; border-left-width: 1px; }
+        .hud-bracket.br { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px; }
+        @keyframes bracketPulse { 0%,100% { opacity: 0.25; } 50% { opacity: 0.55; } }
+
+        .hud-top {
+            position: absolute; top: 28px; left: 50%; transform: translateX(-50%);
+            z-index: 45; display: flex; align-items: center; gap: 10px;
+            font-family: 'JetBrains Mono', monospace; font-size: 9px;
+            letter-spacing: 0.35em; color: var(--muted); text-transform: uppercase;
+        }
+        .hud-dot {
+            width: 5px; height: 5px; border-radius: 50%; background: #fff;
+            box-shadow: 0 0 8px rgba(255,255,255,0.6);
+            animation: dotBlink 2s ease-in-out infinite;
+        }
+        @keyframes dotBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
+
+        .hud-side {
+            position: absolute; z-index: 44; font-family: 'JetBrains Mono', monospace;
+            font-size: 8px; letter-spacing: 0.15em; color: rgba(255,255,255,0.18);
+            writing-mode: vertical-rl; text-orientation: mixed;
+        }
+        .hud-side.left { left: 32px; top: 50%; transform: translateY(-50%); }
+        .hud-side.right { right: 32px; top: 50%; transform: translateY(-50%) rotate(180deg); }
+
+        .hud-bottom {
+            position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+            z-index: 45; font-family: 'JetBrains Mono', monospace; font-size: 8px;
+            letter-spacing: 0.2em; color: rgba(255,255,255,0.2);
         }
 
-        .logo-container {
-            animation: logoFloat 7s ease-in-out infinite;
-            transition: transform 1.6s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 1.2s ease;
-        }
-        .logo-container.fly-up {
-            transform: translateY(-180%) scale(0.45);
-            opacity: 0;
-        }
-        @keyframes logoFloat {
-            0%, 100% { transform: translateY(0); }
-            50%      { transform: translateY(-10px); }
-        }
-
-        .logo {
-            font-family: 'Syncopate', sans-serif; font-size: clamp(48px, 9vw, 108px);
-            color: #f5f5f5; letter-spacing: clamp(6px, 1.4vw, 16px);
-            text-shadow: 0 0 18px rgba(255,255,255,0.25), 0 0 40px rgba(255,255,255,0.08);
-            position: relative; margin: 0; text-align: center;
-        }
-        .logo-sub {
-            display: none;
-        }
-
-        .logo::before, .logo::after {
-            content: "Z-CITY RPH"; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            overflow: hidden;
-        }
-        .logo::before {
-            text-shadow: -2px 0 rgba(200,200,200,0.35);
-            animation: glitchA 5s infinite linear alternate-reverse;
-            clip-path: inset(0 0 55% 0);
-        }
-        .logo::after {
-            text-shadow: 2px 0 rgba(120,120,120,0.45);
-            animation: glitchB 4.2s infinite linear alternate-reverse;
-            clip-path: inset(45% 0 0 0);
-        }
-        @keyframes glitchA {
-            0%   { transform: translate(0); }
-            8%   { transform: translate(-3px, 1px); }
-            9%   { transform: translate(2px, -1px); }
-            10%  { transform: translate(0); }
-            42%  { transform: translate(3px, 0); }
-            43%  { transform: translate(0); }
-            100% { transform: translate(0); }
-        }
-        @keyframes glitchB {
-            0%   { transform: translate(0); }
-            15%  { transform: translate(4px, 0); }
-            16%  { transform: translate(-2px, 1px); }
-            17%  { transform: translate(0); }
-            55%  { transform: translate(-3px, -1px); }
-            56%  { transform: translate(0); }
-            100% { transform: translate(0); }
-        }
-
-        .load-panel { display: none !important; }
-
-        /* ── Ротация фраз ── */
-        .phrase-panel {
-            position: absolute; top: 58%; left: 50%;
+        .center-stack {
+            position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: min(680px, 88vw); z-index: 45;
-            padding: 22px 28px;
-            background: linear-gradient(135deg, rgba(12,12,12,0.92), rgba(6,6,6,0.88));
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 0 40px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.04);
-            backdrop-filter: blur(6px);
+            z-index: 20; width: min(720px, 90vw);
+            display: flex; flex-direction: column; align-items: center; gap: 36px;
             text-align: center;
         }
 
-        .phrase-tag {
-            font-size: 10px; letter-spacing: 0.45em; color: rgba(200,200,200,0.45);
-            margin-bottom: 12px; text-transform: uppercase;
+        .logo-block { position: relative; display: flex; align-items: center; justify-content: center; }
+
+        .logo-container {
+            position: relative; z-index: 2;
+            animation: logoFloat 8s ease-in-out infinite;
+            transition: transform 1.6s cubic-bezier(0.68,-0.55,0.27,1.55), opacity 1.2s ease;
         }
+        .logo-container.fly-up { transform: translateY(-160%) scale(0.4); opacity: 0; }
+        @keyframes logoFloat {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .logo {
+            font-family: 'Cinzel', 'Syncopate', serif;
+            font-size: clamp(42px, 8.5vw, 96px);
+            font-weight: 700;
+            letter-spacing: clamp(8px, 1.8vw, 20px);
+            color: #fafafa;
+            text-shadow: 0 0 30px rgba(255,255,255,0.15), 0 0 60px rgba(255,255,255,0.05);
+            position: relative; white-space: nowrap;
+        }
+        .logo-line {
+            display: block; width: min(200px, 40vw); height: 1px; margin: 14px auto 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
+        }
+        .logo-shine {
+            position: relative; overflow: hidden;
+        }
+        .logo-shine::after {
+            content: ''; position: absolute; top: 0; left: -120%; width: 60%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+            animation: shine 5s ease-in-out infinite;
+        }
+        @keyframes shine { 0%,100% { left: -120%; } 45% { left: 160%; } }
+
+        .logo::before, .logo::after {
+            content: "Z-CITY RPH"; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        }
+        .logo::before {
+            clip-path: inset(0 0 52% 0);
+            text-shadow: -2px 0 rgba(200,200,200,0.3);
+            animation: glitchA 6s infinite linear alternate-reverse;
+        }
+        .logo::after {
+            clip-path: inset(48% 0 0 0);
+            text-shadow: 2px 0 rgba(140,140,140,0.35);
+            animation: glitchB 5s infinite linear alternate-reverse;
+        }
+        @keyframes glitchA {
+            0%,100% { transform: translate(0); }
+            7% { transform: translate(-4px,1px); } 8% { transform: translate(2px,-1px); } 9% { transform: translate(0); }
+        }
+        @keyframes glitchB {
+            0%,100% { transform: translate(0); }
+            14% { transform: translate(3px,0); } 15% { transform: translate(-2px,1px); } 16% { transform: translate(0); }
+        }
+
+        .glass-card {
+            position: relative; width: 100%;
+            padding: 26px 32px 24px;
+            background: linear-gradient(145deg, rgba(14,14,16,0.92), rgba(6,6,8,0.88));
+            border: 1px solid var(--line);
+            box-shadow: 0 0 50px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+        .glass-card::before {
+            content: ''; position: absolute; inset: -1px; z-index: -1;
+            background: conic-gradient(from var(--border-angle, 0deg), transparent, rgba(255,255,255,0.15), transparent, rgba(255,255,255,0.08), transparent);
+            animation: borderSpin 8s linear infinite;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude; padding: 1px;
+        }
+        @property --border-angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+        @keyframes borderSpin { to { --border-angle: 360deg; } }
+        .glass-card::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        }
+
+        .card-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px; letter-spacing: 0.4em; color: rgba(200,200,200,0.4);
+            text-transform: uppercase; margin-bottom: 14px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .card-tag::before, .card-tag::after {
+            content: ''; flex: 1; max-width: 40px; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15));
+        }
+        .card-tag::after { transform: scaleX(-1); }
 
         .phrase-text {
-            font-size: clamp(12px, 1.35vw, 14px); line-height: 1.65;
-            color: rgba(190,190,190,0.9); font-weight: 300;
-            min-height: 2.6em;
-            transition: opacity 0.65s ease, transform 0.65s ease;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(16px, 2vw, 20px); font-weight: 300; font-style: italic;
+            line-height: 1.65; color: rgba(210,210,210,0.92);
+            min-height: 3em; transition: opacity 0.7s ease, transform 0.7s ease;
         }
-        .phrase-text.fade-out {
-            opacity: 0;
-            transform: translateY(6px);
+        .phrase-text.fade-out { opacity: 0; transform: translateY(8px); }
+
+        .phrase-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px; letter-spacing: 0.25em; color: rgba(255,255,255,0.2);
+            margin-top: 16px;
         }
 
-        .phrase-divider {
-            height: 1px; margin: 14px auto 0; width: 60%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
-        }
-
-        .corner {
-            position: absolute; width: 18px; height: 18px; z-index: 35; opacity: 0.35;
-            will-change: transform;
-        }
-        .corner-tl { top: 24px; left: 24px; border-top: 1px solid #fff; border-left: 1px solid #fff; }
-        .corner-tr { top: 24px; right: 24px; border-top: 1px solid #fff; border-right: 1px solid #fff; }
-        .corner-bl { bottom: 24px; left: 24px; border-bottom: 1px solid #fff; border-left: 1px solid #fff; }
-        .corner-br { bottom: 24px; right: 24px; border-bottom: 1px solid #fff; border-right: 1px solid #fff; }
+        .phrase-panel { width: 100%; }
 
         .crosshair {
-            position: absolute; z-index: 8; width: 40px; height: 40px;
-            opacity: 0.08; pointer-events: none;
+            position: absolute; z-index: 8; opacity: 0.06; pointer-events: none;
         }
         .crosshair::before, .crosshair::after {
             content: ''; position: absolute; background: #fff;
         }
         .crosshair::before { width: 1px; height: 100%; left: 50%; }
-        .crosshair::after  { height: 1px; width: 100%; top: 50%; }
-        .crosshair-a { top: 18%; left: 12%; }
-        .crosshair-b { bottom: 22%; right: 14%; width: 28px; height: 28px; }
+        .crosshair::after { height: 1px; width: 100%; top: 50%; }
+        .crosshair-a { top: 20%; left: 10%; width: 36px; height: 36px; }
+        .crosshair-b { bottom: 24%; right: 12%; width: 24px; height: 24px; }
+
+        .load-panel { display: none !important; }
     </style>
 </head>
 <body>
@@ -262,192 +308,147 @@
     <div class="vignette"></div>
     <div class="glitch-bar" id="glitchBar"></div>
 
-    <div class="corner corner-tl" data-depth="0.04"></div>
-    <div class="corner corner-tr" data-depth="0.04"></div>
-    <div class="corner corner-bl" data-depth="0.04"></div>
-    <div class="corner corner-br" data-depth="0.04"></div>
+    <div class="hud-frame">
+        <div class="hud-bracket tl"></div>
+        <div class="hud-bracket tr"></div>
+        <div class="hud-bracket bl"></div>
+        <div class="hud-bracket br"></div>
+    </div>
 
-    <div class="parallax-root" id="parallaxRoot">
-        <div class="viewport">
-            <div class="layer sketch-bg" data-depth="0.015"></div>
-            <div class="layer depth-fog" data-depth="0.02"></div>
-            <div class="layer grid-plane" data-depth="0.05"></div>
-            <div class="layer horizon-glow" data-depth="0.03"></div>
+    <div class="hud-top"><span class="hud-dot"></span> Z-CITY NET // SECURE CHANNEL</div>
+    <div class="hud-side left">PERMADEATH PROTOCOL ACTIVE</div>
+    <div class="hud-side right">NEURAL LINK STANDBY</div>
+    <div class="hud-bottom" id="hudCoords">X:0000 Y:0000 // SYNC</div>
 
-            <div class="layer wire-ring" data-depth="0.025">
-                <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="100" cy="100" r="88" stroke="white" stroke-width="0.5" stroke-dasharray="4 8"/>
-                    <circle cx="100" cy="100" r="72" stroke="white" stroke-width="0.3" stroke-dasharray="2 12"/>
-                    <line x1="100" y1="12" x2="100" y2="188" stroke="white" stroke-width="0.2" opacity="0.5"/>
-                    <line x1="12" y1="100" x2="188" y2="100" stroke="white" stroke-width="0.2" opacity="0.5"/>
-                </svg>
-            </div>
+    <div class="viewport">
+        <div class="layer sketch-bg" data-depth="0.012"></div>
+        <div class="layer grid-plane" data-depth="0.04"></div>
+        <div class="layer horizon-glow" data-depth="0.025"></div>
 
-            <canvas id="particleCanvas"></canvas>
+        <div class="layer wire-ring" data-depth="0.02">
+            <svg viewBox="0 0 200 200" fill="none"><circle cx="100" cy="100" r="88" stroke="white" stroke-width="0.4" stroke-dasharray="3 9"/><circle cx="100" cy="100" r="68" stroke="white" stroke-width="0.25" stroke-dasharray="2 14"/><line x1="100" y1="8" x2="100" y2="192" stroke="white" stroke-width="0.15" opacity="0.4"/><line x1="8" y1="100" x2="192" y2="100" stroke="white" stroke-width="0.15" opacity="0.4"/></svg>
+        </div>
 
-            <div class="crosshair crosshair-a" data-depth="0.06"></div>
-            <div class="crosshair crosshair-b" data-depth="0.045"></div>
+        <canvas id="particleCanvas"></canvas>
+        <div class="crosshair crosshair-a" data-depth="0.05"></div>
+        <div class="crosshair crosshair-b" data-depth="0.035"></div>
 
-            <div class="logo-wrap" id="logoWrap" data-depth="0.08">
+        <div class="center-stack">
+            <div class="logo-block">
+                <div class="pulse-ring"></div>
+                <div class="pulse-ring"></div>
+                <div class="pulse-ring"></div>
                 <div class="logo-container" id="logo">
-                    <h1 class="logo">Z-CITY RPH</h1>
-                    <div class="logo-sub"></div>
+                    <div class="logo-shine"><h1 class="logo">Z-CITY RPH</h1></div>
+                    <div class="logo-line"></div>
                 </div>
             </div>
 
-            <div class="phrase-panel" id="phrasePanel">
-                <div class="phrase-tag">// Системное предупреждение</div>
+            <div class="phrase-panel glass-card" id="phrasePanel">
+                <div class="card-tag">Системное предупреждение</div>
                 <div class="phrase-text" id="phraseText"></div>
-                <div class="phrase-divider"></div>
+                <div class="phrase-num" id="phraseNum">01 / 10</div>
             </div>
-
-            <div class="load-panel" id="loadPanel" style="display:none"></div>
         </div>
+
+        <div class="load-panel" id="loadPanel" style="display:none"></div>
     </div>
 
     <script>
-        var filesTotal = 0;
-        var filesNeeded = 0;
-        var mouseX = 0.5, mouseY = 0.5;
-        var smoothX = 0.5, smoothY = 0.5;
+        var filesTotal = 0, filesNeeded = 0;
+        var mouseX = 0.5, mouseY = 0.5, smoothX = 0.5, smoothY = 0.5;
 
-        /* ── Параллакс ── */
-        function initParallax() {
-            document.addEventListener('mousemove', function(e) {
-                mouseX = e.clientX / window.innerWidth;
-                mouseY = e.clientY / window.innerHeight;
-            });
-
-            var layers = document.querySelectorAll('[data-depth]');
-            function tick() {
-                smoothX += (mouseX - 0.5 - (smoothX - 0.5)) * 0.06;
-                smoothY += (mouseY - 0.5 - (smoothY - 0.5)) * 0.06;
-
-                for (var i = 0; i < layers.length; i++) {
-                    var el = layers[i];
-                    var d = parseFloat(el.getAttribute('data-depth')) || 0.03;
-                    var tx = (smoothX - 0.5) * d * window.innerWidth;
-                    var ty = (smoothY - 0.5) * d * window.innerHeight;
-                    el.style.transform = 'translate3d(' + tx + 'px,' + ty + 'px,0)';
-                }
-                requestAnimationFrame(tick);
-            }
-            tick();
-        }
-
-        /* ── Частицы ── */
-        function initParticles() {
-            var canvas = document.getElementById('particleCanvas');
-            var ctx = canvas.getContext('2d');
-            var particles = [];
-            var count = 70;
-
-            function resize() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            }
-            resize();
-            window.addEventListener('resize', resize);
-
-            for (var i = 0; i < count; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    z: Math.random(),
-                    s: Math.random() * 1.5 + 0.3,
-                    vx: (Math.random() - 0.5) * 0.15,
-                    vy: -Math.random() * 0.25 - 0.05
-                });
-            }
-
-            function draw() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                for (var i = 0; i < particles.length; i++) {
-                    var p = particles[i];
-                    p.x += p.vx + (smoothX - 0.5) * p.z * 0.6;
-                    p.y += p.vy + (smoothY - 0.5) * p.z * 0.4;
-                    if (p.y < -10) { p.y = canvas.height + 10; p.x = Math.random() * canvas.width; }
-                    if (p.x < -10) p.x = canvas.width + 10;
-                    if (p.x > canvas.width + 10) p.x = -10;
-
-                    var a = 0.08 + p.z * 0.35;
-                    ctx.fillStyle = 'rgba(255,255,255,' + a + ')';
-                    ctx.fillRect(p.x, p.y, p.s, p.s);
-                }
-                requestAnimationFrame(draw);
-            }
-            draw();
-        }
-
-        /* ── Случайные глитч-полосы ── */
-        function initGlitchBars() {
-            var bar = document.getElementById('glitchBar');
-            setInterval(function() {
-                if (Math.random() > 0.72) {
-                    bar.style.top = (Math.random() * 100) + '%';
-                    bar.style.height = (Math.random() * 3 + 1) + 'px';
-                    bar.style.opacity = '1';
-                    setTimeout(function() { bar.style.opacity = '0'; }, 60 + Math.random() * 80);
-                }
-            }, 400);
-        }
-
-        /* ── Ротация фраз об ответственности ── */
         var PHRASES = [
             "Смерть здесь необратима. Ваш персонаж перестаёт существовать — навсегда.",
-            "Новая жизнь означает другого человека: другое имя, другая одежда, другая история.",
-            "Каждое ваше решение имеет последствия. Думайте, прежде чем нажать на курок.",
-            "Город не прощает импульсивных поступков. Ответственность лежит только на вас.",
-            "Permadeath — не откат и не респawn. Это конец. Без исключений.",
-            "Всё, что вы построили, может исчезнуть за секунду. Цените каждый момент.",
-            "Не играйте с чужими жизнями, как с игрушкой. Здесь это стоит всего.",
-            "Один необдуманный шаг — и ваш персонаж станет чужой памятью.",
+            "Новая жизнь — другой человек: другое имя, другая одежда, другая история.",
+            "Каждое решение имеет последствия. Думайте, прежде чем нажать на курок.",
+            "Город не прощает импульсивных поступков. Ответственность — только ваша.",
+            "Permadeath — не откат. Это конец. Без исключений.",
+            "Всё, что вы построили, может исчезнуть за секунду.",
+            "Не играйте с чужими жизнями. Здесь это стоит всего.",
+            "Один необдуманный шаг — и персонаж станет чужой памятью.",
             "Вы несёте полную ответственность за судьбу того, кем играете.",
             "Z-City не даёт вторых шансов. Только последствия."
         ];
 
+        function initParallax() {
+            document.addEventListener('mousemove', function(e) {
+                mouseX = e.clientX / innerWidth;
+                mouseY = e.clientY / innerHeight;
+            });
+            var layers = document.querySelectorAll('[data-depth]');
+            (function tick() {
+                smoothX += (mouseX - 0.5 - (smoothX - 0.5)) * 0.05;
+                smoothY += (mouseY - 0.5 - (smoothY - 0.5)) * 0.05;
+                for (var i = 0; i < layers.length; i++) {
+                    var d = parseFloat(layers[i].getAttribute('data-depth')) || 0.03;
+                    layers[i].style.transform = 'translate3d(' + ((smoothX-0.5)*d*innerWidth) + 'px,' + ((smoothY-0.5)*d*innerHeight) + 'px,0)';
+                }
+                requestAnimationFrame(tick);
+            })();
+        }
+
+        function initParticles() {
+            var c = document.getElementById('particleCanvas'), ctx = c.getContext('2d'), pts = [];
+            function resize() { c.width = innerWidth; c.height = innerHeight; }
+            resize(); addEventListener('resize', resize);
+            for (var i = 0; i < 90; i++) pts.push({ x: Math.random()*c.width, y: Math.random()*c.height, z: Math.random(), s: Math.random()*1.4+0.2, vx: (Math.random()-0.5)*0.12, vy: -Math.random()*0.2-0.04 });
+            (function draw() {
+                ctx.clearRect(0,0,c.width,c.height);
+                for (var i = 0; i < pts.length; i++) {
+                    var p = pts[i];
+                    p.x += p.vx + (smoothX-0.5)*p.z*0.5; p.y += p.vy + (smoothY-0.5)*p.z*0.3;
+                    if (p.y < -8) { p.y = c.height+8; p.x = Math.random()*c.width; }
+                    ctx.fillStyle = 'rgba(255,255,255,' + (0.06+p.z*0.3) + ')';
+                    ctx.fillRect(p.x, p.y, p.s, p.s);
+                }
+                requestAnimationFrame(draw);
+            })();
+        }
+
+        function initGlitchBars() {
+            var bar = document.getElementById('glitchBar');
+            setInterval(function() {
+                if (Math.random() > 0.7) {
+                    bar.style.top = (Math.random()*100)+'%';
+                    bar.style.height = (Math.random()*2+1)+'px';
+                    bar.style.opacity = '1';
+                    setTimeout(function(){ bar.style.opacity='0'; }, 50+Math.random()*70);
+                }
+            }, 380);
+        }
+
+        function initHudTelemetry() {
+            var el = document.getElementById('hudCoords');
+            setInterval(function() {
+                el.textContent = 'X:' + ('0000'+Math.floor(Math.random()*9999)).slice(-4) + ' Y:' + ('0000'+Math.floor(Math.random()*9999)).slice(-4) + ' // SYNC';
+            }, 1200);
+        }
+
         function initPhraseRotator() {
-            var el = document.getElementById('phraseText');
+            var el = document.getElementById('phraseText'), num = document.getElementById('phraseNum');
             var idx = Math.floor(Math.random() * PHRASES.length);
             el.textContent = PHRASES[idx];
-
+            num.textContent = (idx+1<10?'0':'') + (idx+1) + ' / ' + PHRASES.length;
             setInterval(function() {
                 el.classList.add('fade-out');
                 setTimeout(function() {
-                    idx = (idx + 1) % PHRASES.length;
+                    idx = (idx+1) % PHRASES.length;
                     el.textContent = PHRASES[idx];
+                    num.textContent = (idx+1<10?'0':'') + (idx+1) + ' / ' + PHRASES.length;
                     el.classList.remove('fade-out');
-                }, 650);
-            }, 5500);
+                }, 680);
+            }, 5800);
         }
 
-        /* ── GMod Loading API ── */
-        function setProgress(pct) { /* ползунок отключён */ }
-
-        function SetStatusChanged(status) { /* ползунок отключён */ }
-
-        function SetFilesTotal(total) {
-            filesTotal = total || 0;
-        }
-
-        function SetFilesNeeded(needed) {
-            filesNeeded = needed || 0;
-        }
-
-        function DownloadingFile(file) { /* ползунок отключён */ }
-
-        function updateFileProgress() { /* ползунок отключён */ }
-
-        function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) { /* ползунок отключён */ }
+        function setProgress(pct){} function SetStatusChanged(s){} function SetFilesTotal(t){filesTotal=t||0;}
+        function SetFilesNeeded(n){filesNeeded=n||0;} function DownloadingFile(f){} function updateFileProgress(){} function GameDetails(){}
 
         function triggerExit() {
             document.getElementById('logo').classList.add('fly-up');
         }
 
-        initParallax();
-        initParticles();
-        initGlitchBars();
-        initPhraseRotator();
+        initParallax(); initParticles(); initGlitchBars(); initHudTelemetry(); initPhraseRotator();
     </script>
 </body>
 </html>
