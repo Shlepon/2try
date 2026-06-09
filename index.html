@@ -4,93 +4,434 @@
     <meta charset="UTF-8">
     <title>Z-CITY RPH</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Exo+2:wght@900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Exo+2:wght@300;700;900&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; }
 
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
-            background-color: #050000; font-family: 'Exo 2', sans-serif;
+            background: #030303; font-family: 'Exo 2', sans-serif; color: #e8e8e8;
+            cursor: default; user-select: none;
         }
 
-        /* Тот самый класс, который мы добавили */
-        .logo-container.fly-up {
-            transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            transform: translateY(-200%) scale(0.5);
+        .parallax-root {
+            position: relative; width: 100%; height: 100%;
+            perspective: 900px; perspective-origin: 50% 45%;
         }
-
-        /* Эффект старой пленки */
-        .film-scratch {
-            position: absolute; top: 0; left: 20%; width: 1px; height: 100%;
-            background: rgba(255, 255, 255, 0.05); z-index: 100; animation: scratch 3s infinite;
-        }
-        @keyframes scratch {
-            0% { left: 10%; opacity: 0; }
-            5% { opacity: 0.5; }
-            10% { left: 15%; opacity: 0; }
-            15% { left: 80%; opacity: 0.2; }
-            20% { opacity: 0; }
-        }
-
-        .scanline {
-            position: absolute; width: 100%; height: 4px; background: rgba(255, 0, 0, 0.1);
-            z-index: 50; top: -10px; animation: scan 6s linear infinite;
-        }
-        @keyframes scan { 0% { top: -10%; } 100% { top: 110%; } }
 
         .viewport {
             position: relative; width: 100%; height: 100%;
-            background: radial-gradient(circle, #2b0000 0%, #000000 80%);
+            background: radial-gradient(ellipse at 50% 40%, #141414 0%, #030303 55%, #000 100%);
             display: flex; justify-content: center; align-items: center;
+            overflow: hidden;
+        }
+
+        .layer { position: absolute; inset: 0; pointer-events: none; will-change: transform; }
+
+        .sketch-bg {
+            z-index: 1; opacity: 0.18;
+            background:
+                repeating-linear-gradient(0deg, transparent, transparent 47px, rgba(255,255,255,0.03) 47px, rgba(255,255,255,0.03) 48px),
+                repeating-linear-gradient(90deg, transparent, transparent 47px, rgba(255,255,255,0.02) 47px, rgba(255,255,255,0.02) 48px);
+            animation: sketchDrift 18s linear infinite;
+        }
+        @keyframes sketchDrift {
+            from { transform: translate(0, 0) rotate(0deg); }
+            to   { transform: translate(-24px, 24px) rotate(0.3deg); }
+        }
+
+        .depth-fog {
+            z-index: 2;
+            background:
+                radial-gradient(ellipse 80% 50% at 50% 100%, rgba(255,255,255,0.04) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 20% 20%, rgba(255,255,255,0.02) 0%, transparent 50%);
         }
 
         .grid-plane {
-            position: absolute; width: 400%; height: 400%; top: -150%; left: -150%;
-            background-image: 
-                linear-gradient(to right, rgba(255, 0, 0, 0.1) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 0, 0, 0.1) 1px, transparent 1px);
-            background-size: 60px 60px;
-            transform: perspective(400px) rotateX(60deg);
-            animation: moveGrid 4s linear infinite, autoParallax 10s ease-in-out infinite;
-            z-index: 2;
+            z-index: 3; width: 420%; height: 420%; top: -160%; left: -160%;
+            background-image:
+                linear-gradient(to right, rgba(255,255,255,0.07) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px);
+            background-size: 64px 64px;
+            transform: perspective(420px) rotateX(62deg);
+            animation: moveGrid 5s linear infinite;
+            opacity: 0.55;
         }
-        @keyframes moveGrid { from { background-position: 0 0; } to { background-position: 0 60px; } }
+        @keyframes moveGrid { from { background-position: 0 0; } to { background-position: 0 64px; } }
 
-        .logo-container { position: relative; z-index: 10; animation: logoFloat 6s ease-in-out infinite; }
+        .horizon-glow {
+            z-index: 4; width: 140%; height: 40%; bottom: 18%; left: -20%; top: auto;
+            background: radial-gradient(ellipse, rgba(255,255,255,0.07) 0%, transparent 70%);
+        }
+
+        .wire-ring {
+            z-index: 5; display: flex; align-items: center; justify-content: center;
+        }
+        .wire-ring svg {
+            width: min(520px, 75vw); height: min(520px, 75vw);
+            opacity: 0.12; animation: ringSpin 48s linear infinite;
+        }
+        @keyframes ringSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        #particleCanvas {
+            position: absolute; inset: 0; z-index: 6; opacity: 0.55;
+        }
+
+        .film-scratch {
+            position: absolute; top: 0; width: 1px; height: 100%;
+            background: rgba(255,255,255,0.08); z-index: 100;
+            animation: scratch 4.5s infinite;
+        }
+        @keyframes scratch {
+            0%   { left: 8%;  opacity: 0; }
+            4%   { opacity: 0.6; }
+            8%   { left: 14%; opacity: 0; }
+            14%  { left: 72%; opacity: 0.25; }
+            18%  { opacity: 0; }
+            100% { left: 90%; opacity: 0; }
+        }
+
+        .scanline {
+            position: absolute; width: 100%; height: 3px;
+            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.06), transparent);
+            z-index: 50; top: -8px;
+            animation: scan 7s linear infinite; pointer-events: none;
+        }
+        @keyframes scan { 0% { top: -8%; } 100% { top: 108%; } }
+
+        .noise {
+            position: absolute; inset: 0; z-index: 25; opacity: 0.07; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            animation: noiseFlicker 0.12s steps(2) infinite;
+        }
+        @keyframes noiseFlicker {
+            0%   { opacity: 0.05; transform: translate(0,0); }
+            50%  { opacity: 0.09; transform: translate(-1px,1px); }
+            100% { opacity: 0.06; transform: translate(1px,-1px); }
+        }
+
+        .vignette {
+            position: absolute; inset: 0; z-index: 30; pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 25%, rgba(0,0,0,0.92) 100%);
+        }
+
+        .static-burst {
+            position: absolute; inset: 0; z-index: 95; pointer-events: none;
+            opacity: 0; background: rgba(255,255,255,0.04);
+            animation: staticBurst 8s infinite;
+        }
+        @keyframes staticBurst {
+            0%, 92%, 100% { opacity: 0; }
+            93% { opacity: 0.15; }
+            93.5% { opacity: 0; }
+            96% { opacity: 0.08; }
+        }
+
+        .glitch-bar {
+            position: absolute; left: 0; width: 100%; height: 0;
+            background: rgba(255,255,255,0.06); z-index: 90;
+            pointer-events: none; opacity: 0;
+        }
+
+        .logo-wrap {
+            position: relative; z-index: 20;
+            display: flex; flex-direction: column; align-items: center;
+            will-change: transform;
+        }
+
+        .logo-container {
+            animation: logoFloat 7s ease-in-out infinite;
+            transition: transform 1.6s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 1.2s ease;
+        }
+        .logo-container.fly-up {
+            transform: translateY(-180%) scale(0.45);
+            opacity: 0;
+        }
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(-10px); }
+        }
+
         .logo {
-            font-family: 'Syncopate', sans-serif; font-size: 110px; color: #fff;
-            letter-spacing: 15px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px #ff0000;
-            position: relative; margin: 0;
+            font-family: 'Syncopate', sans-serif; font-size: clamp(48px, 9vw, 108px);
+            color: #f5f5f5; letter-spacing: clamp(6px, 1.4vw, 16px);
+            text-shadow: 0 0 18px rgba(255,255,255,0.25), 0 0 40px rgba(255,255,255,0.08);
+            position: relative; margin: 0; text-align: center;
+        }
+        .logo-sub {
+            font-family: 'Exo 2', sans-serif; font-size: clamp(10px, 1.2vw, 14px);
+            letter-spacing: 0.55em; color: rgba(180,180,180,0.55);
+            text-align: center; margin-top: 14px; font-weight: 300;
+        }
+
+        .logo::before, .logo::after {
+            content: "Z-CITY RPH"; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden;
+        }
+        .logo::before {
+            text-shadow: -2px 0 rgba(200,200,200,0.35);
+            animation: glitchA 5s infinite linear alternate-reverse;
+            clip-path: inset(0 0 55% 0);
         }
         .logo::after {
-            content: "Z-CITY RPH"; position: absolute; top: 0; left: 2px; width: 100%; height: 100%;
-            text-shadow: -2px 0 #ff0000; animation: glitch 4s infinite linear alternate-reverse;
+            text-shadow: 2px 0 rgba(120,120,120,0.45);
+            animation: glitchB 4.2s infinite linear alternate-reverse;
+            clip-path: inset(45% 0 0 0);
         }
-        @keyframes glitch {
-            0% { clip: rect(42px, 9999px, 44px, 0); }
-            10% { clip: rect(85px, 9999px, 2px, 0); }
-            15% { clip: rect(0, 0, 0, 0); }
+        @keyframes glitchA {
+            0%   { transform: translate(0); }
+            8%   { transform: translate(-3px, 1px); }
+            9%   { transform: translate(2px, -1px); }
+            10%  { transform: translate(0); }
+            42%  { transform: translate(3px, 0); }
+            43%  { transform: translate(0); }
+            100% { transform: translate(0); }
+        }
+        @keyframes glitchB {
+            0%   { transform: translate(0); }
+            15%  { transform: translate(4px, 0); }
+            16%  { transform: translate(-2px, 1px); }
+            17%  { transform: translate(0); }
+            55%  { transform: translate(-3px, -1px); }
+            56%  { transform: translate(0); }
+            100% { transform: translate(0); }
         }
 
-        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('https://www.transparenttextures.com/patterns/dust.png'); opacity: 0.15; z-index: 20; }
-        .vignette { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.9) 100%); z-index: 21; }
+        .load-panel {
+            position: absolute; bottom: 6%; left: 50%; transform: translateX(-50%);
+            width: min(520px, 82vw); z-index: 40;
+        }
+
+        .load-status {
+            font-size: 11px; letter-spacing: 0.35em; text-transform: uppercase;
+            color: rgba(160,160,160,0.75); margin-bottom: 10px; text-align: center;
+            min-height: 16px;
+        }
+
+        .load-bar-track {
+            height: 2px; background: rgba(255,255,255,0.08); position: relative; overflow: hidden;
+        }
+        .load-bar-fill {
+            height: 100%; width: 0%; background: linear-gradient(90deg, #555, #eee, #888);
+            transition: width 0.35s ease;
+            box-shadow: 0 0 12px rgba(255,255,255,0.25);
+        }
+        .load-bar-glow {
+            position: absolute; top: -4px; height: 10px; width: 40px;
+            background: radial-gradient(ellipse, rgba(255,255,255,0.35), transparent);
+            transform: translateX(-50%); pointer-events: none;
+            left: 0%; transition: left 0.35s ease;
+        }
+
+        .load-percent {
+            font-size: 10px; letter-spacing: 0.2em; color: rgba(130,130,130,0.6);
+            text-align: right; margin-top: 6px;
+        }
+
+        .corner {
+            position: absolute; width: 18px; height: 18px; z-index: 35; opacity: 0.35;
+            will-change: transform;
+        }
+        .corner-tl { top: 24px; left: 24px; border-top: 1px solid #fff; border-left: 1px solid #fff; }
+        .corner-tr { top: 24px; right: 24px; border-top: 1px solid #fff; border-right: 1px solid #fff; }
+        .corner-bl { bottom: 24px; left: 24px; border-bottom: 1px solid #fff; border-left: 1px solid #fff; }
+        .corner-br { bottom: 24px; right: 24px; border-bottom: 1px solid #fff; border-right: 1px solid #fff; }
+
+        .crosshair {
+            position: absolute; z-index: 8; width: 40px; height: 40px;
+            opacity: 0.08; pointer-events: none;
+        }
+        .crosshair::before, .crosshair::after {
+            content: ''; position: absolute; background: #fff;
+        }
+        .crosshair::before { width: 1px; height: 100%; left: 50%; }
+        .crosshair::after  { height: 1px; width: 100%; top: 50%; }
+        .crosshair-a { top: 18%; left: 12%; }
+        .crosshair-b { bottom: 22%; right: 14%; width: 28px; height: 28px; }
     </style>
 </head>
 <body>
     <div class="film-scratch"></div>
     <div class="scanline"></div>
-    <div class="overlay"></div>
+    <div class="noise"></div>
+    <div class="static-burst"></div>
     <div class="vignette"></div>
-    <div class="viewport">
-        <div class="grid-plane"></div>
-        <div class="logo-container">
-            <h1 class="logo">Z-CITY RPH</h1>
+    <div class="glitch-bar" id="glitchBar"></div>
+
+    <div class="corner corner-tl" data-depth="0.04"></div>
+    <div class="corner corner-tr" data-depth="0.04"></div>
+    <div class="corner corner-bl" data-depth="0.04"></div>
+    <div class="corner corner-br" data-depth="0.04"></div>
+
+    <div class="parallax-root" id="parallaxRoot">
+        <div class="viewport">
+            <div class="layer sketch-bg" data-depth="0.015"></div>
+            <div class="layer depth-fog" data-depth="0.02"></div>
+            <div class="layer grid-plane" data-depth="0.05"></div>
+            <div class="layer horizon-glow" data-depth="0.03"></div>
+
+            <div class="layer wire-ring" data-depth="0.025">
+                <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="100" cy="100" r="88" stroke="white" stroke-width="0.5" stroke-dasharray="4 8"/>
+                    <circle cx="100" cy="100" r="72" stroke="white" stroke-width="0.3" stroke-dasharray="2 12"/>
+                    <line x1="100" y1="12" x2="100" y2="188" stroke="white" stroke-width="0.2" opacity="0.5"/>
+                    <line x1="12" y1="100" x2="188" y2="100" stroke="white" stroke-width="0.2" opacity="0.5"/>
+                </svg>
+            </div>
+
+            <canvas id="particleCanvas"></canvas>
+
+            <div class="crosshair crosshair-a" data-depth="0.06"></div>
+            <div class="crosshair crosshair-b" data-depth="0.045"></div>
+
+            <div class="logo-wrap" id="logoWrap" data-depth="0.08">
+                <div class="logo-container" id="logo">
+                    <h1 class="logo">Z-CITY RPH</h1>
+                    <div class="logo-sub">ROLEPLAY // PERMADEATH PROTOCOL</div>
+                </div>
+            </div>
+
+            <div class="load-panel" id="loadPanel">
+                <div class="load-status" id="statusText">ПОДКЛЮЧЕНИЕ К СЕРВЕРУ</div>
+                <div class="load-bar-track">
+                    <div class="load-bar-fill" id="barFill"></div>
+                    <div class="load-bar-glow" id="barGlow"></div>
+                </div>
+                <div class="load-percent" id="percentText">0%</div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Функция, которую будет вызывать GMod через Lua
-        function triggerExit() {
-            document.querySelector('.logo-container').classList.add('fly-up');
+        var filesTotal = 0;
+        var filesNeeded = 0;
+        var mouseX = 0.5, mouseY = 0.5;
+        var smoothX = 0.5, smoothY = 0.5;
+
+        /* ── Параллакс ── */
+        function initParallax() {
+            document.addEventListener('mousemove', function(e) {
+                mouseX = e.clientX / window.innerWidth;
+                mouseY = e.clientY / window.innerHeight;
+            });
+
+            var layers = document.querySelectorAll('[data-depth]');
+            function tick() {
+                smoothX += (mouseX - 0.5 - (smoothX - 0.5)) * 0.06;
+                smoothY += (mouseY - 0.5 - (smoothY - 0.5)) * 0.06;
+
+                for (var i = 0; i < layers.length; i++) {
+                    var el = layers[i];
+                    var d = parseFloat(el.getAttribute('data-depth')) || 0.03;
+                    var tx = (smoothX - 0.5) * d * window.innerWidth;
+                    var ty = (smoothY - 0.5) * d * window.innerHeight;
+                    el.style.transform = 'translate3d(' + tx + 'px,' + ty + 'px,0)';
+                }
+                requestAnimationFrame(tick);
+            }
+            tick();
         }
+
+        /* ── Частицы ── */
+        function initParticles() {
+            var canvas = document.getElementById('particleCanvas');
+            var ctx = canvas.getContext('2d');
+            var particles = [];
+            var count = 70;
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            for (var i = 0; i < count; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    z: Math.random(),
+                    s: Math.random() * 1.5 + 0.3,
+                    vx: (Math.random() - 0.5) * 0.15,
+                    vy: -Math.random() * 0.25 - 0.05
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (var i = 0; i < particles.length; i++) {
+                    var p = particles[i];
+                    p.x += p.vx + (smoothX - 0.5) * p.z * 0.6;
+                    p.y += p.vy + (smoothY - 0.5) * p.z * 0.4;
+                    if (p.y < -10) { p.y = canvas.height + 10; p.x = Math.random() * canvas.width; }
+                    if (p.x < -10) p.x = canvas.width + 10;
+                    if (p.x > canvas.width + 10) p.x = -10;
+
+                    var a = 0.08 + p.z * 0.35;
+                    ctx.fillStyle = 'rgba(255,255,255,' + a + ')';
+                    ctx.fillRect(p.x, p.y, p.s, p.s);
+                }
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        /* ── Случайные глитч-полосы ── */
+        function initGlitchBars() {
+            var bar = document.getElementById('glitchBar');
+            setInterval(function() {
+                if (Math.random() > 0.72) {
+                    bar.style.top = (Math.random() * 100) + '%';
+                    bar.style.height = (Math.random() * 3 + 1) + 'px';
+                    bar.style.opacity = '1';
+                    setTimeout(function() { bar.style.opacity = '0'; }, 60 + Math.random() * 80);
+                }
+            }, 400);
+        }
+
+        /* ── GMod Loading API ── */
+        function setProgress(pct) {
+            pct = Math.max(0, Math.min(100, pct));
+            document.getElementById('barFill').style.width = pct + '%';
+            document.getElementById('barGlow').style.left = pct + '%';
+            document.getElementById('percentText').textContent = Math.round(pct) + '%';
+        }
+
+        function SetStatusChanged(status) {
+            document.getElementById('statusText').textContent = (status || '').toUpperCase();
+        }
+
+        function SetFilesTotal(total) {
+            filesTotal = total || 0;
+            updateFileProgress();
+        }
+
+        function SetFilesNeeded(needed) {
+            filesNeeded = needed || 0;
+            updateFileProgress();
+        }
+
+        function DownloadingFile(file) {
+            document.getElementById('statusText').textContent = 'ЗАГРУЗКА: ' + (file || '').toUpperCase();
+        }
+
+        function updateFileProgress() {
+            if (filesTotal <= 0) return;
+            var done = filesTotal - filesNeeded;
+            setProgress((done / filesTotal) * 100);
+        }
+
+        function GameDetails(servername, serverurl, mapname, maxplayers, steamid, gamemode) {
+            document.getElementById('statusText').textContent = 'КАРТА: ' + (mapname || '').toUpperCase();
+        }
+
+        function triggerExit() {
+            document.getElementById('logo').classList.add('fly-up');
+        }
+
+        initParallax();
+        initParticles();
+        initGlitchBars();
     </script>
 </body>
 </html>
