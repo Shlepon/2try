@@ -7,7 +7,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400&display=swap');
 
         :root {
-            --bg: #030303;
+            --bg: #000;
             --fg: #ececec;
             --muted: rgba(180,180,180,0.55);
             --line: rgba(255,255,255,0.12);
@@ -17,192 +17,80 @@
 
         html, body {
             width: 100%; height: 100%; overflow: hidden;
-            background: var(--bg); color: var(--fg);
+            background: #000; color: var(--fg);
             font-family: 'IBM Plex Sans', sans-serif;
             cursor: default; user-select: none;
         }
 
-        .police-bg {
+        /* ── ФОН: чёрный + сетка + рамка + мигалки ── */
+        .sketch-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; pointer-events: none;
+            opacity: 0.38;
+            background:
+                repeating-linear-gradient(0deg, transparent, transparent 47px, rgba(255,255,255,0.05) 47px, rgba(255,255,255,0.05) 48px),
+                repeating-linear-gradient(90deg, transparent, transparent 47px, rgba(255,255,255,0.04) 47px, rgba(255,255,255,0.04) 48px);
+        }
+
+        .scene-frame {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 14;
-            background: #000;
+            top: 28px; left: 28px; right: 28px; bottom: 28px;
+            z-index: 2;
+            border: 1px solid rgba(255,255,255,0.14);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), inset 0 0 120px rgba(0,0,0,0.6);
             pointer-events: none;
+            overflow: hidden;
             transition: opacity 1.5s ease;
         }
-        .police-bg.exit-fade { opacity: 0; }
+        .scene-frame.exit-fade { opacity: 0; }
 
-        .police-flash {
-            position: absolute; inset: 0;
+        .flash-red, .flash-blue {
+            position: absolute;
+            top: 4%; bottom: 4%;
+            width: 54%;
             opacity: 0;
-            transition: opacity 0.45s ease;
+            transition: opacity 0.5s ease;
         }
-        .police-flash.on { opacity: 1; }
-
-        .police-flash-red.on {
-            background: rgba(180, 20, 20, 0.5);
-        }
-        .police-flash-blue.on {
-            background: rgba(20, 55, 200, 0.5);
-        }
-
-        #bgGridCanvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 13;
-            pointer-events: none;
-        }
-
-        #bgGridSvg {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 12;
-            pointer-events: none;
-        }
-
-        .viewport {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 2;
-            background: transparent;
-            overflow: hidden;
-        }
-
-        .layer { position: absolute; inset: 0; pointer-events: none; }
-
-        .center-glow {
-            z-index: 0;
-            background:
-                radial-gradient(circle at 50% 46%, rgba(255,255,255,0.14) 0%, transparent 30%),
-                radial-gradient(circle at 50% 46%, rgba(200,200,200,0.06) 0%, transparent 48%);
-            animation: centerPulse 6s ease-in-out infinite;
-        }
-        @keyframes centerPulse {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 1; }
-        }
-
-        .bg-beams {
-            z-index: 1; opacity: 0.22;
-            background:
-                linear-gradient(90deg, transparent 0%, transparent 18%, rgba(255,255,255,0.05) 24%, transparent 30%, transparent 48%, rgba(255,255,255,0.04) 52%, transparent 58%, transparent 76%, rgba(255,255,255,0.035) 82%, transparent 88%);
-        }
-
-        .parallax-wrap { position: absolute; inset: 0; pointer-events: none; will-change: transform; }
-
-        .sketch-bg {
-            z-index: 2; opacity: 0.28;
-            background:
-                repeating-linear-gradient(0deg, transparent, transparent 47px, rgba(255,255,255,0.04) 47px, rgba(255,255,255,0.04) 48px),
-                repeating-linear-gradient(90deg, transparent, transparent 47px, rgba(255,255,255,0.03) 47px, rgba(255,255,255,0.03) 48px);
-            animation: sketchDrift 22s linear infinite;
-        }
-        @keyframes sketchDrift { to { background-position: -24px 24px; } }
-
-        .grid-wrap {
-            z-index: 3; overflow: hidden;
-        }
-        .grid-plane {
-            width: 500%; height: 500%; top: -200%; left: -200%;
-            background-image:
-                linear-gradient(rgba(255,255,255,0.32) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.32) 1px, transparent 1px);
-            background-size: 48px 48px;
-            transform: perspective(500px) rotateX(68deg);
-            transform-origin: 50% 0%;
-            animation: gridMove 4s linear infinite;
+        .flash-red { left: -2%; }
+        .flash-blue { right: -2%; }
+        .flash-red.on {
             opacity: 1;
+            background: radial-gradient(ellipse 95% 85% at 18% 48%,
+                rgba(255, 45, 45, 0.72) 0%,
+                rgba(200, 10, 10, 0.38) 42%,
+                rgba(80, 0, 0, 0.12) 68%,
+                transparent 82%);
         }
-        @keyframes gridMove { to { background-position: 0 48px; } }
-
-        .grid-vignette {
-            z-index: 4;
-            background: radial-gradient(ellipse 68% 52% at 50% 58%, transparent 8%, rgba(0,0,0,0.75) 68%);
-        }
-
-        .horizon-glow {
-            z-index: 5; bottom: 0; top: auto; height: 55%;
-            background:
-                radial-gradient(ellipse 90% 70% at 50% 100%, rgba(255,255,255,0.12) 0%, transparent 62%),
-                linear-gradient(0deg, rgba(255,255,255,0.05) 0%, transparent 35%);
-        }
-
-        .wire-ring {
-            z-index: 6; display: flex; align-items: center; justify-content: center;
-        }
-        .wire-ring svg {
-            width: min(680px, 92vw); height: min(680px, 92vw);
-            opacity: 0.22; animation: ringSpin 60s linear infinite;
-        }
-        .wire-ring.ring-inner svg {
-            width: min(420px, 58vw); height: min(420px, 58vw);
-            opacity: 0.16; animation: ringSpinRev 45s linear infinite;
-        }
-        @keyframes ringSpin { to { transform: rotate(360deg); } }
-        @keyframes ringSpinRev { to { transform: rotate(-360deg); } }
-
-        #particleCanvas { position: absolute; inset: 0; z-index: 7; opacity: 0.75; }
-
-        .film-scratch {
-            position: fixed; top: 0; width: 1px; height: 100%; z-index: 100;
-            background: rgba(255,255,255,0.06); animation: scratch 5s infinite;
-        }
-        @keyframes scratch {
-            0% { left: 5%; opacity: 0; } 5% { opacity: 0.4; } 10% { left: 12%; opacity: 0; }
-            16% { left: 78%; opacity: 0.2; } 20% { opacity: 0; } 100% { left: 95%; opacity: 0; }
+        .flash-blue.on {
+            opacity: 1;
+            background: radial-gradient(ellipse 95% 85% at 82% 48%,
+                rgba(45, 90, 255, 0.72) 0%,
+                rgba(10, 40, 200, 0.38) 42%,
+                rgba(0, 10, 80, 0.12) 68%,
+                transparent 82%);
         }
 
-        .scanline {
-            position: fixed; width: 100%; height: 2px; z-index: 50;
-            background: linear-gradient(transparent, rgba(255,255,255,0.04), transparent);
-            animation: scan 8s linear infinite; pointer-events: none;
+        #rainCanvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 3; pointer-events: none;
+            transition: opacity 1.5s ease;
         }
-        @keyframes scan { from { top: -5%; } to { top: 105%; } }
+        #rainCanvas.exit-fade { opacity: 0; }
 
         .noise {
-            position: fixed; inset: 0; z-index: 15; opacity: 0.06; pointer-events: none;
+            position: fixed; inset: 0; z-index: 4; opacity: 0.05; pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-            animation: noiseTick 0.15s steps(2) infinite;
         }
-        @keyframes noiseTick { 50% { opacity: 0.08; } }
 
         .vignette {
-            position: fixed; inset: 0; z-index: 18; pointer-events: none;
-            background: radial-gradient(ellipse, transparent 32%, rgba(0,0,0,0.55) 100%);
+            position: fixed; inset: 0; z-index: 5; pointer-events: none;
+            background: radial-gradient(ellipse, transparent 40%, rgba(0,0,0,0.45) 100%);
+            transition: opacity 1.5s ease;
         }
+        .vignette.exit-fade { opacity: 0; }
 
-        .glitch-bar {
-            position: fixed; left: 0; width: 100%; z-index: 90;
-            background: rgba(255,255,255,0.04); opacity: 0; pointer-events: none;
-        }
-
-        @keyframes revealIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes revealFade {
-            from { opacity: 0; }
-            to   { opacity: 1; }
-        }
-        .reveal {
-            opacity: 0;
-            animation: revealIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-        .reveal-fade {
-            opacity: 0;
-            animation: revealFade 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-        .reveal-d1 { animation-delay: 0.08s; }
-        .reveal-d2 { animation-delay: 0.16s; }
-        .reveal-d3 { animation-delay: 0.24s; }
-        .reveal-d4 { animation-delay: 0.32s; }
-        .reveal-d5 { animation-delay: 0.4s; }
-
-        .hud-frame { position: fixed; inset: 18px; z-index: 40; pointer-events: none; }
+        /* ── HUD ── */
+        .hud-frame { position: fixed; inset: 18px; z-index: 20; pointer-events: none; }
         .hud-bracket {
             position: absolute; width: 28px; height: 28px;
             border-color: rgba(255,255,255,0.22); border-style: solid; border-width: 0;
@@ -213,127 +101,106 @@
         .hud-bracket.br { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px; }
 
         .hud-top {
-            position: fixed; top: 28px; left: 0; right: 0;
-            z-index: 45; text-align: center;
+            position: fixed; top: 22px; left: 0; right: 0;
+            z-index: 22; text-align: center;
             font-family: 'JetBrains Mono', monospace; font-size: 9px;
             letter-spacing: 0.32em; color: var(--muted); text-transform: uppercase;
         }
         .hud-dot {
-            width: 4px; height: 4px; border-radius: 50%; background: #fff;
+            display: inline-block; width: 4px; height: 4px; border-radius: 50%;
+            background: #fff; margin-right: 8px; vertical-align: middle;
             animation: dotBlink 2s ease-in-out infinite;
         }
         @keyframes dotBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
 
-        .hud-side {
-            position: fixed; z-index: 44; font-family: 'JetBrains Mono', monospace;
-            font-size: 8px; letter-spacing: 0.14em; color: rgba(255,255,255,0.16);
-            writing-mode: vertical-rl;
-        }
-        .hud-side.left { left: 32px; top: 0; bottom: 0; margin: auto 0; height: 200px; }
-        .hud-side.right { right: 32px; top: 0; bottom: 0; margin: auto 0; height: 200px; transform: rotate(180deg); }
-
         .hud-bottom {
-            position: fixed; bottom: 28px; left: 0; right: 0;
-            z-index: 45; text-align: center;
+            position: fixed; bottom: 22px; left: 0; right: 0;
+            z-index: 22; text-align: center;
             font-family: 'JetBrains Mono', monospace; font-size: 8px;
             letter-spacing: 0.18em; color: rgba(255,255,255,0.18);
         }
 
-        /* ── ЛОГОТИП — центр без transform (GMod CEF) ── */
+        /* Карусель по краям */
+        .edge-marquee {
+            position: fixed; z-index: 21; pointer-events: none;
+            overflow: hidden;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(11px, 1.2vw, 14px);
+            letter-spacing: 0.22em;
+            color: rgba(255,255,255,0.32);
+            text-transform: uppercase;
+        }
+        .edge-marquee.top { top: 6px; left: 40px; right: 40px; height: 22px; }
+        .edge-marquee.bottom { bottom: 6px; left: 40px; right: 40px; height: 22px; }
+        .edge-marquee.left { left: 6px; top: 40px; bottom: 40px; width: 22px; }
+        .edge-marquee.right { right: 6px; top: 40px; bottom: 40px; width: 22px; }
+
+        .edge-track-h {
+            display: inline-block; white-space: nowrap;
+            padding-right: 80px;
+            animation: scrollH 55s linear infinite;
+        }
+        .edge-track-h.rev { animation-direction: reverse; animation-duration: 62s; }
+        @keyframes scrollH {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .edge-track-v {
+            display: inline-block;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            white-space: nowrap;
+            padding-bottom: 80px;
+            animation: scrollV 48s linear infinite;
+        }
+        .edge-track-v.rev { animation-direction: reverse; animation-duration: 58s; }
+        @keyframes scrollV {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50%); }
+        }
+
+        body.mode-intro .phrase-zone { display: none !important; }
+        body:not(.mode-intro) .intro-stack { display: none !important; }
+
+        /* ── ЛОГОТИП ── */
         .logo-zone {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 30;
-            text-align: center;
-            padding-top: 38vh;
-            pointer-events: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 30; text-align: center;
+            padding-top: 38vh; pointer-events: none;
+            transition: opacity 1s ease;
         }
-        body.mode-intro .logo-zone {
-            padding-top: 28vh;
-        }
+        body.mode-intro .logo-zone { padding-top: 22vh; }
+        .logo-zone.exit-fade { opacity: 0; }
 
-        .logo-block {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .pulse-ring {
-            position: absolute; border-radius: 50%;
-            border: 1px solid rgba(255,255,255,0.07);
-            animation: pulseExpand 4s ease-out infinite;
-            top: 0; left: 0; right: 0; bottom: 0; margin: auto;
-        }
-        .pulse-ring:nth-child(1) { width: 300px; height: 300px; animation-delay: 0s; }
-        .pulse-ring:nth-child(2) { width: 300px; height: 300px; animation-delay: 1.3s; }
-        .pulse-ring:nth-child(3) { width: 300px; height: 300px; animation-delay: 2.6s; }
-        @keyframes pulseExpand {
-            0%   { transform: scale(0.88); opacity: 0.3; }
-            100% { transform: scale(1.3); opacity: 0; }
-        }
+        .logo-block { position: relative; display: inline-block; }
 
         .logo-container {
             position: relative; z-index: 2;
-            animation: logoFloat 7s ease-in-out infinite;
             transition: transform 1.4s cubic-bezier(0.68,-0.55,0.27,1.55), opacity 1s ease;
         }
-        .logo-container.fly-up { transform: translateY(-140%) scale(0.45); opacity: 0; }
-        @keyframes logoFloat {
-            0%,100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
-        }
+        .logo-container.fly-up { transform: translateY(-120%); opacity: 0; }
 
         .logo {
             font-family: 'Oswald', sans-serif;
             font-size: clamp(44px, 7.5vw, 88px);
-            font-weight: 600;
-            letter-spacing: 0.14em;
-            color: #fafafa;
-            text-shadow: 0 0 40px rgba(255,255,255,0.12);
-            position: relative;
-            line-height: 1;
-            text-align: center;
-            display: inline-flex;
-            flex-wrap: nowrap;
-            justify-content: center;
+            font-weight: 600; letter-spacing: 0.14em; color: #fafafa;
+            line-height: 1; text-align: center;
+            display: inline-flex; flex-wrap: nowrap; justify-content: center;
         }
-        .logo-char {
-            display: inline-block;
-            will-change: transform;
-            position: relative;
-            z-index: 1;
-        }
+        .logo-char { display: inline-block; will-change: transform; position: relative; }
         .logo-char.space { width: 0.35em; }
         .logo-line {
             width: min(180px, 36vw); height: 1px; margin: 16px auto 0;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
         }
 
-        .logo::before, .logo::after { display: none; }
-
-        @keyframes glitchA {
-            0%,100% { transform: translate(0); }
-            8% { transform: translate(-3px,1px); } 9% { transform: translate(0); }
-        }
-        @keyframes glitchB {
-            0%,100% { transform: translate(0); }
-            15% { transform: translate(3px,0); } 16% { transform: translate(0); }
-        }
-
-        /* ── Подсказки (загрузка) ── */
+        /* ── Подсказки (только загрузка) ── */
         .phrase-zone {
             position: fixed;
-            top: calc(50% + 10vh);
-            left: 0; right: 0;
-            margin: 0 auto;
-            z-index: 28;
-            width: min(640px, 90vw);
-            transition: opacity 0.5s ease;
-        }
-        .phrase-zone.hidden {
-            opacity: 0;
-            pointer-events: none;
+            top: calc(50% + 8vh);
+            left: 0; right: 0; margin: 0 auto;
+            z-index: 28; width: min(640px, 90vw);
         }
 
         .glass-card {
@@ -342,97 +209,144 @@
             background: linear-gradient(145deg, rgba(12,12,14,0.94), rgba(6,6,8,0.9));
             border: 1px solid var(--line);
             box-shadow: 0 0 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.04);
-            backdrop-filter: blur(8px);
             text-align: center;
         }
         .glass-card::after {
             content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
         }
-
         .card-tag {
             font-family: 'JetBrains Mono', monospace;
             font-size: 8px; letter-spacing: 0.38em; color: rgba(200,200,200,0.38);
             text-transform: uppercase; margin-bottom: 12px;
         }
-
         .phrase-text {
-            font-family: 'IBM Plex Sans', sans-serif;
             font-size: clamp(13px, 1.5vw, 15px); font-weight: 300;
             line-height: 1.7; color: rgba(205,205,205,0.9);
             min-height: 2.8em;
-            transition: opacity 0.6s ease, transform 0.6s ease;
+            transition: opacity 0.6s ease;
         }
-        .phrase-text.fade-out { opacity: 0; transform: translateY(6px); }
-
+        .phrase-text.fade-out { opacity: 0; }
         .phrase-num {
             font-family: 'JetBrains Mono', monospace;
             font-size: 8px; letter-spacing: 0.22em; color: rgba(255,255,255,0.18);
             margin-top: 14px;
         }
 
-        .crosshair {
-            position: absolute; z-index: 8; opacity: 0.05; pointer-events: none;
+        /* ── ИНТРО: дисклеймер + кнопка в одном блоке ── */
+        .intro-stack {
+            position: fixed;
+            left: 0; right: 0;
+            margin: 0 auto;
+            width: min(680px, 92vw);
+            top: 48%;
+            z-index: 60;
         }
-        .crosshair::before, .crosshair::after { content: ''; position: absolute; background: #fff; }
-        .crosshair::before { width: 1px; height: 100%; left: 50%; }
-        .crosshair::after { height: 1px; width: 100%; top: 50%; }
-        .crosshair-a { top: 20%; left: 10%; width: 32px; height: 32px; }
-        .crosshair-b { bottom: 24%; right: 12%; width: 22px; height: 22px; }
+
+        .disclaimer {
+            width: 100%;
+            opacity: 0;
+            transform: translateY(18px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .disclaimer.show { opacity: 1; transform: translateY(0); }
+
+        .disclaimer-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(18px, 2.2vw, 24px);
+            font-weight: 600; letter-spacing: 0.14em; color: #fff; margin-bottom: 14px;
+        }
+        .disclaimer-body {
+            font-size: clamp(12px, 1.35vw, 14px); line-height: 1.75;
+            color: rgba(190,190,190,0.92); font-weight: 300; text-align: center;
+        }
+        .disclaimer-body strong { color: #fff; font-weight: 600; }
+        .disclaimer-divider {
+            height: 1px; margin: 16px 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        }
+        .disclaimer-foot {
+            font-size: 11px; color: rgba(130,130,130,0.7); font-weight: 300;
+        }
+
+        .enter-btn {
+            position: relative;
+            width: 100%;
+            height: 68px;
+            margin-top: 14px;
+            padding: 0;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.65s ease;
+            display: block;
+        }
+        .enter-btn.show { opacity: 1; pointer-events: auto; }
+
+        .enter-btn-inner {
+            position: absolute; inset: 0;
+            background: rgba(8,8,10,0.95);
+            border: 1px solid rgba(255,255,255,0.22);
+            transition: border-color 0.3s;
+        }
+        .enter-btn:hover .enter-btn-inner { border-color: rgba(255,255,255,0.5); }
+
+        .enter-btn-label {
+            position: absolute; z-index: 1;
+            top: 0; left: 0; right: 0; bottom: 0;
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(17px, 2vw, 22px);
+            font-weight: 500; color: #f0f0f0;
+            line-height: 68px; text-align: center;
+        }
+        .enter-btn-text { letter-spacing: 0.28em; }
+        .enter-arrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px; opacity: 0.6; margin-left: 10px;
+        }
+
+        .enter-btn-corners span {
+            position: absolute; width: 10px; height: 10px;
+            border-color: rgba(255,255,255,0.5); border-style: solid; border-width: 0;
+        }
+        .enter-btn-corners span:nth-child(1) { top: 4px; left: 4px; border-top-width: 1px; border-left-width: 1px; }
+        .enter-btn-corners span:nth-child(2) { top: 4px; right: 4px; border-top-width: 1px; border-right-width: 1px; }
+        .enter-btn-corners span:nth-child(3) { bottom: 4px; left: 4px; border-bottom-width: 1px; border-left-width: 1px; }
+        .enter-btn-corners span:nth-child(4) { bottom: 4px; right: 4px; border-bottom-width: 1px; border-right-width: 1px; }
 
         .load-panel { display: none !important; }
     </style>
 </head>
 <body>
-    <div class="police-bg" id="policeBg">
-        <div class="police-flash police-flash-red on" id="policeRed"></div>
-        <div class="police-flash police-flash-blue" id="policeBlue"></div>
+    <div class="sketch-layer"></div>
+
+    <div class="scene-frame" id="sceneFrame">
+        <div class="flash-red on" id="flashRed"></div>
+        <div class="flash-blue" id="flashBlue"></div>
     </div>
-    <canvas id="bgGridCanvas"></canvas>
-    <svg id="bgGridSvg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"></svg>
 
-    <div class="film-scratch"></div>
-    <div class="scanline"></div>
+    <canvas id="rainCanvas"></canvas>
     <div class="noise"></div>
-    <div class="vignette"></div>
-    <div class="glitch-bar" id="glitchBar"></div>
+    <div class="vignette" id="vignette"></div>
 
-    <div class="hud-frame reveal reveal-d1">
+    <div class="hud-frame">
         <div class="hud-bracket tl"></div>
         <div class="hud-bracket tr"></div>
         <div class="hud-bracket bl"></div>
         <div class="hud-bracket br"></div>
     </div>
-    <div class="hud-top reveal-fade reveal-d2"><span class="hud-dot"></span> Z-CITY NET // SECURE CHANNEL</div>
-    <div class="hud-side left reveal-fade reveal-d3">PERMADEATH PROTOCOL ACTIVE</div>
-    <div class="hud-side right reveal-fade reveal-d3">NEURAL LINK STANDBY</div>
-    <div class="hud-bottom reveal-fade reveal-d4" id="hudCoords">X:0000 Y:0000 // SYNC</div>
+    <div class="hud-top"><span class="hud-dot"></span>Z-CITY NET // SECURE CHANNEL</div>
+    <div class="hud-bottom" id="hudCoords">X:0000 Y:0000 // SYNC</div>
 
-    <div class="viewport">
-        <div class="layer center-glow"></div>
-        <div class="parallax-wrap" data-depth="0.012"><div class="layer bg-beams"></div></div>
-        <div class="parallax-wrap" data-depth="0.022"><div class="layer sketch-bg"></div></div>
-        <div class="parallax-wrap grid-wrap" data-depth="0.065">
-            <div class="layer grid-plane"></div>
-            <div class="layer grid-vignette"></div>
-        </div>
-        <div class="layer horizon-glow" data-depth="0.038"></div>
-        <div class="layer wire-ring" data-depth="0.03">
-            <svg viewBox="0 0 200 200" fill="none"><circle cx="100" cy="100" r="88" stroke="white" stroke-width="0.35" stroke-dasharray="3 9"/><circle cx="100" cy="100" r="68" stroke="white" stroke-width="0.2" stroke-dasharray="2 14"/><circle cx="100" cy="100" r="48" stroke="white" stroke-width="0.15" stroke-dasharray="1 8"/></svg>
-        </div>
-        <div class="layer wire-ring ring-inner" data-depth="0.042">
-            <svg viewBox="0 0 200 200" fill="none"><circle cx="100" cy="100" r="72" stroke="white" stroke-width="0.25" stroke-dasharray="4 12"/></svg>
-        </div>
-        <canvas id="particleCanvas"></canvas>
-        <div class="crosshair crosshair-a" data-depth="0.08"></div>
-        <div class="crosshair crosshair-b" data-depth="0.055"></div>
-    </div>
+    <div class="edge-marquee top" id="edgeTop"></div>
+    <div class="edge-marquee bottom" id="edgeBottom"></div>
+    <div class="edge-marquee left" id="edgeLeft"></div>
+    <div class="edge-marquee right" id="edgeRight"></div>
 
     <div class="logo-zone" id="logoZone">
         <div class="logo-block">
-            <div class="pulse-ring"></div>
-            <div class="pulse-ring"></div>
-            <div class="pulse-ring"></div>
             <div class="logo-container" id="logo">
                 <div class="logo" id="logoText">Z-CITY RPH</div>
                 <div class="logo-line"></div>
@@ -441,176 +355,42 @@
     </div>
 
     <div class="phrase-zone" id="phrasePanel">
-        <div class="glass-card reveal reveal-d4">
+        <div class="glass-card">
             <div class="card-tag">// Системное предупреждение</div>
             <div class="phrase-text" id="phraseText"></div>
             <div class="phrase-num" id="phraseNum">01 / 10</div>
         </div>
     </div>
 
+    <div class="intro-stack" id="introStack">
+        <div class="disclaimer glass-card" id="disclaimer">
+            <div class="card-tag">// Протокол необратимости</div>
+            <div class="disclaimer-title">ВЫ ВХОДИТЕ В Z-CITY</div>
+            <div class="disclaimer-body">
+                В этом городе <strong>смерть — не ошибка и не откат</strong>. Это конец. Ваш персонаж перестаёт существовать навсегда — без исключений, без возврата.<br><br>
+                Новая жизнь — <strong>другой человек</strong>: другое имя, другая история, другая одежда. Всё, что вы построили, исчезает с последним вдохом.<br><br>
+                Каждое решение — ваша ответственность. <strong>Город не прощает.</strong>
+            </div>
+            <div class="disclaimer-divider"></div>
+            <div class="disclaimer-foot">Нажимая кнопку, вы принимаете условия permadeath-сервера.</div>
+        </div>
+        <button class="enter-btn" id="enterBtn" onclick="onEnterClick()">
+            <div class="enter-btn-inner">
+                <div class="enter-btn-corners"><span></span><span></span><span></span><span></span></div>
+                <div class="enter-btn-label"><span class="enter-btn-text">ПРИНЯТЬ И ВОЙТИ</span><span class="enter-arrow">→</span></div>
+            </div>
+        </button>
+    </div>
+
     <div class="load-panel" id="loadPanel" style="display:none"></div>
 
     <script>
-        var filesTotal = 0, filesNeeded = 0;
+        var isIntro = false, enterLocked = false;
+        var isIntroUrl = (window.location.search || '').indexOf('mode=intro') !== -1;
         var mouseX = 0.5, mouseY = 0.5, smoothX = 0.5, smoothY = 0.5;
+        var READ_DELAY_MS = 2000;
         var LOGO_MAGNET_DELAY = 1000;
-        var logoChars = [];
-        var logoMagnetReady = false;
-        var logoMagnetStart = Date.now();
-
-        function initBgGridSvg() {
-            var svg = document.getElementById('bgGridSvg');
-            if (!svg) return;
-            function rebuild() {
-                var w = window.innerWidth || 800, h = window.innerHeight || 600;
-                svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
-                svg.innerHTML = '';
-                var horizon = h * 0.36, ns = 'http://www.w3.org/2000/svg';
-                for (var r = 0; r <= 22; r++) {
-                    var t = r / 22, y = horizon + (h - horizon) * t * t;
-                    var half = (w * 0.52) * (0.15 + t * 1.1);
-                    var line = document.createElementNS(ns, 'line');
-                    line.setAttribute('x1', w * 0.5 - half); line.setAttribute('y1', y);
-                    line.setAttribute('x2', w * 0.5 + half); line.setAttribute('y2', y);
-                    line.setAttribute('stroke', 'rgba(255,255,255,0.38)'); line.setAttribute('stroke-width', '1');
-                    svg.appendChild(line);
-                }
-                for (var col = -18; col <= 18; col++) {
-                    var line = document.createElementNS(ns, 'line');
-                    line.setAttribute('x1', w * 0.5 + col * 14); line.setAttribute('y1', horizon);
-                    line.setAttribute('x2', w * 0.5 + col * 110); line.setAttribute('y2', h + 20);
-                    line.setAttribute('stroke', 'rgba(255,255,255,0.32)'); line.setAttribute('stroke-width', '1');
-                    svg.appendChild(line);
-                }
-            }
-            rebuild();
-            if (window.addEventListener) window.addEventListener('resize', rebuild);
-        }
-
-        function initBgGrid() {
-            var c = document.getElementById('bgGridCanvas');
-            if (!c) return;
-            var ctx = c.getContext('2d');
-            var offset = 0;
-
-            function resize() {
-                c.width = window.innerWidth || document.documentElement.clientWidth;
-                c.height = window.innerHeight || document.documentElement.clientHeight;
-            }
-
-            function draw() {
-                var w = c.width, h = c.height;
-                if (w < 10 || h < 10) { requestAnimationFrame(draw); return; }
-                ctx.clearRect(0, 0, w, h);
-                var horizon = h * 0.36;
-                ctx.strokeStyle = 'rgba(255,255,255,0.28)';
-                ctx.lineWidth = 1;
-
-                var rows = 22;
-                for (var r = 0; r <= rows; r++) {
-                    var t = r / rows;
-                    var y = horizon + (h - horizon) * t * t;
-                    var half = (w * 0.52) * (0.15 + t * 1.1);
-                    ctx.beginPath();
-                    ctx.moveTo(w * 0.5 - half, y);
-                    ctx.lineTo(w * 0.5 + half, y);
-                    ctx.stroke();
-                }
-
-                var cols = 18;
-                for (var col = -cols; col <= cols; col++) {
-                    ctx.beginPath();
-                    ctx.moveTo(w * 0.5 + col * 14, horizon);
-                    ctx.lineTo(w * 0.5 + col * 110, h + 20);
-                    ctx.stroke();
-                }
-
-                offset = (offset + 0.6) % 48;
-                requestAnimationFrame(draw);
-            }
-
-            resize();
-            if (window.addEventListener) window.addEventListener('resize', resize);
-            draw();
-        }
-
-        function initLogoLetters() {
-            var logo = document.getElementById('logoText');
-            if (!logo) return;
-            var text = logo.textContent.trim();
-            logo.textContent = '';
-            for (var i = 0; i < text.length; i++) {
-                var ch = document.createElement('span');
-                ch.className = 'logo-char' + (text[i] === ' ' ? ' space' : '');
-                ch.textContent = text[i] === ' ' ? '\u00A0' : text[i];
-                ch._ox = 0; ch._oy = 0;
-                logo.appendChild(ch);
-                logoChars.push(ch);
-            }
-        }
-
-        function tickLogoMagnet() {
-            if (Date.now() - logoMagnetStart >= LOGO_MAGNET_DELAY) {
-                logoMagnetReady = true;
-            }
-            if (logoMagnetReady && logoChars.length) {
-                var mx = smoothX * innerWidth;
-                var my = smoothY * innerHeight;
-                var maxDist = 360;
-                var pull = 0.2;
-                for (var i = 0; i < logoChars.length; i++) {
-                    var ch = logoChars[i];
-                    if (ch.classList.contains('space')) continue;
-                    var rect = ch.getBoundingClientRect();
-                    var cx = rect.left + rect.width * 0.5;
-                    var cy = rect.top + rect.height * 0.5;
-                    var dx = mx - cx;
-                    var dy = my - cy;
-                    var dist = Math.sqrt(dx * dx + dy * dy);
-                    var t = Math.max(0, 1 - dist / maxDist);
-                    t = t * t * (3 - 2 * t);
-                    var tx = dx * t * pull;
-                    var ty = dy * t * pull;
-                    ch._ox += (tx - ch._ox) * 0.11;
-                    ch._oy += (ty - ch._oy) * 0.11;
-                    ch.style.transform = 'translate(' + ch._ox.toFixed(2) + 'px,' + ch._oy.toFixed(2) + 'px)';
-                }
-            }
-            requestAnimationFrame(tickLogoMagnet);
-        }
-
-        function initPoliceLights() {
-            var red = document.getElementById('policeRed');
-            var blue = document.getElementById('policeBlue');
-            var showRed = true;
-            setInterval(function() {
-                showRed = !showRed;
-                if (showRed) {
-                    red.classList.add('on'); blue.classList.remove('on');
-                } else {
-                    red.classList.remove('on'); blue.classList.add('on');
-                }
-            }, 600);
-        }
-
-        function initParallax() {
-            document.addEventListener('mousemove', function(e) {
-                mouseX = e.clientX / innerWidth;
-                mouseY = e.clientY / innerHeight;
-            });
-            var layers = document.querySelectorAll('[data-depth]');
-            (function tick() {
-                smoothX += (mouseX - smoothX) * 0.07;
-                smoothY += (mouseY - smoothY) * 0.07;
-                var dx = (smoothX - 0.5) * innerWidth;
-                var dy = (smoothY - 0.5) * innerHeight;
-                for (var i = 0; i < layers.length; i++) {
-                    var d = parseFloat(layers[i].getAttribute('data-depth')) || 0.03;
-                    layers[i].style.transform = 'translate3d(' + (dx * d) + 'px,' + (dy * d) + 'px,0)';
-                }
-                requestAnimationFrame(tick);
-            })();
-        }
+        var logoChars = [], logoMagnetReady = false, logoMagnetStart = Date.now(), logoLettersReady = false;
 
         var PHRASES = [
             "Смерть здесь необратима. Ваш персонаж перестаёт существовать — навсегда.",
@@ -625,81 +405,241 @@
             "Z-City не даёт вторых шансов. Только последствия."
         ];
 
-        function initParticles() {
-            var c = document.getElementById('particleCanvas'), ctx = c.getContext('2d'), pts = [];
-            function resize() { c.width = innerWidth; c.height = innerHeight; }
-            resize(); addEventListener('resize', resize);
-            for (var i = 0; i < 130; i++) pts.push({ x: Math.random()*c.width, y: Math.random()*c.height, z: Math.random(), s: Math.random()*1.6+0.25, vx: (Math.random()-0.5)*0.12, vy: -Math.random()*0.22-0.05 });
-            (function draw() {
-                ctx.clearRect(0,0,c.width,c.height);
-                for (var i = 0; i < pts.length; i++) {
-                    var p = pts[i];
-                    p.x += p.vx + (smoothX-0.5)*p.z*0.45; p.y += p.vy + (smoothY-0.5)*p.z*0.28;
-                    if (p.y < -8) { p.y = c.height+8; p.x = Math.random()*c.width; }
-                    ctx.fillStyle = 'rgba(255,255,255,' + (0.05+p.z*0.28) + ')';
-                    ctx.fillRect(p.x, p.y, p.s, p.s);
+        var EDGE_ITEMS = [
+            "PERMADEATH PROTOCOL ACTIVE",
+            "NEURAL LINK STANDBY",
+            "Z-CITY RPH // ROLEPLAY",
+            "NO SECOND CHANCES",
+            "DEATH IS FINAL",
+            "SECURE CHANNEL OPEN",
+            "CITY WATCHES",
+            "ONE LIFE — ONE CHANCE"
+        ];
+
+        function initFlashes() {
+            var red = document.getElementById('flashRed');
+            var blue = document.getElementById('flashBlue');
+            var showRed = true;
+            setInterval(function() {
+                showRed = !showRed;
+                if (showRed) {
+                    red.classList.add('on'); blue.classList.remove('on');
+                } else {
+                    red.classList.remove('on'); blue.classList.add('on');
                 }
-                requestAnimationFrame(draw);
-            })();
+            }, 650);
         }
 
-        function initGlitchBars() {
-            var bar = document.getElementById('glitchBar');
-            setInterval(function() {
-                if (Math.random() > 0.68) {
-                    bar.style.top = (Math.random()*100)+'%';
-                    bar.style.height = (Math.random()*2+1)+'px';
-                    bar.style.opacity = '1';
-                    setTimeout(function(){ bar.style.opacity='0'; }, 45+Math.random()*60);
+        function initRain() {
+            var c = document.getElementById('rainCanvas');
+            if (!c) return;
+            var ctx = c.getContext('2d');
+            if (!ctx) return;
+            var drops = [];
+
+            function resize() {
+                c.width = window.innerWidth || 800;
+                c.height = window.innerHeight || 600;
+            }
+            resize();
+
+            for (var i = 0; i < 200; i++) {
+                drops.push({
+                    x: Math.random() * c.width,
+                    y: Math.random() * c.height,
+                    len: Math.random() * 22 + 10,
+                    speed: Math.random() * 7 + 5,
+                    a: Math.random() * 0.22 + 0.08
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, c.width, c.height);
+                for (var i = 0; i < drops.length; i++) {
+                    var d = drops[i];
+                    ctx.strokeStyle = 'rgba(170, 190, 220, ' + d.a + ')';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(d.x, d.y);
+                    ctx.lineTo(d.x - 1.5, d.y + d.len);
+                    ctx.stroke();
+                    d.y += d.speed;
+                    d.x -= 0.8;
+                    if (d.y > c.height + 20) {
+                        d.y = -30;
+                        d.x = Math.random() * c.width;
+                    }
                 }
-            }, 360);
+                requestAnimationFrame(draw);
+            }
+            draw();
+            if (window.addEventListener) window.addEventListener('resize', resize);
+        }
+
+        function initEdgeCarousel() {
+            function buildLine(items, sep) {
+                var s = '';
+                for (var r = 0; r < 2; r++) {
+                    for (var i = 0; i < items.length; i++) {
+                        s += items[i] + sep;
+                    }
+                }
+                return s;
+            }
+            var sep = '  ///  ';
+            var line = buildLine(EDGE_ITEMS, sep);
+
+            document.getElementById('edgeTop').innerHTML =
+                '<div class="edge-track-h">' + line + '</div>';
+            document.getElementById('edgeBottom').innerHTML =
+                '<div class="edge-track-h rev">' + line + '</div>';
+            document.getElementById('edgeLeft').innerHTML =
+                '<div class="edge-track-v">' + line + '</div>';
+            document.getElementById('edgeRight').innerHTML =
+                '<div class="edge-track-v rev">' + line + '</div>';
+        }
+
+        function initLogoLetters() {
+            if (logoLettersReady) return;
+            var logo = document.getElementById('logoText');
+            if (!logo) return;
+            var text = (logo.textContent || 'Z-CITY RPH').replace(/\s+/g, ' ').trim();
+            logo.textContent = '';
+            logoChars = [];
+            for (var i = 0; i < text.length; i++) {
+                var ch = document.createElement('span');
+                ch.className = 'logo-char' + (text[i] === ' ' ? ' space' : '');
+                ch.textContent = text[i] === ' ' ? '\u00A0' : text[i];
+                ch._ox = 0; ch._oy = 0;
+                logo.appendChild(ch);
+                logoChars.push(ch);
+            }
+            logoLettersReady = true;
+        }
+
+        function tickLogoMagnet() {
+            if (Date.now() - logoMagnetStart >= LOGO_MAGNET_DELAY) logoMagnetReady = true;
+            if (logoMagnetReady && logoChars.length) {
+                var mx = smoothX * (window.innerWidth || 800);
+                var my = smoothY * (window.innerHeight || 600);
+                for (var i = 0; i < logoChars.length; i++) {
+                    var ch = logoChars[i];
+                    if (ch.classList.contains('space')) continue;
+                    var rect = ch.getBoundingClientRect();
+                    var dx = mx - (rect.left + rect.width * 0.5);
+                    var dy = my - (rect.top + rect.height * 0.5);
+                    var dist = Math.sqrt(dx * dx + dy * dy);
+                    var t = Math.max(0, 1 - dist / 360);
+                    t = t * t * (3 - 2 * t);
+                    ch._ox += (dx * t * 0.2 - ch._ox) * 0.11;
+                    ch._oy += (dy * t * 0.2 - ch._oy) * 0.11;
+                    ch.style.marginLeft = ch._ox.toFixed(1) + 'px';
+                    ch.style.marginTop = ch._oy.toFixed(1) + 'px';
+                }
+            }
+            requestAnimationFrame(tickLogoMagnet);
+        }
+
+        function initMouseTrack() {
+            document.addEventListener('mousemove', function(e) {
+                mouseX = e.clientX / (window.innerWidth || 1);
+                mouseY = e.clientY / (window.innerHeight || 1);
+            });
+            (function tick() {
+                smoothX += (mouseX - smoothX) * 0.07;
+                smoothY += (mouseY - smoothY) * 0.07;
+                requestAnimationFrame(tick);
+            })();
         }
 
         function initHudTelemetry() {
             var el = document.getElementById('hudCoords');
             setInterval(function() {
-                el.textContent = 'X:' + ('0000'+Math.floor(Math.random()*9999)).slice(-4) + ' Y:' + ('0000'+Math.floor(Math.random()*9999)).slice(-4) + ' // SYNC';
+                el.textContent = 'X:' + ('0000' + Math.floor(Math.random() * 9999)).slice(-4) +
+                    ' Y:' + ('0000' + Math.floor(Math.random() * 9999)).slice(-4) + ' // SYNC';
             }, 1100);
         }
 
         function initPhraseRotator() {
-            var el = document.getElementById('phraseText'), num = document.getElementById('phraseNum');
+            var el = document.getElementById('phraseText');
+            var num = document.getElementById('phraseNum');
+            if (!el) return;
             var idx = Math.floor(Math.random() * PHRASES.length);
             el.textContent = PHRASES[idx];
-            num.textContent = (idx+1<10?'0':'') + (idx+1) + ' / ' + PHRASES.length;
+            num.textContent = (idx + 1 < 10 ? '0' : '') + (idx + 1) + ' / ' + PHRASES.length;
             setInterval(function() {
                 el.classList.add('fade-out');
                 setTimeout(function() {
-                    idx = (idx+1) % PHRASES.length;
+                    idx = (idx + 1) % PHRASES.length;
                     el.textContent = PHRASES[idx];
-                    num.textContent = (idx+1<10?'0':'') + (idx+1) + ' / ' + PHRASES.length;
+                    num.textContent = (idx + 1 < 10 ? '0' : '') + (idx + 1) + ' / ' + PHRASES.length;
                     el.classList.remove('fade-out');
                 }, 600);
             }, 5600);
         }
 
-        function triggerExit() {
-            document.getElementById('logo').classList.add('fly-up');
-            var policeBg = document.getElementById('policeBg');
-            if (policeBg) policeBg.classList.add('exit-fade');
-            var grid = document.getElementById('bgGridCanvas');
-            if (grid) { grid.style.transition = 'opacity 1.5s ease'; grid.style.opacity = '0'; }
-            var viewport = document.querySelector('.viewport');
-            if (viewport) {
-                viewport.style.transition = 'opacity 1.5s ease';
-                viewport.style.opacity = '0';
+        function initIntro() {
+            if (isIntro) return;
+            isIntro = true;
+            document.body.classList.add('mode-intro');
+
+            var disclaimer = document.getElementById('disclaimer');
+            var btn = document.getElementById('enterBtn');
+            var btnReady = false;
+
+            function revealBtn() {
+                if (btnReady) return;
+                btnReady = true;
+                btn.classList.add('show');
             }
+
+            requestAnimationFrame(function() { disclaimer.classList.add('show'); });
+            disclaimer.addEventListener('transitionend', function(e) {
+                if (e.propertyName !== 'opacity') return;
+                setTimeout(revealBtn, READ_DELAY_MS);
+            }, { once: true });
+            setTimeout(revealBtn, READ_DELAY_MS + 700);
         }
 
-        function setProgress(pct){} function SetStatusChanged(s){} function SetFilesTotal(t){filesTotal=t||0;}
-        function SetFilesNeeded(n){filesNeeded=n||0;} function DownloadingFile(f){} function updateFileProgress(){} function GameDetails(){}
+        function triggerExit() {
+            document.getElementById('logo').classList.add('fly-up');
+            document.getElementById('logoZone').classList.add('exit-fade');
+            var sf = document.getElementById('sceneFrame');
+            if (sf) sf.classList.add('exit-fade');
+            var rain = document.getElementById('rainCanvas');
+            if (rain) rain.classList.add('exit-fade');
+            var vig = document.getElementById('vignette');
+            if (vig) vig.classList.add('exit-fade');
+            document.getElementById('disclaimer').style.opacity = '0';
+            document.getElementById('enterBtn').style.opacity = '0';
+        }
 
+        function onEnterClick() {
+            if (enterLocked) return;
+            enterLocked = true;
+            triggerExit();
+            if (window.gmod && window.gmod.onEnter) window.gmod.onEnter();
+        }
+
+        function setProgress(pct) {}
+        function SetStatusChanged(s) {}
+        function SetFilesTotal(t) {}
+        function SetFilesNeeded(n) {}
+        function DownloadingFile(f) {}
+        function updateFileProgress() {}
+        function GameDetails() {}
+
+        initFlashes();
+        initRain();
+        initEdgeCarousel();
         initLogoLetters();
-        initBgGridSvg();
-        initBgGrid();
-        initPoliceLights();
-        initParallax(); initParticles(); initGlitchBars(); initHudTelemetry(); initPhraseRotator();
+        initMouseTrack();
+        initHudTelemetry();
         tickLogoMagnet();
+
+        if (!isIntroUrl) {
+            initPhraseRotator();
+        }
     </script>
 </body>
 </html>
