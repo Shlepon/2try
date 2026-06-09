@@ -22,13 +22,80 @@
             cursor: default; user-select: none;
         }
 
+        .police-bg {
+            position: fixed; inset: 0; z-index: 0;
+            background: #000;
+            pointer-events: none;
+            transition: opacity 1.5s ease;
+        }
+        .police-bg.exit-fade { opacity: 0; }
+
+        .police-flash {
+            position: absolute; inset: 0;
+            opacity: 0;
+            transition: opacity 0.45s ease;
+        }
+        .police-flash.on { opacity: 1; }
+
+        .police-flash-red {
+            background:
+                radial-gradient(ellipse 90% 75% at 22% 48%, rgba(255,40,40,0.55) 0%, transparent 58%),
+                radial-gradient(ellipse 130% 90% at 0% 50%, rgba(200,0,0,0.4) 0%, transparent 52%),
+                linear-gradient(90deg, rgba(160,0,0,0.35) 0%, transparent 55%);
+        }
+        .police-flash-blue {
+            background:
+                radial-gradient(ellipse 90% 75% at 78% 48%, rgba(40,90,255,0.55) 0%, transparent 58%),
+                radial-gradient(ellipse 130% 90% at 100% 50%, rgba(0,60,200,0.4) 0%, transparent 52%),
+                linear-gradient(270deg, rgba(0,70,200,0.35) 0%, transparent 55%);
+        }
+
+        .police-lightbar-wrap {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(480px, 78vw);
+            height: 36px;
+            opacity: 0.85;
+        }
+        .police-lightbar {
+            display: flex; width: 100%; height: 100%;
+            border-radius: 3px;
+            overflow: hidden;
+            box-shadow: 0 0 80px rgba(255,255,255,0.15), 0 0 120px rgba(255,255,255,0.08);
+        }
+        .police-lightbar-seg {
+            flex: 1;
+            opacity: 0.35;
+            transition: opacity 0.45s ease, box-shadow 0.45s ease;
+        }
+        .police-lightbar-seg.lit { opacity: 1; }
+        .police-lightbar-seg.r1, .police-lightbar-seg.r2 { background: linear-gradient(180deg, #ff5555 0%, #cc0000 100%); }
+        .police-lightbar-seg.b1, .police-lightbar-seg.b2 { background: linear-gradient(180deg, #5599ff 0%, #0033cc 100%); }
+        .police-lightbar-seg.lit.r1, .police-lightbar-seg.lit.r2 {
+            box-shadow: 0 0 40px rgba(255,50,50,0.9), inset 0 0 12px rgba(255,200,200,0.5);
+        }
+        .police-lightbar-seg.lit.b1, .police-lightbar-seg.lit.b2 {
+            box-shadow: 0 0 40px rgba(50,100,255,0.9), inset 0 0 12px rgba(200,220,255,0.5);
+        }
+        .police-bar-glow {
+            position: absolute; inset: -40px -80px;
+            opacity: 0;
+            transition: opacity 0.45s ease;
+            pointer-events: none;
+        }
+        .police-bar-glow.on-red {
+            opacity: 1;
+            background: radial-gradient(ellipse 100% 80% at 50% 50%, rgba(255,30,30,0.35) 0%, transparent 70%);
+        }
+        .police-bar-glow.on-blue {
+            opacity: 1;
+            background: radial-gradient(ellipse 100% 80% at 50% 50%, rgba(30,80,255,0.35) 0%, transparent 70%);
+        }
+
         .viewport {
             position: fixed; inset: 0; z-index: 1;
-            background:
-                radial-gradient(ellipse 55% 45% at 50% 42%, rgba(255,255,255,0.1) 0%, transparent 58%),
-                radial-gradient(ellipse 90% 70% at 50% 35%, #222 0%, transparent 55%),
-                radial-gradient(ellipse 120% 80% at 50% 110%, rgba(255,255,255,0.05) 0%, transparent 45%),
-                linear-gradient(180deg, #0a0a0a 0%, #000 100%);
+            background: transparent;
             overflow: hidden;
         }
 
@@ -67,20 +134,21 @@
             z-index: 3; overflow: hidden;
         }
         .grid-plane {
-            width: 480%; height: 480%; top: -190%; left: -190%;
+            width: 500%; height: 500%; top: -200%; left: -200%;
             background-image:
-                linear-gradient(rgba(255,255,255,0.14) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.14) 1px, transparent 1px);
-            background-size: 52px 52px;
-            transform: perspective(420px) rotateX(62deg);
-            animation: gridMove 5s linear infinite;
+                linear-gradient(rgba(255,255,255,0.32) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.32) 1px, transparent 1px);
+            background-size: 48px 48px;
+            transform: perspective(500px) rotateX(68deg);
+            transform-origin: 50% 0%;
+            animation: gridMove 4s linear infinite;
             opacity: 1;
         }
-        @keyframes gridMove { to { background-position: 0 52px; } }
+        @keyframes gridMove { to { background-position: 0 48px; } }
 
         .grid-vignette {
             z-index: 4;
-            background: radial-gradient(ellipse 72% 58% at 50% 54%, transparent 18%, rgba(0,0,0,0.92) 72%);
+            background: radial-gradient(ellipse 68% 52% at 50% 58%, transparent 8%, rgba(0,0,0,0.75) 68%);
         }
 
         .horizon-glow {
@@ -131,7 +199,7 @@
 
         .vignette {
             position: fixed; inset: 0; z-index: 18; pointer-events: none;
-            background: radial-gradient(ellipse, transparent 28%, rgba(0,0,0,0.72) 100%);
+            background: radial-gradient(ellipse, transparent 32%, rgba(0,0,0,0.55) 100%);
         }
 
         .glitch-bar {
@@ -362,6 +430,20 @@
     </style>
 </head>
 <body>
+    <div class="police-bg" id="policeBg">
+        <div class="police-flash police-flash-red on" id="policeRed"></div>
+        <div class="police-flash police-flash-blue" id="policeBlue"></div>
+        <div class="police-lightbar-wrap">
+            <div class="police-bar-glow" id="policeBarGlow"></div>
+            <div class="police-lightbar">
+                <div class="police-lightbar-seg r1" id="segR1"></div>
+                <div class="police-lightbar-seg r2" id="segR2"></div>
+                <div class="police-lightbar-seg b1" id="segB1"></div>
+                <div class="police-lightbar-seg b2" id="segB2"></div>
+            </div>
+        </div>
+    </div>
+
     <div class="film-scratch"></div>
     <div class="scanline"></div>
     <div class="noise"></div>
@@ -478,6 +560,37 @@
             requestAnimationFrame(tickLogoMagnet);
         }
 
+        function initPoliceLights() {
+            var red = document.getElementById('policeRed');
+            var blue = document.getElementById('policeBlue');
+            var glow = document.getElementById('policeBarGlow');
+            var segR1 = document.getElementById('segR1');
+            var segR2 = document.getElementById('segR2');
+            var segB1 = document.getElementById('segB1');
+            var segB2 = document.getElementById('segB2');
+            var showRed = true;
+
+            function setRed(on) {
+                if (on) {
+                    red.classList.add('on'); blue.classList.remove('on');
+                    glow.className = 'police-bar-glow on-red';
+                    segR1.classList.add('lit'); segR2.classList.add('lit');
+                    segB1.classList.remove('lit'); segB2.classList.remove('lit');
+                } else {
+                    red.classList.remove('on'); blue.classList.add('on');
+                    glow.className = 'police-bar-glow on-blue';
+                    segR1.classList.remove('lit'); segR2.classList.remove('lit');
+                    segB1.classList.add('lit'); segB2.classList.add('lit');
+                }
+            }
+
+            setRed(true);
+            setInterval(function() {
+                showRed = !showRed;
+                setRed(showRed);
+            }, 600);
+        }
+
         function initParallax() {
             document.addEventListener('mousemove', function(e) {
                 mouseX = e.clientX / innerWidth;
@@ -565,12 +678,20 @@
 
         function triggerExit() {
             document.getElementById('logo').classList.add('fly-up');
+            var policeBg = document.getElementById('policeBg');
+            if (policeBg) policeBg.classList.add('exit-fade');
+            var viewport = document.querySelector('.viewport');
+            if (viewport) {
+                viewport.style.transition = 'opacity 1.5s ease';
+                viewport.style.opacity = '0';
+            }
         }
 
         function setProgress(pct){} function SetStatusChanged(s){} function SetFilesTotal(t){filesTotal=t||0;}
         function SetFilesNeeded(n){filesNeeded=n||0;} function DownloadingFile(f){} function updateFileProgress(){} function GameDetails(){}
 
         initLogoLetters();
+        initPoliceLights();
         initParallax(); initParticles(); initGlitchBars(); initHudTelemetry(); initPhraseRotator();
         tickLogoMagnet();
     </script>
