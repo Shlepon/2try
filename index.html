@@ -4,15 +4,13 @@
     <meta charset="UTF-8">
     <title>Z-CITY RPH</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@300;400&family=Syncopate:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400&display=swap');
 
         :root {
             --bg: #030303;
             --fg: #ececec;
             --muted: rgba(180,180,180,0.55);
-            --glass: rgba(10,10,12,0.82);
             --line: rgba(255,255,255,0.12);
-            --glow: rgba(255,255,255,0.06);
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -20,282 +18,288 @@
         html, body {
             width: 100%; height: 100%; overflow: hidden;
             background: var(--bg); color: var(--fg);
-            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-family: 'IBM Plex Sans', sans-serif;
             cursor: default; user-select: none;
         }
 
         .viewport {
-            position: relative; width: 100%; height: 100%;
+            position: fixed; inset: 0;
             background:
                 radial-gradient(ellipse 90% 70% at 50% 35%, #161616 0%, transparent 55%),
-                radial-gradient(ellipse 60% 40% at 80% 80%, rgba(255,255,255,0.02) 0%, transparent 50%),
                 linear-gradient(180deg, #050505 0%, #000 100%);
             overflow: hidden;
         }
 
-        .layer { position: absolute; inset: 0; pointer-events: none; }
+        .layer { position: absolute; inset: 0; pointer-events: none; will-change: transform; }
+
+        .parallax-wrap { position: absolute; inset: 0; pointer-events: none; will-change: transform; }
 
         .sketch-bg {
-            z-index: 1; opacity: 0.14;
+            z-index: 1; opacity: 0.12;
             background:
-                repeating-linear-gradient(0deg, transparent, transparent 47px, rgba(255,255,255,0.025) 47px, rgba(255,255,255,0.025) 48px),
-                repeating-linear-gradient(90deg, transparent, transparent 47px, rgba(255,255,255,0.018) 47px, rgba(255,255,255,0.018) 48px);
+                repeating-linear-gradient(0deg, transparent, transparent 47px, rgba(255,255,255,0.02) 47px, rgba(255,255,255,0.02) 48px),
+                repeating-linear-gradient(90deg, transparent, transparent 47px, rgba(255,255,255,0.015) 47px, rgba(255,255,255,0.015) 48px);
             animation: sketchDrift 22s linear infinite;
         }
-        @keyframes sketchDrift { to { transform: translate(-30px, 30px) rotate(0.4deg); } }
+        @keyframes sketchDrift { to { background-position: -24px 24px; } }
 
         .grid-plane {
             z-index: 2; width: 440%; height: 440%; top: -170%; left: -170%;
             background-image:
-                linear-gradient(rgba(255,255,255,0.055) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.055) 1px, transparent 1px);
+                linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
             background-size: 56px 56px;
             transform: perspective(380px) rotateX(64deg);
             animation: gridMove 6s linear infinite;
-            opacity: 0.45;
+            opacity: 0.4;
             mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, #000 20%, transparent 75%);
         }
         @keyframes gridMove { to { background-position: 0 56px; } }
 
         .horizon-glow {
             z-index: 3; bottom: 0; top: auto; height: 45%;
-            background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(255,255,255,0.05) 0%, transparent 65%);
+            background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(255,255,255,0.04) 0%, transparent 65%);
         }
 
         .wire-ring {
             z-index: 4; display: flex; align-items: center; justify-content: center;
         }
         .wire-ring svg {
-            width: min(580px, 82vw); height: min(580px, 82vw);
-            opacity: 0.1; animation: ringSpin 60s linear infinite;
+            width: min(560px, 80vw); height: min(560px, 80vw);
+            opacity: 0.09; animation: ringSpin 60s linear infinite;
         }
         @keyframes ringSpin { to { transform: rotate(360deg); } }
 
-        .pulse-ring {
-            position: absolute; border-radius: 50%;
-            border: 1px solid rgba(255,255,255,0.08);
-            animation: pulseExpand 4s ease-out infinite;
-        }
-        .pulse-ring:nth-child(1) { width: 280px; height: 280px; animation-delay: 0s; }
-        .pulse-ring:nth-child(2) { width: 280px; height: 280px; animation-delay: 1.3s; }
-        .pulse-ring:nth-child(3) { width: 280px; height: 280px; animation-delay: 2.6s; }
-        @keyframes pulseExpand {
-            0%   { transform: scale(0.85); opacity: 0.35; }
-            100% { transform: scale(1.35); opacity: 0; }
-        }
-
-        #particleCanvas { position: absolute; inset: 0; z-index: 5; opacity: 0.5; }
+        #particleCanvas { position: absolute; inset: 0; z-index: 5; opacity: 0.45; }
 
         .film-scratch {
-            position: absolute; top: 0; width: 1px; height: 100%; z-index: 100;
-            background: rgba(255,255,255,0.07); animation: scratch 5s infinite;
+            position: fixed; top: 0; width: 1px; height: 100%; z-index: 100;
+            background: rgba(255,255,255,0.06); animation: scratch 5s infinite;
         }
         @keyframes scratch {
-            0% { left: 5%; opacity: 0; } 5% { opacity: 0.5; } 10% { left: 12%; opacity: 0; }
+            0% { left: 5%; opacity: 0; } 5% { opacity: 0.4; } 10% { left: 12%; opacity: 0; }
             16% { left: 78%; opacity: 0.2; } 20% { opacity: 0; } 100% { left: 95%; opacity: 0; }
         }
 
         .scanline {
-            position: absolute; width: 100%; height: 2px; z-index: 50;
-            background: linear-gradient(transparent, rgba(255,255,255,0.05), transparent);
-            animation: scan 8s linear infinite;
+            position: fixed; width: 100%; height: 2px; z-index: 50;
+            background: linear-gradient(transparent, rgba(255,255,255,0.04), transparent);
+            animation: scan 8s linear infinite; pointer-events: none;
         }
         @keyframes scan { from { top: -5%; } to { top: 105%; } }
 
         .noise {
-            position: absolute; inset: 0; z-index: 25; opacity: 0.06; pointer-events: none;
+            position: fixed; inset: 0; z-index: 25; opacity: 0.05; pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
             animation: noiseTick 0.15s steps(2) infinite;
         }
-        @keyframes noiseTick { 50% { opacity: 0.09; transform: translate(-1px,1px); } }
+        @keyframes noiseTick { 50% { opacity: 0.08; } }
 
         .vignette {
-            position: absolute; inset: 0; z-index: 30; pointer-events: none;
+            position: fixed; inset: 0; z-index: 30; pointer-events: none;
             background: radial-gradient(ellipse, transparent 30%, rgba(0,0,0,0.88) 100%);
         }
 
-        .static-burst {
-            position: absolute; inset: 0; z-index: 95; pointer-events: none;
-            background: rgba(255,255,255,0.03); opacity: 0;
-            animation: burst 9s infinite;
-        }
-        @keyframes burst {
-            0%,91%,100% { opacity: 0; } 92% { opacity: 0.12; } 93% { opacity: 0; } 96% { opacity: 0.06; }
-        }
-
         .glitch-bar {
-            position: absolute; left: 0; width: 100%; z-index: 90;
-            background: rgba(255,255,255,0.05); opacity: 0; pointer-events: none;
+            position: fixed; left: 0; width: 100%; z-index: 90;
+            background: rgba(255,255,255,0.04); opacity: 0; pointer-events: none;
         }
 
-        .hud-frame {
-            position: absolute; inset: 18px; z-index: 40; pointer-events: none;
+        @keyframes revealIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
+        @keyframes revealFade {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        .reveal {
+            opacity: 0;
+            animation: revealIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        .reveal-fade {
+            opacity: 0;
+            animation: revealFade 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        .reveal-d1 { animation-delay: 0.08s; }
+        .reveal-d2 { animation-delay: 0.16s; }
+        .reveal-d3 { animation-delay: 0.24s; }
+        .reveal-d4 { animation-delay: 0.32s; }
+        .reveal-d5 { animation-delay: 0.4s; }
+
+        .hud-frame { position: fixed; inset: 18px; z-index: 40; pointer-events: none; }
         .hud-bracket {
-            position: absolute; width: 32px; height: 32px;
-            border-color: rgba(255,255,255,0.25); border-style: solid; border-width: 0;
-            animation: bracketPulse 3s ease-in-out infinite;
+            position: absolute; width: 28px; height: 28px;
+            border-color: rgba(255,255,255,0.22); border-style: solid; border-width: 0;
         }
         .hud-bracket.tl { top: 0; left: 0; border-top-width: 1px; border-left-width: 1px; }
         .hud-bracket.tr { top: 0; right: 0; border-top-width: 1px; border-right-width: 1px; }
         .hud-bracket.bl { bottom: 0; left: 0; border-bottom-width: 1px; border-left-width: 1px; }
         .hud-bracket.br { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px; }
-        @keyframes bracketPulse { 0%,100% { opacity: 0.25; } 50% { opacity: 0.55; } }
 
         .hud-top {
-            position: absolute; top: 28px; left: 50%; transform: translateX(-50%);
+            position: fixed; top: 28px; left: 50%; transform: translateX(-50%);
             z-index: 45; display: flex; align-items: center; gap: 10px;
             font-family: 'JetBrains Mono', monospace; font-size: 9px;
-            letter-spacing: 0.35em; color: var(--muted); text-transform: uppercase;
+            letter-spacing: 0.32em; color: var(--muted); text-transform: uppercase;
         }
         .hud-dot {
-            width: 5px; height: 5px; border-radius: 50%; background: #fff;
-            box-shadow: 0 0 8px rgba(255,255,255,0.6);
+            width: 4px; height: 4px; border-radius: 50%; background: #fff;
             animation: dotBlink 2s ease-in-out infinite;
         }
-        @keyframes dotBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
+        @keyframes dotBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
 
         .hud-side {
-            position: absolute; z-index: 44; font-family: 'JetBrains Mono', monospace;
-            font-size: 8px; letter-spacing: 0.15em; color: rgba(255,255,255,0.18);
-            writing-mode: vertical-rl; text-orientation: mixed;
+            position: fixed; z-index: 44; font-family: 'JetBrains Mono', monospace;
+            font-size: 8px; letter-spacing: 0.14em; color: rgba(255,255,255,0.16);
+            writing-mode: vertical-rl;
         }
         .hud-side.left { left: 32px; top: 50%; transform: translateY(-50%); }
         .hud-side.right { right: 32px; top: 50%; transform: translateY(-50%) rotate(180deg); }
 
         .hud-bottom {
-            position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+            position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
             z-index: 45; font-family: 'JetBrains Mono', monospace; font-size: 8px;
-            letter-spacing: 0.2em; color: rgba(255,255,255,0.2);
+            letter-spacing: 0.18em; color: rgba(255,255,255,0.18);
         }
 
-        .center-stack {
-            position: absolute; top: 50%; left: 50%;
+        /* ── ЛОГОТИП — строго по центру экрана ── */
+        .logo-zone {
+            position: fixed;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 20; width: min(720px, 90vw);
-            display: flex; flex-direction: column; align-items: center; gap: 36px;
+            z-index: 30;
             text-align: center;
+            transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .logo-block {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .logo-block { position: relative; display: flex; align-items: center; justify-content: center; }
+        .pulse-ring {
+            position: absolute; border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.07);
+            animation: pulseExpand 4s ease-out infinite;
+            left: 50%; top: 50%; transform: translate(-50%, -50%);
+        }
+        .pulse-ring:nth-child(1) { width: 260px; height: 260px; animation-delay: 0s; }
+        .pulse-ring:nth-child(2) { width: 260px; height: 260px; animation-delay: 1.3s; }
+        .pulse-ring:nth-child(3) { width: 260px; height: 260px; animation-delay: 2.6s; }
+        @keyframes pulseExpand {
+            0%   { transform: translate(-50%,-50%) scale(0.88); opacity: 0.3; }
+            100% { transform: translate(-50%,-50%) scale(1.3); opacity: 0; }
+        }
 
         .logo-container {
             position: relative; z-index: 2;
-            animation: logoFloat 8s ease-in-out infinite;
-            transition: transform 1.6s cubic-bezier(0.68,-0.55,0.27,1.55), opacity 1.2s ease;
+            animation: logoFloat 7s ease-in-out infinite;
+            transition: transform 1.4s cubic-bezier(0.68,-0.55,0.27,1.55), opacity 1s ease;
         }
-        .logo-container.fly-up { transform: translateY(-160%) scale(0.4); opacity: 0; }
+        .logo-container.fly-up { transform: translateY(-140%) scale(0.45); opacity: 0; }
         @keyframes logoFloat {
             0%,100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
+            50% { transform: translateY(-6px); }
         }
 
         .logo {
-            font-family: 'Cinzel', 'Syncopate', serif;
-            font-size: clamp(42px, 8.5vw, 96px);
-            font-weight: 700;
-            letter-spacing: clamp(8px, 1.8vw, 20px);
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(52px, 10vw, 110px);
+            font-weight: 600;
+            letter-spacing: 0.14em;
             color: #fafafa;
-            text-shadow: 0 0 30px rgba(255,255,255,0.15), 0 0 60px rgba(255,255,255,0.05);
-            position: relative; white-space: nowrap;
+            text-shadow: 0 0 40px rgba(255,255,255,0.12);
+            position: relative;
+            line-height: 1;
+            text-align: center;
         }
         .logo-line {
-            display: block; width: min(200px, 40vw); height: 1px; margin: 14px auto 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
+            width: min(180px, 36vw); height: 1px; margin: 16px auto 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
         }
-        .logo-shine {
-            position: relative; overflow: hidden;
-        }
-        .logo-shine::after {
-            content: ''; position: absolute; top: 0; left: -120%; width: 60%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
-            animation: shine 5s ease-in-out infinite;
-        }
-        @keyframes shine { 0%,100% { left: -120%; } 45% { left: 160%; } }
 
         .logo::before, .logo::after {
             content: "Z-CITY RPH"; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
         }
         .logo::before {
             clip-path: inset(0 0 52% 0);
-            text-shadow: -2px 0 rgba(200,200,200,0.3);
-            animation: glitchA 6s infinite linear alternate-reverse;
+            text-shadow: -2px 0 rgba(200,200,200,0.25);
+            animation: glitchA 5s infinite linear alternate-reverse;
         }
         .logo::after {
             clip-path: inset(48% 0 0 0);
-            text-shadow: 2px 0 rgba(140,140,140,0.35);
-            animation: glitchB 5s infinite linear alternate-reverse;
+            text-shadow: 2px 0 rgba(120,120,120,0.3);
+            animation: glitchB 4s infinite linear alternate-reverse;
         }
         @keyframes glitchA {
             0%,100% { transform: translate(0); }
-            7% { transform: translate(-4px,1px); } 8% { transform: translate(2px,-1px); } 9% { transform: translate(0); }
+            8% { transform: translate(-3px,1px); } 9% { transform: translate(0); }
         }
         @keyframes glitchB {
             0%,100% { transform: translate(0); }
-            14% { transform: translate(3px,0); } 15% { transform: translate(-2px,1px); } 16% { transform: translate(0); }
+            15% { transform: translate(3px,0); } 16% { transform: translate(0); }
+        }
+
+        /* ── Подсказки (загрузка) ── */
+        .phrase-zone {
+            position: fixed;
+            top: calc(50% + 12vh);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 28;
+            width: min(640px, 90vw);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .phrase-zone.hidden {
+            opacity: 0; transform: translateX(-50%) translateY(12px);
+            pointer-events: none;
         }
 
         .glass-card {
             position: relative; width: 100%;
-            padding: 26px 32px 24px;
-            background: linear-gradient(145deg, rgba(14,14,16,0.92), rgba(6,6,8,0.88));
+            padding: 22px 28px 20px;
+            background: linear-gradient(145deg, rgba(12,12,14,0.94), rgba(6,6,8,0.9));
             border: 1px solid var(--line);
-            box-shadow: 0 0 50px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px);
-            overflow: hidden;
+            box-shadow: 0 0 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.04);
+            backdrop-filter: blur(8px);
+            text-align: center;
         }
-        .glass-card::before {
-            content: ''; position: absolute; inset: -1px; z-index: -1;
-            background: conic-gradient(from var(--border-angle, 0deg), transparent, rgba(255,255,255,0.15), transparent, rgba(255,255,255,0.08), transparent);
-            animation: borderSpin 8s linear infinite;
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask-composite: exclude; padding: 1px;
-        }
-        @property --border-angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
-        @keyframes borderSpin { to { --border-angle: 360deg; } }
         .glass-card::after {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
         }
 
         .card-tag {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9px; letter-spacing: 0.4em; color: rgba(200,200,200,0.4);
-            text-transform: uppercase; margin-bottom: 14px;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+            font-size: 8px; letter-spacing: 0.38em; color: rgba(200,200,200,0.38);
+            text-transform: uppercase; margin-bottom: 12px;
         }
-        .card-tag::before, .card-tag::after {
-            content: ''; flex: 1; max-width: 40px; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15));
-        }
-        .card-tag::after { transform: scaleX(-1); }
 
         .phrase-text {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(16px, 2vw, 20px); font-weight: 300; font-style: italic;
-            line-height: 1.65; color: rgba(210,210,210,0.92);
-            min-height: 3em; transition: opacity 0.7s ease, transform 0.7s ease;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: clamp(13px, 1.5vw, 15px); font-weight: 300;
+            line-height: 1.7; color: rgba(205,205,205,0.9);
+            min-height: 2.8em;
+            transition: opacity 0.6s ease, transform 0.6s ease;
         }
-        .phrase-text.fade-out { opacity: 0; transform: translateY(8px); }
+        .phrase-text.fade-out { opacity: 0; transform: translateY(6px); }
 
         .phrase-num {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 8px; letter-spacing: 0.25em; color: rgba(255,255,255,0.2);
-            margin-top: 16px;
+            font-size: 8px; letter-spacing: 0.22em; color: rgba(255,255,255,0.18);
+            margin-top: 14px;
         }
-
-        .phrase-panel { width: 100%; }
 
         .crosshair {
-            position: absolute; z-index: 8; opacity: 0.06; pointer-events: none;
+            position: absolute; z-index: 8; opacity: 0.05; pointer-events: none;
         }
-        .crosshair::before, .crosshair::after {
-            content: ''; position: absolute; background: #fff;
-        }
+        .crosshair::before, .crosshair::after { content: ''; position: absolute; background: #fff; }
         .crosshair::before { width: 1px; height: 100%; left: 50%; }
         .crosshair::after { height: 1px; width: 100%; top: 50%; }
-        .crosshair-a { top: 20%; left: 10%; width: 36px; height: 36px; }
-        .crosshair-b { bottom: 24%; right: 12%; width: 24px; height: 24px; }
+        .crosshair-a { top: 20%; left: 10%; width: 32px; height: 32px; }
+        .crosshair-b { bottom: 24%; right: 12%; width: 22px; height: 22px; }
 
         .load-panel { display: none !important; }
     </style>
@@ -304,55 +308,53 @@
     <div class="film-scratch"></div>
     <div class="scanline"></div>
     <div class="noise"></div>
-    <div class="static-burst"></div>
     <div class="vignette"></div>
     <div class="glitch-bar" id="glitchBar"></div>
 
-    <div class="hud-frame">
+    <div class="hud-frame reveal reveal-d1">
         <div class="hud-bracket tl"></div>
         <div class="hud-bracket tr"></div>
         <div class="hud-bracket bl"></div>
         <div class="hud-bracket br"></div>
     </div>
-
-    <div class="hud-top"><span class="hud-dot"></span> Z-CITY NET // SECURE CHANNEL</div>
-    <div class="hud-side left">PERMADEATH PROTOCOL ACTIVE</div>
-    <div class="hud-side right">NEURAL LINK STANDBY</div>
-    <div class="hud-bottom" id="hudCoords">X:0000 Y:0000 // SYNC</div>
+    <div class="hud-top reveal-fade reveal-d2"><span class="hud-dot"></span> Z-CITY NET // SECURE CHANNEL</div>
+    <div class="hud-side left reveal-fade reveal-d3">PERMADEATH PROTOCOL ACTIVE</div>
+    <div class="hud-side right reveal-fade reveal-d3">NEURAL LINK STANDBY</div>
+    <div class="hud-bottom reveal-fade reveal-d4" id="hudCoords">X:0000 Y:0000 // SYNC</div>
 
     <div class="viewport">
-        <div class="layer sketch-bg" data-depth="0.012"></div>
-        <div class="layer grid-plane" data-depth="0.04"></div>
-        <div class="layer horizon-glow" data-depth="0.025"></div>
-
-        <div class="layer wire-ring" data-depth="0.02">
-            <svg viewBox="0 0 200 200" fill="none"><circle cx="100" cy="100" r="88" stroke="white" stroke-width="0.4" stroke-dasharray="3 9"/><circle cx="100" cy="100" r="68" stroke="white" stroke-width="0.25" stroke-dasharray="2 14"/><line x1="100" y1="8" x2="100" y2="192" stroke="white" stroke-width="0.15" opacity="0.4"/><line x1="8" y1="100" x2="192" y2="100" stroke="white" stroke-width="0.15" opacity="0.4"/></svg>
+        <div class="parallax-wrap" data-depth="0.018"><div class="layer sketch-bg"></div></div>
+        <div class="parallax-wrap" data-depth="0.055"><div class="layer grid-plane"></div></div>
+        <div class="layer horizon-glow" data-depth="0.032"></div>
+        <div class="layer wire-ring" data-depth="0.026">
+            <svg viewBox="0 0 200 200" fill="none"><circle cx="100" cy="100" r="88" stroke="white" stroke-width="0.35" stroke-dasharray="3 9"/><circle cx="100" cy="100" r="68" stroke="white" stroke-width="0.2" stroke-dasharray="2 14"/></svg>
         </div>
-
         <canvas id="particleCanvas"></canvas>
-        <div class="crosshair crosshair-a" data-depth="0.05"></div>
-        <div class="crosshair crosshair-b" data-depth="0.035"></div>
+        <div class="crosshair crosshair-a" data-depth="0.07"></div>
+        <div class="crosshair crosshair-b" data-depth="0.048"></div>
+    </div>
 
-        <div class="center-stack">
-            <div class="logo-block">
-                <div class="pulse-ring"></div>
-                <div class="pulse-ring"></div>
-                <div class="pulse-ring"></div>
-                <div class="logo-container" id="logo">
-                    <div class="logo-shine"><h1 class="logo">Z-CITY RPH</h1></div>
-                    <div class="logo-line"></div>
-                </div>
-            </div>
-
-            <div class="phrase-panel glass-card" id="phrasePanel">
-                <div class="card-tag">Системное предупреждение</div>
-                <div class="phrase-text" id="phraseText"></div>
-                <div class="phrase-num" id="phraseNum">01 / 10</div>
+    <div class="logo-zone" id="logoZone">
+        <div class="logo-block reveal-fade reveal-d2" data-depth="0.04">
+            <div class="pulse-ring"></div>
+            <div class="pulse-ring"></div>
+            <div class="pulse-ring"></div>
+            <div class="logo-container" id="logo">
+                <h1 class="logo">Z-CITY RPH</h1>
+                <div class="logo-line"></div>
             </div>
         </div>
-
-        <div class="load-panel" id="loadPanel" style="display:none"></div>
     </div>
+
+    <div class="phrase-zone" id="phrasePanel">
+        <div class="glass-card reveal reveal-d4">
+            <div class="card-tag">// Системное предупреждение</div>
+            <div class="phrase-text" id="phraseText"></div>
+            <div class="phrase-num" id="phraseNum">01 / 10</div>
+        </div>
+    </div>
+
+    <div class="load-panel" id="loadPanel" style="display:none"></div>
 
     <script>
         var filesTotal = 0, filesNeeded = 0;
@@ -378,11 +380,13 @@
             });
             var layers = document.querySelectorAll('[data-depth]');
             (function tick() {
-                smoothX += (mouseX - 0.5 - (smoothX - 0.5)) * 0.05;
-                smoothY += (mouseY - 0.5 - (smoothY - 0.5)) * 0.05;
+                smoothX += (mouseX - smoothX) * 0.07;
+                smoothY += (mouseY - smoothY) * 0.07;
+                var dx = (smoothX - 0.5) * innerWidth;
+                var dy = (smoothY - 0.5) * innerHeight;
                 for (var i = 0; i < layers.length; i++) {
                     var d = parseFloat(layers[i].getAttribute('data-depth')) || 0.03;
-                    layers[i].style.transform = 'translate3d(' + ((smoothX-0.5)*d*innerWidth) + 'px,' + ((smoothY-0.5)*d*innerHeight) + 'px,0)';
+                    layers[i].style.transform = 'translate3d(' + (dx * d) + 'px,' + (dy * d) + 'px,0)';
                 }
                 requestAnimationFrame(tick);
             })();
@@ -392,14 +396,14 @@
             var c = document.getElementById('particleCanvas'), ctx = c.getContext('2d'), pts = [];
             function resize() { c.width = innerWidth; c.height = innerHeight; }
             resize(); addEventListener('resize', resize);
-            for (var i = 0; i < 90; i++) pts.push({ x: Math.random()*c.width, y: Math.random()*c.height, z: Math.random(), s: Math.random()*1.4+0.2, vx: (Math.random()-0.5)*0.12, vy: -Math.random()*0.2-0.04 });
+            for (var i = 0; i < 80; i++) pts.push({ x: Math.random()*c.width, y: Math.random()*c.height, z: Math.random(), s: Math.random()*1.2+0.2, vx: (Math.random()-0.5)*0.1, vy: -Math.random()*0.18-0.04 });
             (function draw() {
                 ctx.clearRect(0,0,c.width,c.height);
                 for (var i = 0; i < pts.length; i++) {
                     var p = pts[i];
-                    p.x += p.vx + (smoothX-0.5)*p.z*0.5; p.y += p.vy + (smoothY-0.5)*p.z*0.3;
+                    p.x += p.vx + (smoothX-0.5)*p.z*0.45; p.y += p.vy + (smoothY-0.5)*p.z*0.28;
                     if (p.y < -8) { p.y = c.height+8; p.x = Math.random()*c.width; }
-                    ctx.fillStyle = 'rgba(255,255,255,' + (0.06+p.z*0.3) + ')';
+                    ctx.fillStyle = 'rgba(255,255,255,' + (0.05+p.z*0.28) + ')';
                     ctx.fillRect(p.x, p.y, p.s, p.s);
                 }
                 requestAnimationFrame(draw);
@@ -409,20 +413,20 @@
         function initGlitchBars() {
             var bar = document.getElementById('glitchBar');
             setInterval(function() {
-                if (Math.random() > 0.7) {
+                if (Math.random() > 0.68) {
                     bar.style.top = (Math.random()*100)+'%';
                     bar.style.height = (Math.random()*2+1)+'px';
                     bar.style.opacity = '1';
-                    setTimeout(function(){ bar.style.opacity='0'; }, 50+Math.random()*70);
+                    setTimeout(function(){ bar.style.opacity='0'; }, 45+Math.random()*60);
                 }
-            }, 380);
+            }, 360);
         }
 
         function initHudTelemetry() {
             var el = document.getElementById('hudCoords');
             setInterval(function() {
                 el.textContent = 'X:' + ('0000'+Math.floor(Math.random()*9999)).slice(-4) + ' Y:' + ('0000'+Math.floor(Math.random()*9999)).slice(-4) + ' // SYNC';
-            }, 1200);
+            }, 1100);
         }
 
         function initPhraseRotator() {
@@ -437,16 +441,16 @@
                     el.textContent = PHRASES[idx];
                     num.textContent = (idx+1<10?'0':'') + (idx+1) + ' / ' + PHRASES.length;
                     el.classList.remove('fade-out');
-                }, 680);
-            }, 5800);
+                }, 600);
+            }, 5600);
         }
-
-        function setProgress(pct){} function SetStatusChanged(s){} function SetFilesTotal(t){filesTotal=t||0;}
-        function SetFilesNeeded(n){filesNeeded=n||0;} function DownloadingFile(f){} function updateFileProgress(){} function GameDetails(){}
 
         function triggerExit() {
             document.getElementById('logo').classList.add('fly-up');
         }
+
+        function setProgress(pct){} function SetStatusChanged(s){} function SetFilesTotal(t){filesTotal=t||0;}
+        function SetFilesNeeded(n){filesNeeded=n||0;} function DownloadingFile(f){} function updateFileProgress(){} function GameDetails(){}
 
         initParallax(); initParticles(); initGlitchBars(); initHudTelemetry(); initPhraseRotator();
     </script>
