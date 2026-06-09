@@ -228,6 +228,39 @@
             text-align: right; margin-top: 6px;
         }
 
+        /* ── Ротация фраз (как disclaimer в интро, но компактно) ── */
+        .phrase-panel {
+            position: absolute; bottom: 16%; left: 50%; transform: translateX(-50%);
+            width: min(680px, 88vw); z-index: 45;
+            padding: 22px 28px;
+            background: linear-gradient(135deg, rgba(12,12,12,0.92), rgba(6,6,6,0.88));
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 0 40px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.04);
+            backdrop-filter: blur(6px);
+            text-align: center;
+        }
+
+        .phrase-tag {
+            font-size: 10px; letter-spacing: 0.45em; color: rgba(200,200,200,0.45);
+            margin-bottom: 12px; text-transform: uppercase;
+        }
+
+        .phrase-text {
+            font-size: clamp(12px, 1.35vw, 14px); line-height: 1.65;
+            color: rgba(190,190,190,0.9); font-weight: 300;
+            min-height: 2.6em;
+            transition: opacity 0.65s ease, transform 0.65s ease;
+        }
+        .phrase-text.fade-out {
+            opacity: 0;
+            transform: translateY(6px);
+        }
+
+        .phrase-divider {
+            height: 1px; margin: 14px auto 0; width: 60%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+        }
+
         .corner {
             position: absolute; width: 18px; height: 18px; z-index: 35; opacity: 0.35;
             will-change: transform;
@@ -289,6 +322,12 @@
                     <h1 class="logo">Z-CITY RPH</h1>
                     <div class="logo-sub">ROLEPLAY // PERMADEATH PROTOCOL</div>
                 </div>
+            </div>
+
+            <div class="phrase-panel" data-depth="0.035">
+                <div class="phrase-tag">// Системное предупреждение</div>
+                <div class="phrase-text" id="phraseText"></div>
+                <div class="phrase-divider"></div>
             </div>
 
             <div class="load-panel" id="loadPanel">
@@ -389,6 +428,35 @@
             }, 400);
         }
 
+        /* ── Ротация фраз об ответственности ── */
+        var PHRASES = [
+            "Смерть здесь необратима. Ваш персонаж перестаёт существовать — навсегда.",
+            "Новая жизнь означает другого человека: другое имя, другая одежда, другая история.",
+            "Каждое ваше решение имеет последствия. Думайте, прежде чем нажать на курок.",
+            "Город не прощает импульсивных поступков. Ответственность лежит только на вас.",
+            "Permadeath — не откат и не респawn. Это конец. Без исключений.",
+            "Всё, что вы построили, может исчезнуть за секунду. Цените каждый момент.",
+            "Не играйте с чужими жизнями, как с игрушкой. Здесь это стоит всего.",
+            "Один необдуманный шаг — и ваш персонаж станет чужой памятью.",
+            "Вы несёте полную ответственность за судьбу того, кем играете.",
+            "Z-City не даёт вторых шансов. Только последствия."
+        ];
+
+        function initPhraseRotator() {
+            var el = document.getElementById('phraseText');
+            var idx = Math.floor(Math.random() * PHRASES.length);
+            el.textContent = PHRASES[idx];
+
+            setInterval(function() {
+                el.classList.add('fade-out');
+                setTimeout(function() {
+                    idx = (idx + 1) % PHRASES.length;
+                    el.textContent = PHRASES[idx];
+                    el.classList.remove('fade-out');
+                }, 650);
+            }, 5500);
+        }
+
         /* ── GMod Loading API ── */
         function setProgress(pct) {
             pct = Math.max(0, Math.min(100, pct));
@@ -432,6 +500,7 @@
         initParallax();
         initParticles();
         initGlitchBars();
+        initPhraseRotator();
     </script>
 </body>
 </html>
