@@ -23,7 +23,10 @@
         }
 
         .police-bg {
-            position: fixed; inset: 0; z-index: 0;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 14;
             background: #000;
             pointer-events: none;
             transition: opacity 1.5s ease;
@@ -38,14 +41,33 @@
         .police-flash.on { opacity: 1; }
 
         .police-flash-red.on {
-            background: rgba(140, 10, 10, 0.38);
+            background: rgba(180, 20, 20, 0.5);
         }
         .police-flash-blue.on {
-            background: rgba(10, 40, 140, 0.38);
+            background: rgba(20, 55, 200, 0.5);
+        }
+
+        #bgGridCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 13;
+            pointer-events: none;
+        }
+
+        #bgGridSvg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 12;
+            pointer-events: none;
         }
 
         .viewport {
-            position: fixed; inset: 0; z-index: 1;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 2;
             background: transparent;
             overflow: hidden;
         }
@@ -290,29 +312,6 @@
 
         .logo::before, .logo::after { display: none; }
 
-        .logo-glitch {
-            position: absolute; top: 0; left: 0; width: 100%;
-            pointer-events: none; z-index: 0;
-            font-family: 'Oswald', sans-serif;
-            font-size: clamp(44px, 7.5vw, 88px);
-            font-weight: 600; letter-spacing: 0.14em;
-            line-height: 1; white-space: nowrap;
-            opacity: 0.35;
-        }
-        .logo-glitch::before, .logo-glitch::after {
-            content: "Z-CITY RPH"; position: absolute; top: 0; left: 0; width: 100%;
-            color: #fafafa; text-align: center;
-        }
-        .logo-glitch::before {
-            clip-path: inset(0 0 52% 0);
-            text-shadow: -2px 0 rgba(200,200,200,0.25);
-            animation: glitchA 5s infinite linear alternate-reverse;
-        }
-        .logo-glitch::after {
-            clip-path: inset(48% 0 0 0);
-            text-shadow: 2px 0 rgba(120,120,120,0.3);
-            animation: glitchB 4s infinite linear alternate-reverse;
-        }
         @keyframes glitchA {
             0%,100% { transform: translate(0); }
             8% { transform: translate(-3px,1px); } 9% { transform: translate(0); }
@@ -389,6 +388,8 @@
         <div class="police-flash police-flash-red on" id="policeRed"></div>
         <div class="police-flash police-flash-blue" id="policeBlue"></div>
     </div>
+    <canvas id="bgGridCanvas"></canvas>
+    <svg id="bgGridSvg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"></svg>
 
     <div class="film-scratch"></div>
     <div class="scanline"></div>
@@ -433,7 +434,7 @@
             <div class="pulse-ring"></div>
             <div class="pulse-ring"></div>
             <div class="logo-container" id="logo">
-                <h1 class="logo" id="logoText">Z-CITY RPH</h1>
+                <div class="logo" id="logoText">Z-CITY RPH</div>
                 <div class="logo-line"></div>
             </div>
         </div>
@@ -457,6 +458,82 @@
         var logoMagnetReady = false;
         var logoMagnetStart = Date.now();
 
+        function initBgGridSvg() {
+            var svg = document.getElementById('bgGridSvg');
+            if (!svg) return;
+            function rebuild() {
+                var w = window.innerWidth || 800, h = window.innerHeight || 600;
+                svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+                svg.innerHTML = '';
+                var horizon = h * 0.36, ns = 'http://www.w3.org/2000/svg';
+                for (var r = 0; r <= 22; r++) {
+                    var t = r / 22, y = horizon + (h - horizon) * t * t;
+                    var half = (w * 0.52) * (0.15 + t * 1.1);
+                    var line = document.createElementNS(ns, 'line');
+                    line.setAttribute('x1', w * 0.5 - half); line.setAttribute('y1', y);
+                    line.setAttribute('x2', w * 0.5 + half); line.setAttribute('y2', y);
+                    line.setAttribute('stroke', 'rgba(255,255,255,0.38)'); line.setAttribute('stroke-width', '1');
+                    svg.appendChild(line);
+                }
+                for (var col = -18; col <= 18; col++) {
+                    var line = document.createElementNS(ns, 'line');
+                    line.setAttribute('x1', w * 0.5 + col * 14); line.setAttribute('y1', horizon);
+                    line.setAttribute('x2', w * 0.5 + col * 110); line.setAttribute('y2', h + 20);
+                    line.setAttribute('stroke', 'rgba(255,255,255,0.32)'); line.setAttribute('stroke-width', '1');
+                    svg.appendChild(line);
+                }
+            }
+            rebuild();
+            if (window.addEventListener) window.addEventListener('resize', rebuild);
+        }
+
+        function initBgGrid() {
+            var c = document.getElementById('bgGridCanvas');
+            if (!c) return;
+            var ctx = c.getContext('2d');
+            var offset = 0;
+
+            function resize() {
+                c.width = window.innerWidth || document.documentElement.clientWidth;
+                c.height = window.innerHeight || document.documentElement.clientHeight;
+            }
+
+            function draw() {
+                var w = c.width, h = c.height;
+                if (w < 10 || h < 10) { requestAnimationFrame(draw); return; }
+                ctx.clearRect(0, 0, w, h);
+                var horizon = h * 0.36;
+                ctx.strokeStyle = 'rgba(255,255,255,0.28)';
+                ctx.lineWidth = 1;
+
+                var rows = 22;
+                for (var r = 0; r <= rows; r++) {
+                    var t = r / rows;
+                    var y = horizon + (h - horizon) * t * t;
+                    var half = (w * 0.52) * (0.15 + t * 1.1);
+                    ctx.beginPath();
+                    ctx.moveTo(w * 0.5 - half, y);
+                    ctx.lineTo(w * 0.5 + half, y);
+                    ctx.stroke();
+                }
+
+                var cols = 18;
+                for (var col = -cols; col <= cols; col++) {
+                    ctx.beginPath();
+                    ctx.moveTo(w * 0.5 + col * 14, horizon);
+                    ctx.lineTo(w * 0.5 + col * 110, h + 20);
+                    ctx.stroke();
+                }
+
+                offset = (offset + 0.6) % 48;
+                requestAnimationFrame(draw);
+            }
+
+            resize();
+            if (window.addEventListener) window.addEventListener('resize', resize);
+            draw();
+        }
+
         function initLogoLetters() {
             var logo = document.getElementById('logoText');
             if (!logo) return;
@@ -470,10 +547,6 @@
                 logo.appendChild(ch);
                 logoChars.push(ch);
             }
-            var glitch = document.createElement('div');
-            glitch.className = 'logo-glitch';
-            glitch.setAttribute('aria-hidden', 'true');
-            logo.parentNode.insertBefore(glitch, logo);
         }
 
         function tickLogoMagnet() {
@@ -609,6 +682,8 @@
             document.getElementById('logo').classList.add('fly-up');
             var policeBg = document.getElementById('policeBg');
             if (policeBg) policeBg.classList.add('exit-fade');
+            var grid = document.getElementById('bgGridCanvas');
+            if (grid) { grid.style.transition = 'opacity 1.5s ease'; grid.style.opacity = '0'; }
             var viewport = document.querySelector('.viewport');
             if (viewport) {
                 viewport.style.transition = 'opacity 1.5s ease';
@@ -620,6 +695,8 @@
         function SetFilesNeeded(n){filesNeeded=n||0;} function DownloadingFile(f){} function updateFileProgress(){} function GameDetails(){}
 
         initLogoLetters();
+        initBgGridSvg();
+        initBgGrid();
         initPoliceLights();
         initParallax(); initParticles(); initGlitchBars(); initHudTelemetry(); initPhraseRotator();
         tickLogoMagnet();
