@@ -37,60 +37,11 @@
         }
         .police-flash.on { opacity: 1; }
 
-        .police-flash-red {
-            background:
-                radial-gradient(ellipse 90% 75% at 22% 48%, rgba(255,40,40,0.55) 0%, transparent 58%),
-                radial-gradient(ellipse 130% 90% at 0% 50%, rgba(200,0,0,0.4) 0%, transparent 52%),
-                linear-gradient(90deg, rgba(160,0,0,0.35) 0%, transparent 55%);
+        .police-flash-red.on {
+            background: rgba(140, 10, 10, 0.38);
         }
-        .police-flash-blue {
-            background:
-                radial-gradient(ellipse 90% 75% at 78% 48%, rgba(40,90,255,0.55) 0%, transparent 58%),
-                radial-gradient(ellipse 130% 90% at 100% 50%, rgba(0,60,200,0.4) 0%, transparent 52%),
-                linear-gradient(270deg, rgba(0,70,200,0.35) 0%, transparent 55%);
-        }
-
-        .police-lightbar-wrap {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: min(480px, 78vw);
-            height: 36px;
-            opacity: 0.85;
-        }
-        .police-lightbar {
-            display: flex; width: 100%; height: 100%;
-            border-radius: 3px;
-            overflow: hidden;
-            box-shadow: 0 0 80px rgba(255,255,255,0.15), 0 0 120px rgba(255,255,255,0.08);
-        }
-        .police-lightbar-seg {
-            flex: 1;
-            opacity: 0.35;
-            transition: opacity 0.45s ease, box-shadow 0.45s ease;
-        }
-        .police-lightbar-seg.lit { opacity: 1; }
-        .police-lightbar-seg.r1, .police-lightbar-seg.r2 { background: linear-gradient(180deg, #ff5555 0%, #cc0000 100%); }
-        .police-lightbar-seg.b1, .police-lightbar-seg.b2 { background: linear-gradient(180deg, #5599ff 0%, #0033cc 100%); }
-        .police-lightbar-seg.lit.r1, .police-lightbar-seg.lit.r2 {
-            box-shadow: 0 0 40px rgba(255,50,50,0.9), inset 0 0 12px rgba(255,200,200,0.5);
-        }
-        .police-lightbar-seg.lit.b1, .police-lightbar-seg.lit.b2 {
-            box-shadow: 0 0 40px rgba(50,100,255,0.9), inset 0 0 12px rgba(200,220,255,0.5);
-        }
-        .police-bar-glow {
-            position: absolute; inset: -40px -80px;
-            opacity: 0;
-            transition: opacity 0.45s ease;
-            pointer-events: none;
-        }
-        .police-bar-glow.on-red {
-            opacity: 1;
-            background: radial-gradient(ellipse 100% 80% at 50% 50%, rgba(255,30,30,0.35) 0%, transparent 70%);
-        }
-        .police-bar-glow.on-blue {
-            opacity: 1;
-            background: radial-gradient(ellipse 100% 80% at 50% 50%, rgba(30,80,255,0.35) 0%, transparent 70%);
+        .police-flash-blue.on {
+            background: rgba(10, 40, 140, 0.38);
         }
 
         .viewport {
@@ -240,8 +191,8 @@
         .hud-bracket.br { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px; }
 
         .hud-top {
-            position: fixed; top: 28px; left: 50%; transform: translateX(-50%);
-            z-index: 45; display: flex; align-items: center; gap: 10px;
+            position: fixed; top: 28px; left: 0; right: 0;
+            z-index: 45; text-align: center;
             font-family: 'JetBrains Mono', monospace; font-size: 9px;
             letter-spacing: 0.32em; color: var(--muted); text-transform: uppercase;
         }
@@ -256,24 +207,29 @@
             font-size: 8px; letter-spacing: 0.14em; color: rgba(255,255,255,0.16);
             writing-mode: vertical-rl;
         }
-        .hud-side.left { left: 32px; top: 50%; transform: translateY(-50%); }
-        .hud-side.right { right: 32px; top: 50%; transform: translateY(-50%) rotate(180deg); }
+        .hud-side.left { left: 32px; top: 0; bottom: 0; margin: auto 0; height: 200px; }
+        .hud-side.right { right: 32px; top: 0; bottom: 0; margin: auto 0; height: 200px; transform: rotate(180deg); }
 
         .hud-bottom {
-            position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
-            z-index: 45; font-family: 'JetBrains Mono', monospace; font-size: 8px;
+            position: fixed; bottom: 28px; left: 0; right: 0;
+            z-index: 45; text-align: center;
+            font-family: 'JetBrains Mono', monospace; font-size: 8px;
             letter-spacing: 0.18em; color: rgba(255,255,255,0.18);
         }
 
-        /* ── ЛОГОТИП — строго по центру экрана ── */
+        /* ── ЛОГОТИП — центр без transform (GMod CEF) ── */
         .logo-zone {
             position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
+            top: 0; left: 0; width: 100%; height: 100%;
             z-index: 30;
             text-align: center;
-            transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+            padding-top: 38vh;
+            pointer-events: none;
         }
+        body.mode-intro .logo-zone {
+            padding-top: 28vh;
+        }
+
         .logo-block {
             position: relative;
             display: inline-flex;
@@ -285,14 +241,14 @@
             position: absolute; border-radius: 50%;
             border: 1px solid rgba(255,255,255,0.07);
             animation: pulseExpand 4s ease-out infinite;
-            left: 50%; top: 50%; transform: translate(-50%, -50%);
+            top: 0; left: 0; right: 0; bottom: 0; margin: auto;
         }
         .pulse-ring:nth-child(1) { width: 300px; height: 300px; animation-delay: 0s; }
         .pulse-ring:nth-child(2) { width: 300px; height: 300px; animation-delay: 1.3s; }
         .pulse-ring:nth-child(3) { width: 300px; height: 300px; animation-delay: 2.6s; }
         @keyframes pulseExpand {
-            0%   { transform: translate(-50%,-50%) scale(0.88); opacity: 0.3; }
-            100% { transform: translate(-50%,-50%) scale(1.3); opacity: 0; }
+            0%   { transform: scale(0.88); opacity: 0.3; }
+            100% { transform: scale(1.3); opacity: 0; }
         }
 
         .logo-container {
@@ -308,7 +264,7 @@
 
         .logo {
             font-family: 'Oswald', sans-serif;
-            font-size: clamp(52px, 10vw, 110px);
+            font-size: clamp(44px, 7.5vw, 88px);
             font-weight: 600;
             letter-spacing: 0.14em;
             color: #fafafa;
@@ -335,11 +291,10 @@
         .logo::before, .logo::after { display: none; }
 
         .logo-glitch {
-            position: absolute; top: 0; left: 50%;
-            transform: translateX(-50%);
+            position: absolute; top: 0; left: 0; width: 100%;
             pointer-events: none; z-index: 0;
             font-family: 'Oswald', sans-serif;
-            font-size: clamp(52px, 10vw, 110px);
+            font-size: clamp(44px, 7.5vw, 88px);
             font-weight: 600; letter-spacing: 0.14em;
             line-height: 1; white-space: nowrap;
             opacity: 0.35;
@@ -370,15 +325,15 @@
         /* ── Подсказки (загрузка) ── */
         .phrase-zone {
             position: fixed;
-            top: calc(50% + 12vh);
-            left: 50%;
-            transform: translateX(-50%);
+            top: calc(50% + 10vh);
+            left: 0; right: 0;
+            margin: 0 auto;
             z-index: 28;
             width: min(640px, 90vw);
-            transition: opacity 0.5s ease, transform 0.5s ease;
+            transition: opacity 0.5s ease;
         }
         .phrase-zone.hidden {
-            opacity: 0; transform: translateX(-50%) translateY(12px);
+            opacity: 0;
             pointer-events: none;
         }
 
@@ -433,15 +388,6 @@
     <div class="police-bg" id="policeBg">
         <div class="police-flash police-flash-red on" id="policeRed"></div>
         <div class="police-flash police-flash-blue" id="policeBlue"></div>
-        <div class="police-lightbar-wrap">
-            <div class="police-bar-glow" id="policeBarGlow"></div>
-            <div class="police-lightbar">
-                <div class="police-lightbar-seg r1" id="segR1"></div>
-                <div class="police-lightbar-seg r2" id="segR2"></div>
-                <div class="police-lightbar-seg b1" id="segB1"></div>
-                <div class="police-lightbar-seg b2" id="segB2"></div>
-            </div>
-        </div>
     </div>
 
     <div class="film-scratch"></div>
@@ -563,31 +509,14 @@
         function initPoliceLights() {
             var red = document.getElementById('policeRed');
             var blue = document.getElementById('policeBlue');
-            var glow = document.getElementById('policeBarGlow');
-            var segR1 = document.getElementById('segR1');
-            var segR2 = document.getElementById('segR2');
-            var segB1 = document.getElementById('segB1');
-            var segB2 = document.getElementById('segB2');
             var showRed = true;
-
-            function setRed(on) {
-                if (on) {
-                    red.classList.add('on'); blue.classList.remove('on');
-                    glow.className = 'police-bar-glow on-red';
-                    segR1.classList.add('lit'); segR2.classList.add('lit');
-                    segB1.classList.remove('lit'); segB2.classList.remove('lit');
-                } else {
-                    red.classList.remove('on'); blue.classList.add('on');
-                    glow.className = 'police-bar-glow on-blue';
-                    segR1.classList.remove('lit'); segR2.classList.remove('lit');
-                    segB1.classList.add('lit'); segB2.classList.add('lit');
-                }
-            }
-
-            setRed(true);
             setInterval(function() {
                 showRed = !showRed;
-                setRed(showRed);
+                if (showRed) {
+                    red.classList.add('on'); blue.classList.remove('on');
+                } else {
+                    red.classList.remove('on'); blue.classList.add('on');
+                }
             }, 600);
         }
 
