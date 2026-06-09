@@ -11,6 +11,10 @@
             --fg: #ececec;
             --muted: rgba(180,180,180,0.55);
             --line: rgba(255,255,255,0.12);
+            --edge-pad: 2px;
+            --carousel-top: 46px;
+            --carousel-bottom: 46px;
+            --carousel-side: 2px;
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -22,75 +26,77 @@
             cursor: default; user-select: none;
         }
 
-        /* ── ФОН: чёрный + сетка + рамка + мигалки ── */
         .sketch-layer {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; pointer-events: none;
+            position: fixed; inset: 0; z-index: 1; pointer-events: none;
             opacity: 0.38;
             background:
                 repeating-linear-gradient(0deg, transparent, transparent 47px, rgba(255,255,255,0.05) 47px, rgba(255,255,255,0.05) 48px),
                 repeating-linear-gradient(90deg, transparent, transparent 47px, rgba(255,255,255,0.04) 47px, rgba(255,255,255,0.04) 48px);
         }
 
+        .flash-layer {
+            position: fixed; inset: 0; z-index: 2;
+            pointer-events: none; overflow: hidden;
+            transition: opacity 1.5s ease;
+        }
+        .flash-layer.exit-fade { opacity: 0; }
+
+        .flash-red, .flash-blue {
+            position: absolute; top: 0; bottom: 0;
+            width: 62%;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .flash-red { left: 0; }
+        .flash-blue { right: 0; }
+        .flash-red.on {
+            opacity: 1;
+            background:
+                linear-gradient(90deg,
+                    rgba(255, 35, 35, 0.82) 0%,
+                    rgba(220, 15, 15, 0.55) 18%,
+                    rgba(140, 0, 0, 0.22) 42%,
+                    rgba(60, 0, 0, 0.06) 62%,
+                    transparent 78%);
+        }
+        .flash-blue.on {
+            opacity: 1;
+            background:
+                linear-gradient(270deg,
+                    rgba(35, 75, 255, 0.82) 0%,
+                    rgba(15, 45, 220, 0.55) 18%,
+                    rgba(0, 20, 140, 0.22) 42%,
+                    rgba(0, 8, 60, 0.06) 62%,
+                    transparent 78%);
+        }
+
         .scene-frame {
-            position: fixed;
-            top: 28px; left: 28px; right: 28px; bottom: 28px;
-            z-index: 2;
-            border: 1px solid rgba(255,255,255,0.14);
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), inset 0 0 120px rgba(0,0,0,0.6);
+            position: fixed; inset: 0; z-index: 3;
             pointer-events: none;
-            overflow: hidden;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
             transition: opacity 1.5s ease;
         }
         .scene-frame.exit-fade { opacity: 0; }
 
-        .flash-red, .flash-blue {
-            position: absolute;
-            top: 4%; bottom: 4%;
-            width: 54%;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-        .flash-red { left: -2%; }
-        .flash-blue { right: -2%; }
-        .flash-red.on {
-            opacity: 1;
-            background: radial-gradient(ellipse 95% 85% at 18% 48%,
-                rgba(255, 45, 45, 0.72) 0%,
-                rgba(200, 10, 10, 0.38) 42%,
-                rgba(80, 0, 0, 0.12) 68%,
-                transparent 82%);
-        }
-        .flash-blue.on {
-            opacity: 1;
-            background: radial-gradient(ellipse 95% 85% at 82% 48%,
-                rgba(45, 90, 255, 0.72) 0%,
-                rgba(10, 40, 200, 0.38) 42%,
-                rgba(0, 10, 80, 0.12) 68%,
-                transparent 82%);
-        }
-
-        #rainCanvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 3; pointer-events: none;
+        #glassCanvas {
+            position: fixed; inset: 0; z-index: 4; pointer-events: none;
             transition: opacity 1.5s ease;
         }
-        #rainCanvas.exit-fade { opacity: 0; }
+        #glassCanvas.exit-fade { opacity: 0; }
 
         .noise {
-            position: fixed; inset: 0; z-index: 4; opacity: 0.05; pointer-events: none;
+            position: fixed; inset: 0; z-index: 5; opacity: 0.04; pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         }
 
         .vignette {
-            position: fixed; inset: 0; z-index: 5; pointer-events: none;
-            background: radial-gradient(ellipse, transparent 40%, rgba(0,0,0,0.45) 100%);
+            position: fixed; inset: 0; z-index: 6; pointer-events: none;
+            background: radial-gradient(ellipse, transparent 42%, rgba(0,0,0,0.4) 100%);
             transition: opacity 1.5s ease;
         }
         .vignette.exit-fade { opacity: 0; }
 
-        /* ── HUD ── */
-        .hud-frame { position: fixed; inset: 18px; z-index: 20; pointer-events: none; }
+        .hud-frame { position: fixed; inset: 14px; z-index: 20; pointer-events: none; }
         .hud-bracket {
             position: absolute; width: 28px; height: 28px;
             border-color: rgba(255,255,255,0.22); border-style: solid; border-width: 0;
@@ -101,10 +107,11 @@
         .hud-bracket.br { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px; }
 
         .hud-top {
-            position: fixed; top: 22px; left: 0; right: 0;
-            z-index: 22; text-align: center;
+            position: fixed;
+            top: 16px; left: 0; right: 0;
+            z-index: 24; text-align: center;
             font-family: 'JetBrains Mono', monospace; font-size: 9px;
-            letter-spacing: 0.32em; color: var(--muted); text-transform: uppercase;
+            letter-spacing: 0.28em; color: var(--muted); text-transform: uppercase;
         }
         .hud-dot {
             display: inline-block; width: 4px; height: 4px; border-radius: 50%;
@@ -114,30 +121,28 @@
         @keyframes dotBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
 
         .hud-bottom {
-            position: fixed; bottom: 22px; left: 0; right: 0;
-            z-index: 22; text-align: center;
+            position: fixed;
+            bottom: 32px; left: 0; right: 0;
+            z-index: 24; text-align: center;
             font-family: 'JetBrains Mono', monospace; font-size: 8px;
-            letter-spacing: 0.18em; color: rgba(255,255,255,0.18);
+            letter-spacing: 0.18em; color: rgba(255,255,255,0.2);
         }
 
-        /* Карусель по краям */
         .edge-marquee {
-            position: fixed; z-index: 21; pointer-events: none;
-            overflow: hidden;
+            position: fixed; z-index: 22; pointer-events: none; overflow: hidden;
             font-family: 'JetBrains Mono', monospace;
             font-size: clamp(11px, 1.2vw, 14px);
-            letter-spacing: 0.22em;
-            color: rgba(255,255,255,0.32);
+            letter-spacing: 0.2em;
+            color: rgba(255,255,255,0.34);
             text-transform: uppercase;
         }
-        .edge-marquee.top { top: 6px; left: 40px; right: 40px; height: 22px; }
-        .edge-marquee.bottom { bottom: 6px; left: 40px; right: 40px; height: 22px; }
-        .edge-marquee.left { left: 6px; top: 40px; bottom: 40px; width: 22px; }
-        .edge-marquee.right { right: 6px; top: 40px; bottom: 40px; width: 22px; }
+        .edge-marquee.top { top: 40px; left: 2px; right: 2px; height: 20px; }
+        .edge-marquee.bottom { bottom: 2px; left: 2px; right: 2px; height: 20px; }
+        .edge-marquee.left { left: 2px; top: 36px; bottom: 28px; width: 20px; }
+        .edge-marquee.right { right: 2px; top: 36px; bottom: 28px; width: 20px; }
 
         .edge-track-h {
             display: inline-block; white-space: nowrap;
-            padding-right: 80px;
             animation: scrollH 55s linear infinite;
         }
         .edge-track-h.rev { animation-direction: reverse; animation-duration: 62s; }
@@ -151,7 +156,6 @@
             writing-mode: vertical-rl;
             text-orientation: mixed;
             white-space: nowrap;
-            padding-bottom: 80px;
             animation: scrollV 48s linear infinite;
         }
         .edge-track-v.rev { animation-direction: reverse; animation-duration: 58s; }
@@ -162,15 +166,14 @@
 
         body.mode-intro .phrase-zone { display: none !important; }
         body:not(.mode-intro) .intro-stack { display: none !important; }
+        body:not(.mode-intro) .enter-btn { display: none !important; }
 
-        /* ── ЛОГОТИП ── */
         .logo-zone {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 30; text-align: center;
-            padding-top: 38vh; pointer-events: none;
-            transition: opacity 1s ease;
+            position: fixed; inset: 0; z-index: 30;
+            text-align: center; padding-top: 38vh;
+            pointer-events: none; transition: opacity 1s ease;
         }
-        body.mode-intro .logo-zone { padding-top: 22vh; }
+        body.mode-intro .logo-zone { padding-top: 24vh; }
         .logo-zone.exit-fade { opacity: 0; }
 
         .logo-block { position: relative; display: inline-block; }
@@ -188,17 +191,16 @@
             line-height: 1; text-align: center;
             display: inline-flex; flex-wrap: nowrap; justify-content: center;
         }
-        .logo-char { display: inline-block; will-change: transform; position: relative; }
+        .logo-char { display: inline-block; will-change: margin; position: relative; }
         .logo-char.space { width: 0.35em; }
         .logo-line {
             width: min(180px, 36vw); height: 1px; margin: 16px auto 0;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
         }
 
-        /* ── Подсказки (только загрузка) ── */
         .phrase-zone {
             position: fixed;
-            top: calc(50% + 8vh);
+            top: calc(50% + 6vh);
             left: 0; right: 0; margin: 0 auto;
             z-index: 28; width: min(640px, 90vw);
         }
@@ -223,8 +225,7 @@
         .phrase-text {
             font-size: clamp(13px, 1.5vw, 15px); font-weight: 300;
             line-height: 1.7; color: rgba(205,205,205,0.9);
-            min-height: 2.8em;
-            transition: opacity 0.6s ease;
+            min-height: 2.8em; transition: opacity 0.6s ease;
         }
         .phrase-text.fade-out { opacity: 0; }
         .phrase-num {
@@ -233,19 +234,16 @@
             margin-top: 14px;
         }
 
-        /* ── ИНТРО: дисклеймер + кнопка в одном блоке ── */
         .intro-stack {
             position: fixed;
-            left: 0; right: 0;
-            margin: 0 auto;
+            left: 0; right: 0; margin: 0 auto;
             width: min(680px, 92vw);
-            top: 48%;
-            z-index: 60;
+            top: 44%;
+            z-index: 55;
         }
 
         .disclaimer {
-            width: 100%;
-            opacity: 0;
+            width: 100%; opacity: 0;
             transform: translateY(18px);
             transition: opacity 0.7s ease, transform 0.7s ease;
         }
@@ -270,10 +268,13 @@
         }
 
         .enter-btn {
-            position: relative;
-            width: 100%;
-            height: 68px;
-            margin-top: 14px;
+            position: fixed;
+            left: 0; right: 0;
+            margin-left: auto; margin-right: auto;
+            width: min(240px, 38vw);
+            height: 56px;
+            bottom: 62px;
+            z-index: 65;
             padding: 0;
             background: transparent;
             border: none;
@@ -297,15 +298,18 @@
             position: absolute; z-index: 1;
             top: 0; left: 0; right: 0; bottom: 0;
             font-family: 'Oswald', sans-serif;
-            font-size: clamp(17px, 2vw, 22px);
+            font-size: clamp(18px, 2.2vw, 24px);
             font-weight: 500; color: #f0f0f0;
-            line-height: 68px; text-align: center;
+            line-height: 56px; text-align: center;
+            white-space: nowrap;
+            letter-spacing: 0.22em;
         }
-        .enter-btn-text { letter-spacing: 0.28em; }
         .enter-arrow {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 16px; opacity: 0.6; margin-left: 10px;
+            font-size: 15px; opacity: 0.65; margin-left: 12px;
+            letter-spacing: 0;
         }
+        .enter-btn:hover .enter-arrow { opacity: 1; }
 
         .enter-btn-corners span {
             position: absolute; width: 10px; height: 10px;
@@ -322,12 +326,14 @@
 <body>
     <div class="sketch-layer"></div>
 
-    <div class="scene-frame" id="sceneFrame">
+    <div class="flash-layer" id="flashLayer">
         <div class="flash-red on" id="flashRed"></div>
         <div class="flash-blue" id="flashBlue"></div>
     </div>
 
-    <canvas id="rainCanvas"></canvas>
+    <div class="scene-frame" id="sceneFrame"></div>
+
+    <canvas id="glassCanvas"></canvas>
     <div class="noise"></div>
     <div class="vignette" id="vignette"></div>
 
@@ -374,13 +380,14 @@
             <div class="disclaimer-divider"></div>
             <div class="disclaimer-foot">Нажимая кнопку, вы принимаете условия permadeath-сервера.</div>
         </div>
-        <button class="enter-btn" id="enterBtn" onclick="onEnterClick()">
-            <div class="enter-btn-inner">
-                <div class="enter-btn-corners"><span></span><span></span><span></span><span></span></div>
-                <div class="enter-btn-label"><span class="enter-btn-text">ПРИНЯТЬ И ВОЙТИ</span><span class="enter-arrow">→</span></div>
-            </div>
-        </button>
     </div>
+
+    <button class="enter-btn" id="enterBtn" onclick="onEnterClick()">
+        <div class="enter-btn-inner">
+            <div class="enter-btn-corners"><span></span><span></span><span></span><span></span></div>
+            <div class="enter-btn-label">ВОЙТИ<span class="enter-arrow">→</span></div>
+        </div>
+    </button>
 
     <div class="load-panel" id="loadPanel" style="display:none"></div>
 
@@ -430,12 +437,13 @@
             }, 650);
         }
 
-        function initRain() {
-            var c = document.getElementById('rainCanvas');
+        function initGlassDrops() {
+            var c = document.getElementById('glassCanvas');
             if (!c) return;
             var ctx = c.getContext('2d');
             if (!ctx) return;
-            var drops = [];
+
+            var beads = [], streaks = [];
 
             function resize() {
                 c.width = window.innerWidth || 800;
@@ -443,33 +451,82 @@
             }
             resize();
 
-            for (var i = 0; i < 200; i++) {
-                drops.push({
+            for (var i = 0; i < 90; i++) {
+                beads.push({
                     x: Math.random() * c.width,
                     y: Math.random() * c.height,
-                    len: Math.random() * 22 + 10,
-                    speed: Math.random() * 7 + 5,
-                    a: Math.random() * 0.22 + 0.08
+                    r: Math.random() * 3.5 + 1.2,
+                    a: Math.random() * 0.35 + 0.12,
+                    vy: Math.random() * 0.4 + 0.15,
+                    vx: Math.random() * 0.2 - 0.1
                 });
+            }
+            for (var j = 0; j < 55; j++) {
+                streaks.push({
+                    x: Math.random() * c.width,
+                    y: Math.random() * c.height,
+                    h: Math.random() * 28 + 12,
+                    w: Math.random() * 1.2 + 0.4,
+                    a: Math.random() * 0.18 + 0.06,
+                    vy: Math.random() * 2.5 + 1.2,
+                    vx: Math.random() * 0.3 - 0.15
+                });
+            }
+
+            function drawBead(b) {
+                var g = ctx.createRadialGradient(b.x - b.r * 0.3, b.y - b.r * 0.3, 0, b.x, b.y, b.r);
+                g.addColorStop(0, 'rgba(220, 235, 255, ' + (b.a * 0.9) + ')');
+                g.addColorStop(0.45, 'rgba(160, 190, 220, ' + (b.a * 0.5) + ')');
+                g.addColorStop(1, 'rgba(100, 130, 160, 0)');
+                ctx.fillStyle = g;
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = 'rgba(255,255,255,' + (b.a * 0.35) + ')';
+                ctx.beginPath();
+                ctx.arc(b.x - b.r * 0.35, b.y - b.r * 0.35, b.r * 0.25, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            function drawStreak(s) {
+                var g = ctx.createLinearGradient(s.x, s.y, s.x + s.vx * 4, s.y + s.h);
+                g.addColorStop(0, 'rgba(200, 220, 240, ' + (s.a * 0.5) + ')');
+                g.addColorStop(0.6, 'rgba(160, 190, 220, ' + s.a + ')');
+                g.addColorStop(1, 'rgba(120, 150, 180, 0)');
+                ctx.strokeStyle = g;
+                ctx.lineWidth = s.w;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(s.x, s.y);
+                ctx.lineTo(s.x + s.vx * 3, s.y + s.h);
+                ctx.stroke();
             }
 
             function draw() {
                 ctx.clearRect(0, 0, c.width, c.height);
-                for (var i = 0; i < drops.length; i++) {
-                    var d = drops[i];
-                    ctx.strokeStyle = 'rgba(170, 190, 220, ' + d.a + ')';
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.moveTo(d.x, d.y);
-                    ctx.lineTo(d.x - 1.5, d.y + d.len);
-                    ctx.stroke();
-                    d.y += d.speed;
-                    d.x -= 0.8;
-                    if (d.y > c.height + 20) {
-                        d.y = -30;
-                        d.x = Math.random() * c.width;
+
+                for (var i = 0; i < streaks.length; i++) {
+                    var s = streaks[i];
+                    drawStreak(s);
+                    s.y += s.vy;
+                    s.x += s.vx;
+                    if (s.y > c.height + 40) {
+                        s.y = -s.h - 10;
+                        s.x = Math.random() * c.width;
                     }
                 }
+
+                for (var k = 0; k < beads.length; k++) {
+                    var b = beads[k];
+                    drawBead(b);
+                    b.y += b.vy;
+                    b.x += b.vx;
+                    if (b.y > c.height + 10) {
+                        b.y = -5;
+                        b.x = Math.random() * c.width;
+                    }
+                }
+
                 requestAnimationFrame(draw);
             }
             draw();
@@ -480,23 +537,17 @@
             function buildLine(items, sep) {
                 var s = '';
                 for (var r = 0; r < 2; r++) {
-                    for (var i = 0; i < items.length; i++) {
-                        s += items[i] + sep;
-                    }
+                    for (var i = 0; i < items.length; i++) s += items[i] + sep;
                 }
                 return s;
             }
             var sep = '  ///  ';
             var line = buildLine(EDGE_ITEMS, sep);
 
-            document.getElementById('edgeTop').innerHTML =
-                '<div class="edge-track-h">' + line + '</div>';
-            document.getElementById('edgeBottom').innerHTML =
-                '<div class="edge-track-h rev">' + line + '</div>';
-            document.getElementById('edgeLeft').innerHTML =
-                '<div class="edge-track-v">' + line + '</div>';
-            document.getElementById('edgeRight').innerHTML =
-                '<div class="edge-track-v rev">' + line + '</div>';
+            document.getElementById('edgeTop').innerHTML = '<div class="edge-track-h">' + line + '</div>';
+            document.getElementById('edgeBottom').innerHTML = '<div class="edge-track-h rev">' + line + '</div>';
+            document.getElementById('edgeLeft').innerHTML = '<div class="edge-track-v">' + line + '</div>';
+            document.getElementById('edgeRight').innerHTML = '<div class="edge-track-v rev">' + line + '</div>';
         }
 
         function initLogoLetters() {
@@ -604,10 +655,12 @@
         function triggerExit() {
             document.getElementById('logo').classList.add('fly-up');
             document.getElementById('logoZone').classList.add('exit-fade');
+            var fl = document.getElementById('flashLayer');
+            if (fl) fl.classList.add('exit-fade');
             var sf = document.getElementById('sceneFrame');
             if (sf) sf.classList.add('exit-fade');
-            var rain = document.getElementById('rainCanvas');
-            if (rain) rain.classList.add('exit-fade');
+            var glass = document.getElementById('glassCanvas');
+            if (glass) glass.classList.add('exit-fade');
             var vig = document.getElementById('vignette');
             if (vig) vig.classList.add('exit-fade');
             document.getElementById('disclaimer').style.opacity = '0';
@@ -630,16 +683,14 @@
         function GameDetails() {}
 
         initFlashes();
-        initRain();
+        initGlassDrops();
         initEdgeCarousel();
         initLogoLetters();
         initMouseTrack();
         initHudTelemetry();
         tickLogoMagnet();
 
-        if (!isIntroUrl) {
-            initPhraseRotator();
-        }
+        if (!isIntroUrl) initPhraseRotator();
     </script>
 </body>
 </html>
