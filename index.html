@@ -23,82 +23,88 @@
         }
 
         .viewport {
-            position: fixed; inset: 0;
+            position: fixed; inset: 0; z-index: 1;
             background:
-                radial-gradient(ellipse 55% 45% at 50% 42%, rgba(255,255,255,0.07) 0%, transparent 58%),
-                radial-gradient(ellipse 90% 70% at 50% 35%, #1a1a1a 0%, transparent 55%),
-                radial-gradient(ellipse 120% 80% at 50% 110%, rgba(255,255,255,0.035) 0%, transparent 45%),
-                linear-gradient(180deg, #080808 0%, #000 100%);
+                radial-gradient(ellipse 55% 45% at 50% 42%, rgba(255,255,255,0.1) 0%, transparent 58%),
+                radial-gradient(ellipse 90% 70% at 50% 35%, #222 0%, transparent 55%),
+                radial-gradient(ellipse 120% 80% at 50% 110%, rgba(255,255,255,0.05) 0%, transparent 45%),
+                linear-gradient(180deg, #0a0a0a 0%, #000 100%);
             overflow: hidden;
         }
 
-        .layer { position: absolute; inset: 0; pointer-events: none; will-change: transform; }
+        .layer { position: absolute; inset: 0; pointer-events: none; }
 
         .center-glow {
             z-index: 0;
             background:
-                radial-gradient(circle at 50% 46%, rgba(255,255,255,0.09) 0%, transparent 28%),
-                radial-gradient(circle at 50% 46%, rgba(200,200,200,0.04) 0%, transparent 42%);
+                radial-gradient(circle at 50% 46%, rgba(255,255,255,0.14) 0%, transparent 30%),
+                radial-gradient(circle at 50% 46%, rgba(200,200,200,0.06) 0%, transparent 48%);
             animation: centerPulse 6s ease-in-out infinite;
         }
         @keyframes centerPulse {
-            0%, 100% { opacity: 0.75; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.04); }
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
         }
 
         .bg-beams {
-            z-index: 1; opacity: 0.14;
+            z-index: 1; opacity: 0.22;
             background:
-                linear-gradient(90deg, transparent 0%, transparent 18%, rgba(255,255,255,0.03) 24%, transparent 30%, transparent 48%, rgba(255,255,255,0.025) 52%, transparent 58%, transparent 76%, rgba(255,255,255,0.02) 82%, transparent 88%);
-            mask-image: radial-gradient(ellipse 80% 70% at 50% 45%, #000 10%, transparent 72%);
+                linear-gradient(90deg, transparent 0%, transparent 18%, rgba(255,255,255,0.05) 24%, transparent 30%, transparent 48%, rgba(255,255,255,0.04) 52%, transparent 58%, transparent 76%, rgba(255,255,255,0.035) 82%, transparent 88%);
         }
 
         .parallax-wrap { position: absolute; inset: 0; pointer-events: none; will-change: transform; }
 
         .sketch-bg {
-            z-index: 2; opacity: 0.18;
+            z-index: 2; opacity: 0.28;
             background:
-                repeating-linear-gradient(0deg, transparent, transparent 47px, rgba(255,255,255,0.028) 47px, rgba(255,255,255,0.028) 48px),
-                repeating-linear-gradient(90deg, transparent, transparent 47px, rgba(255,255,255,0.02) 47px, rgba(255,255,255,0.02) 48px);
+                repeating-linear-gradient(0deg, transparent, transparent 47px, rgba(255,255,255,0.04) 47px, rgba(255,255,255,0.04) 48px),
+                repeating-linear-gradient(90deg, transparent, transparent 47px, rgba(255,255,255,0.03) 47px, rgba(255,255,255,0.03) 48px);
             animation: sketchDrift 22s linear infinite;
         }
         @keyframes sketchDrift { to { background-position: -24px 24px; } }
 
+        .grid-wrap {
+            z-index: 3; overflow: hidden;
+        }
         .grid-plane {
-            z-index: 3; width: 480%; height: 480%; top: -190%; left: -190%;
+            width: 480%; height: 480%; top: -190%; left: -190%;
             background-image:
-                linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+                linear-gradient(rgba(255,255,255,0.14) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.14) 1px, transparent 1px);
             background-size: 52px 52px;
             transform: perspective(420px) rotateX(62deg);
             animation: gridMove 5s linear infinite;
-            opacity: 0.62;
-            mask-image: radial-gradient(ellipse 75% 65% at 50% 52%, #000 15%, transparent 78%);
+            opacity: 1;
         }
         @keyframes gridMove { to { background-position: 0 52px; } }
 
+        .grid-vignette {
+            z-index: 4;
+            background: radial-gradient(ellipse 72% 58% at 50% 54%, transparent 18%, rgba(0,0,0,0.92) 72%);
+        }
+
         .horizon-glow {
-            z-index: 4; bottom: 0; top: auto; height: 55%;
+            z-index: 5; bottom: 0; top: auto; height: 55%;
             background:
-                radial-gradient(ellipse 90% 70% at 50% 100%, rgba(255,255,255,0.08) 0%, transparent 62%),
-                linear-gradient(0deg, rgba(255,255,255,0.03) 0%, transparent 35%);
+                radial-gradient(ellipse 90% 70% at 50% 100%, rgba(255,255,255,0.12) 0%, transparent 62%),
+                linear-gradient(0deg, rgba(255,255,255,0.05) 0%, transparent 35%);
         }
 
         .wire-ring {
-            z-index: 5; display: flex; align-items: center; justify-content: center;
+            z-index: 6; display: flex; align-items: center; justify-content: center;
         }
         .wire-ring svg {
             width: min(680px, 92vw); height: min(680px, 92vw);
-            opacity: 0.14; animation: ringSpin 60s linear infinite;
+            opacity: 0.22; animation: ringSpin 60s linear infinite;
         }
         .wire-ring.ring-inner svg {
             width: min(420px, 58vw); height: min(420px, 58vw);
-            opacity: 0.1; animation: ringSpinRev 45s linear infinite;
+            opacity: 0.16; animation: ringSpinRev 45s linear infinite;
         }
         @keyframes ringSpin { to { transform: rotate(360deg); } }
         @keyframes ringSpinRev { to { transform: rotate(-360deg); } }
 
-        #particleCanvas { position: absolute; inset: 0; z-index: 6; opacity: 0.62; }
+        #particleCanvas { position: absolute; inset: 0; z-index: 7; opacity: 0.75; }
 
         .film-scratch {
             position: fixed; top: 0; width: 1px; height: 100%; z-index: 100;
@@ -117,15 +123,15 @@
         @keyframes scan { from { top: -5%; } to { top: 105%; } }
 
         .noise {
-            position: fixed; inset: 0; z-index: 25; opacity: 0.05; pointer-events: none;
+            position: fixed; inset: 0; z-index: 15; opacity: 0.06; pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
             animation: noiseTick 0.15s steps(2) infinite;
         }
         @keyframes noiseTick { 50% { opacity: 0.08; } }
 
         .vignette {
-            position: fixed; inset: 0; z-index: 30; pointer-events: none;
-            background: radial-gradient(ellipse, transparent 22%, rgba(0,0,0,0.82) 100%);
+            position: fixed; inset: 0; z-index: 18; pointer-events: none;
+            background: radial-gradient(ellipse, transparent 28%, rgba(0,0,0,0.72) 100%);
         }
 
         .glitch-bar {
@@ -242,21 +248,44 @@
             position: relative;
             line-height: 1;
             text-align: center;
+            display: inline-flex;
+            flex-wrap: nowrap;
+            justify-content: center;
         }
+        .logo-char {
+            display: inline-block;
+            will-change: transform;
+            position: relative;
+            z-index: 1;
+        }
+        .logo-char.space { width: 0.35em; }
         .logo-line {
             width: min(180px, 36vw); height: 1px; margin: 16px auto 0;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
         }
 
-        .logo::before, .logo::after {
-            content: "Z-CITY RPH"; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        .logo::before, .logo::after { display: none; }
+
+        .logo-glitch {
+            position: absolute; top: 0; left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none; z-index: 0;
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(52px, 10vw, 110px);
+            font-weight: 600; letter-spacing: 0.14em;
+            line-height: 1; white-space: nowrap;
+            opacity: 0.35;
         }
-        .logo::before {
+        .logo-glitch::before, .logo-glitch::after {
+            content: "Z-CITY RPH"; position: absolute; top: 0; left: 0; width: 100%;
+            color: #fafafa; text-align: center;
+        }
+        .logo-glitch::before {
             clip-path: inset(0 0 52% 0);
             text-shadow: -2px 0 rgba(200,200,200,0.25);
             animation: glitchA 5s infinite linear alternate-reverse;
         }
-        .logo::after {
+        .logo-glitch::after {
             clip-path: inset(48% 0 0 0);
             text-shadow: 2px 0 rgba(120,120,120,0.3);
             animation: glitchB 4s infinite linear alternate-reverse;
@@ -354,7 +383,10 @@
         <div class="layer center-glow"></div>
         <div class="parallax-wrap" data-depth="0.012"><div class="layer bg-beams"></div></div>
         <div class="parallax-wrap" data-depth="0.022"><div class="layer sketch-bg"></div></div>
-        <div class="parallax-wrap" data-depth="0.065"><div class="layer grid-plane"></div></div>
+        <div class="parallax-wrap grid-wrap" data-depth="0.065">
+            <div class="layer grid-plane"></div>
+            <div class="layer grid-vignette"></div>
+        </div>
         <div class="layer horizon-glow" data-depth="0.038"></div>
         <div class="layer wire-ring" data-depth="0.03">
             <svg viewBox="0 0 200 200" fill="none"><circle cx="100" cy="100" r="88" stroke="white" stroke-width="0.35" stroke-dasharray="3 9"/><circle cx="100" cy="100" r="68" stroke="white" stroke-width="0.2" stroke-dasharray="2 14"/><circle cx="100" cy="100" r="48" stroke="white" stroke-width="0.15" stroke-dasharray="1 8"/></svg>
@@ -368,12 +400,12 @@
     </div>
 
     <div class="logo-zone" id="logoZone">
-        <div class="logo-block" data-depth="0.045">
+        <div class="logo-block">
             <div class="pulse-ring"></div>
             <div class="pulse-ring"></div>
             <div class="pulse-ring"></div>
             <div class="logo-container" id="logo">
-                <h1 class="logo">Z-CITY RPH</h1>
+                <h1 class="logo" id="logoText">Z-CITY RPH</h1>
                 <div class="logo-line"></div>
             </div>
         </div>
@@ -392,19 +424,59 @@
     <script>
         var filesTotal = 0, filesNeeded = 0;
         var mouseX = 0.5, mouseY = 0.5, smoothX = 0.5, smoothY = 0.5;
+        var LOGO_MAGNET_DELAY = 1000;
+        var logoChars = [];
+        var logoMagnetReady = false;
+        var logoMagnetStart = Date.now();
 
-        var PHRASES = [
-            "Смерть здесь необратима. Ваш персонаж перестаёт существовать — навсегда.",
-            "Новая жизнь — другой человек: другое имя, другая одежда, другая история.",
-            "Каждое решение имеет последствия. Думайте, прежде чем нажать на курок.",
-            "Город не прощает импульсивных поступков. Ответственность — только ваша.",
-            "Permadeath — не откат. Это конец. Без исключений.",
-            "Всё, что вы построили, может исчезнуть за секунду.",
-            "Не играйте с чужими жизнями. Здесь это стоит всего.",
-            "Один необдуманный шаг — и персонаж станет чужой памятью.",
-            "Вы несёте полную ответственность за судьбу того, кем играете.",
-            "Z-City не даёт вторых шансов. Только последствия."
-        ];
+        function initLogoLetters() {
+            var logo = document.getElementById('logoText');
+            if (!logo) return;
+            var text = logo.textContent.trim();
+            logo.textContent = '';
+            for (var i = 0; i < text.length; i++) {
+                var ch = document.createElement('span');
+                ch.className = 'logo-char' + (text[i] === ' ' ? ' space' : '');
+                ch.textContent = text[i] === ' ' ? '\u00A0' : text[i];
+                ch._ox = 0; ch._oy = 0;
+                logo.appendChild(ch);
+                logoChars.push(ch);
+            }
+            var glitch = document.createElement('div');
+            glitch.className = 'logo-glitch';
+            glitch.setAttribute('aria-hidden', 'true');
+            logo.parentNode.insertBefore(glitch, logo);
+        }
+
+        function tickLogoMagnet() {
+            if (Date.now() - logoMagnetStart >= LOGO_MAGNET_DELAY) {
+                logoMagnetReady = true;
+            }
+            if (logoMagnetReady && logoChars.length) {
+                var mx = smoothX * innerWidth;
+                var my = smoothY * innerHeight;
+                var maxDist = 360;
+                var pull = 0.2;
+                for (var i = 0; i < logoChars.length; i++) {
+                    var ch = logoChars[i];
+                    if (ch.classList.contains('space')) continue;
+                    var rect = ch.getBoundingClientRect();
+                    var cx = rect.left + rect.width * 0.5;
+                    var cy = rect.top + rect.height * 0.5;
+                    var dx = mx - cx;
+                    var dy = my - cy;
+                    var dist = Math.sqrt(dx * dx + dy * dy);
+                    var t = Math.max(0, 1 - dist / maxDist);
+                    t = t * t * (3 - 2 * t);
+                    var tx = dx * t * pull;
+                    var ty = dy * t * pull;
+                    ch._ox += (tx - ch._ox) * 0.11;
+                    ch._oy += (ty - ch._oy) * 0.11;
+                    ch.style.transform = 'translate(' + ch._ox.toFixed(2) + 'px,' + ch._oy.toFixed(2) + 'px)';
+                }
+            }
+            requestAnimationFrame(tickLogoMagnet);
+        }
 
         function initParallax() {
             document.addEventListener('mousemove', function(e) {
@@ -424,6 +496,19 @@
                 requestAnimationFrame(tick);
             })();
         }
+
+        var PHRASES = [
+            "Смерть здесь необратима. Ваш персонаж перестаёт существовать — навсегда.",
+            "Новая жизнь — другой человек: другое имя, другая одежда, другая история.",
+            "Каждое решение имеет последствия. Думайте, прежде чем нажать на курок.",
+            "Город не прощает импульсивных поступков. Ответственность — только ваша.",
+            "Permadeath — не откат. Это конец. Без исключений.",
+            "Всё, что вы построили, может исчезнуть за секунду.",
+            "Не играйте с чужими жизнями. Здесь это стоит всего.",
+            "Один необдуманный шаг — и персонаж станет чужой памятью.",
+            "Вы несёте полную ответственность за судьбу того, кем играете.",
+            "Z-City не даёт вторых шансов. Только последствия."
+        ];
 
         function initParticles() {
             var c = document.getElementById('particleCanvas'), ctx = c.getContext('2d'), pts = [];
@@ -485,7 +570,9 @@
         function setProgress(pct){} function SetStatusChanged(s){} function SetFilesTotal(t){filesTotal=t||0;}
         function SetFilesNeeded(n){filesNeeded=n||0;} function DownloadingFile(f){} function updateFileProgress(){} function GameDetails(){}
 
+        initLogoLetters();
         initParallax(); initParticles(); initGlitchBars(); initHudTelemetry(); initPhraseRotator();
+        tickLogoMagnet();
     </script>
 </body>
 </html>
