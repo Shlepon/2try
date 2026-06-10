@@ -21,8 +21,6 @@
             cursor: default; user-select: none;
         }
 
-        .parallax-node { will-change: margin; }
-
         /* ── Фон: чистая тьма + мигалки ── */
         .flash-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -41,24 +39,20 @@
 
         .flash-red.on {
             opacity: 1;
-            background: radial-gradient(ellipse 75% 65% at 22% 48%,
-                rgba(255, 45, 45, 0.62) 0%,
-                rgba(200, 15, 15, 0.28) 38%,
-                rgba(80, 0, 0, 0.08) 58%,
-                transparent 72%);
-            filter: blur(42px);
-            -webkit-filter: blur(42px);
+            background: radial-gradient(ellipse 95% 80% at 18% 48%,
+                rgba(255, 45, 45, 0.5) 0%,
+                rgba(200, 15, 15, 0.22) 42%,
+                rgba(80, 0, 0, 0.06) 65%,
+                transparent 82%);
             animation: breatheRed 2.8s ease-in-out infinite;
         }
         .flash-blue.on {
             opacity: 1;
-            background: radial-gradient(ellipse 75% 65% at 78% 48%,
-                rgba(45, 85, 255, 0.62) 0%,
-                rgba(15, 40, 200, 0.28) 38%,
-                rgba(0, 15, 80, 0.08) 58%,
-                transparent 72%);
-            filter: blur(42px);
-            -webkit-filter: blur(42px);
+            background: radial-gradient(ellipse 95% 80% at 82% 48%,
+                rgba(45, 85, 255, 0.5) 0%,
+                rgba(15, 40, 200, 0.22) 42%,
+                rgba(0, 15, 80, 0.06) 65%,
+                transparent 82%);
             animation: breatheBlue 2.8s ease-in-out infinite;
         }
         @keyframes breatheRed {
@@ -139,19 +133,6 @@
         }
         .letterbox.top { top: 0; }
         .letterbox.bottom { bottom: 0; }
-
-        .film-grain {
-            position: fixed; inset: 0; z-index: 7; pointer-events: none;
-            opacity: 0.045; mix-blend-mode: overlay;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
-        }
-
-        #rainCanvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 6; pointer-events: none;
-            transition: opacity 1.5s ease;
-        }
-        #rainCanvas.exit-fade { opacity: 0; }
 
         #glassCanvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -379,12 +360,12 @@
     </style>
 </head>
 <body>
-    <div class="flash-layer parallax-node" id="flashLayer" data-depth="0.014">
+    <div class="flash-layer" id="flashLayer">
         <div class="flash-red on" id="flashRed"></div>
         <div class="flash-blue" id="flashBlue"></div>
     </div>
 
-    <div class="tape-layer parallax-node" id="tapeLayer" data-depth="0.032">
+    <div class="tape-layer" id="tapeLayer">
         <div class="police-tape tape-a">
             <span>POLICE LINE DO NOT CROSS /// Z-CITY RPH /// PERMADEATH ZONE /// DO NOT ENTER /// POLICE LINE DO NOT CROSS /// Z-CITY RPH ///</span>
         </div>
@@ -396,25 +377,22 @@
     <div class="vignette" id="vignette"></div>
     <div class="letterbox top"></div>
     <div class="letterbox bottom"></div>
-    <div class="film-grain"></div>
-
-    <canvas id="rainCanvas"></canvas>
     <canvas id="glassCanvas"></canvas>
 
-    <div class="scene-frame parallax-node" id="sceneFrame" data-depth="0.02">
+    <div class="scene-frame" id="sceneFrame">
         <div class="hud-bracket tl"></div>
         <div class="hud-bracket tr"></div>
         <div class="hud-bracket bl"></div>
         <div class="hud-bracket br"></div>
     </div>
 
-    <div class="edge-marquee top parallax-node" id="edgeTop" data-depth="0.022"></div>
-    <div class="edge-marquee bottom parallax-node" id="edgeBottom" data-depth="0.022"></div>
-    <div class="edge-marquee left parallax-node" id="edgeLeft" data-depth="0.026"></div>
-    <div class="edge-marquee right parallax-node" id="edgeRight" data-depth="0.026"></div>
+    <div class="edge-marquee top" id="edgeTop"></div>
+    <div class="edge-marquee bottom" id="edgeBottom"></div>
+    <div class="edge-marquee left" id="edgeLeft"></div>
+    <div class="edge-marquee right" id="edgeRight"></div>
 
-    <div class="hud-top parallax-node" data-depth="0.018"><span class="hud-dot"></span>Z-CITY NET // SECURE CHANNEL</div>
-    <div class="hud-bottom parallax-node" id="hudCoords" data-depth="0.018">X:0000 Y:0000 // SYNC</div>
+    <div class="hud-top"><span class="hud-dot"></span>Z-CITY NET // SECURE CHANNEL</div>
+    <div class="hud-bottom" id="hudCoords">X:0000 Y:0000 // SYNC</div>
 
     <div class="logo-zone" id="logoZone">
         <div class="logo-anchor">
@@ -427,7 +405,7 @@
         </div>
     </div>
 
-    <div class="phrase-zone parallax-node" id="phrasePanel" data-depth="0.028">
+    <div class="phrase-zone" id="phrasePanel">
         <div class="phrase-inner">
             <div class="glass-card">
                 <div class="card-tag">// Системное предупреждение</div>
@@ -437,7 +415,7 @@
         </div>
     </div>
 
-    <div class="intro-stack parallax-node" id="introStack" data-depth="0.028">
+    <div class="intro-stack" id="introStack">
         <div class="intro-inner">
             <div class="disclaimer glass-card" id="disclaimer">
                 <div class="card-tag">// Протокол необратимости</div>
@@ -468,7 +446,10 @@
         var isIntro = false, enterLocked = false;
         var isIntroUrl = (window.location.search || '').indexOf('mode=intro') !== -1;
         var mouseX = 0.5, mouseY = 0.5, smoothX = 0.5, smoothY = 0.5;
-        var parallaxX = 0, parallaxY = 0;
+        var animRunning = true;
+        var rainStreaks = [], glassDrops = [];
+        var fxCanvas = null, fxCtx = null, fxW = 0, fxH = 0;
+        var logoCharBase = [];
         var READ_DELAY_MS = 2000;
         var LOGO_MAGNET_DELAY = 1000;
         var logoChars = [], logoMagnetReady = false, logoMagnetStart = Date.now(), logoLettersReady = false;
@@ -514,141 +495,92 @@
         }
 
         function drawWaterDrop(ctx, x, y, r) {
-            if (r < 0.8) {
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, 6.28318);
+            ctx.fillStyle = 'rgba(185, 205, 225, 0.32)';
+            ctx.fill();
+            if (r > 0.7) {
                 ctx.beginPath();
-                ctx.arc(x, y, r, 0, 6.28318);
-                ctx.fillStyle = 'rgba(200, 220, 240, 0.35)';
+                ctx.arc(x - r * 0.32, y - r * 0.32, r * 0.28, 0, 6.28318);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
                 ctx.fill();
-                ctx.beginPath();
-                ctx.arc(x - r * 0.35, y - r * 0.35, r * 0.35, 0, 6.28318);
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
-                ctx.fill();
-                return;
             }
-            var hl = r * 0.38;
-            ctx.beginPath();
-            ctx.arc(x, y + r * 0.12, r * 0.95, 0, 6.28318);
-            ctx.fillStyle = 'rgba(70, 95, 120, 0.35)';
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(x, y, r * 0.9, 0, 6.28318);
-            ctx.fillStyle = 'rgba(175, 205, 230, 0.38)';
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(x - r * 0.3, y - r * 0.3, hl, 0, 6.28318);
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
-            ctx.fill();
         }
 
-        function initRainFall() {
-            var c = document.getElementById('rainCanvas');
-            if (!c) return;
-            var ctx = c.getContext('2d');
-            if (!ctx) return;
-
-            var streaks = [];
-
-            function resize() {
-                c.width = window.innerWidth || 800;
-                c.height = window.innerHeight || 600;
-                streaks = [];
-                var count = Math.floor(c.width / 5);
-                if (count < 90) count = 90;
-                if (count > 220) count = 220;
-                for (var i = 0; i < count; i++) {
-                    streaks.push({
-                        x: Math.random() * c.width,
-                        y: Math.random() * c.height,
-                        len: Math.random() * 14 + 6,
-                        speed: Math.random() * 10 + 7,
-                        w: Math.random() * 0.7 + 0.3,
-                        a: Math.random() * 0.14 + 0.06
-                    });
-                }
+        function buildFxParticles() {
+            rainStreaks = [];
+            glassDrops = [];
+            var count = Math.floor(fxW / 14);
+            if (count < 40) count = 40;
+            if (count > 75) count = 75;
+            for (var i = 0; i < count; i++) {
+                rainStreaks.push({
+                    x: Math.random() * fxW,
+                    y: Math.random() * fxH,
+                    len: Math.random() * 12 + 5,
+                    speed: Math.random() * 8 + 6,
+                    a: Math.random() * 0.1 + 0.05
+                });
             }
-            resize();
-
-            function draw() {
-                var w = c.width, h = c.height;
-                ctx.clearRect(0, 0, w, h);
-                for (var i = 0; i < streaks.length; i++) {
-                    var s = streaks[i];
-                    ctx.strokeStyle = 'rgba(175, 195, 220, ' + s.a + ')';
-                    ctx.lineWidth = s.w;
-                    ctx.lineCap = 'round';
-                    ctx.beginPath();
-                    ctx.moveTo(s.x, s.y);
-                    ctx.lineTo(s.x - 1.2, s.y + s.len);
-                    ctx.stroke();
-                    s.y += s.speed;
-                    s.x -= 0.6;
-                    if (s.y > h + 20) {
-                        s.y = -s.len - Math.random() * 40;
-                        s.x = Math.random() * w;
-                    }
-                }
-                requestAnimationFrame(draw);
+            var dropCount = Math.floor((fxW * fxH) / 5500);
+            if (dropCount < 70) dropCount = 70;
+            if (dropCount > 140) dropCount = 140;
+            for (var j = 0; j < dropCount; j++) {
+                var bias = Math.random();
+                glassDrops.push({
+                    x: Math.random() * fxW,
+                    y: bias * bias * fxH,
+                    r: Math.random() * 1.6 + 0.5,
+                    vy: Math.random() * 0.28 + 0.08,
+                    vx: Math.random() * 0.04 - 0.02
+                });
             }
-            draw();
-            if (window.addEventListener) window.addEventListener('resize', resize);
         }
 
-        function initGlassDrops() {
-            var c = document.getElementById('glassCanvas');
-            if (!c) return;
-            var ctx = c.getContext('2d');
-            if (!ctx) return;
+        function resizeFx() {
+            fxCanvas = document.getElementById('glassCanvas');
+            if (!fxCanvas) return;
+            fxCtx = fxCanvas.getContext('2d');
+            if (!fxCtx) return;
+            fxW = window.innerWidth || 800;
+            fxH = window.innerHeight || 600;
+            var scale = 0.72;
+            fxCanvas.width = Math.floor(fxW * scale);
+            fxCanvas.height = Math.floor(fxH * scale);
+            fxCtx.setTransform(scale, 0, 0, scale, 0, 0);
+            buildFxParticles();
+        }
 
-            var drops = [];
-
-            function resize() {
-                c.width = window.innerWidth || 800;
-                c.height = window.innerHeight || 600;
-                buildDrops();
-            }
-
-            function buildDrops() {
-                drops = [];
-                var w = c.width, h = c.height;
-                var count = Math.floor((w * h) / 2200);
-                if (count < 220) count = 220;
-                if (count > 520) count = 520;
-                for (var i = 0; i < count; i++) {
-                    var bias = Math.random();
-                    var y = bias * bias * h;
-                    drops.push({
-                        x: Math.random() * w,
-                        y: y,
-                        r: Math.random() * 1.8 + 0.5,
-                        vy: Math.random() * 0.35 + 0.1,
-                        vx: Math.random() * 0.05 - 0.025,
-                        phase: Math.random() * 6.28
-                    });
+        function drawFx() {
+            if (!fxCtx) return;
+            var i, s, d;
+            fxCtx.clearRect(0, 0, fxW, fxH);
+            fxCtx.lineCap = 'round';
+            for (i = 0; i < rainStreaks.length; i++) {
+                s = rainStreaks[i];
+                fxCtx.strokeStyle = 'rgba(175,195,220,' + s.a + ')';
+                fxCtx.lineWidth = 0.5;
+                fxCtx.beginPath();
+                fxCtx.moveTo(s.x, s.y);
+                fxCtx.lineTo(s.x - 1, s.y + s.len);
+                fxCtx.stroke();
+                s.y += s.speed;
+                s.x -= 0.5;
+                if (s.y > fxH + 10) {
+                    s.y = -s.len;
+                    s.x = Math.random() * fxW;
                 }
             }
-
-            resize();
-
-            function draw() {
-                var w = c.width, h = c.height;
-                var t = Date.now() * 0.001;
-                ctx.clearRect(0, 0, w, h);
-
-                for (var i = 0; i < drops.length; i++) {
-                    var d = drops[i];
-                    var wobble = Math.sin(t * 1.2 + d.phase) * 0.15;
-                    drawWaterDrop(ctx, d.x + wobble, d.y, d.r);
-                    d.y += d.vy;
-                    d.x += d.vx + wobble * 0.02;
-                    if (d.y > h + 12) {
-                        d.y = -8;
-                        d.x = Math.random() * w;
-                    }
+            for (i = 0; i < glassDrops.length; i++) {
+                d = glassDrops[i];
+                drawWaterDrop(fxCtx, d.x, d.y, d.r);
+                d.y += d.vy;
+                d.x += d.vx;
+                if (d.y > fxH + 8) {
+                    d.y = -6;
+                    d.x = Math.random() * fxW;
                 }
-                requestAnimationFrame(draw);
             }
-            draw();
-            if (window.addEventListener) window.addEventListener('resize', resize);
         }
 
         function initEdgeCarousel() {
@@ -685,80 +617,100 @@
                 logoChars[j]._by = 0;
             }
             logoLettersReady = true;
+            setTimeout(cacheLogoCharPositions, 50);
         }
 
-        function initParallax() {
+        function cacheLogoCharPositions() {
+            var anchor = document.querySelector('.logo-anchor');
+            if (!anchor || !logoChars.length) return;
+            var ar = anchor.getBoundingClientRect();
+            var acx = ar.left + ar.width * 0.5;
+            var acy = ar.top + ar.height * 0.5;
+            logoCharBase = [];
+            for (var i = 0; i < logoChars.length; i++) {
+                var ch = logoChars[i];
+                if (ch.innerHTML === '&nbsp;' || ch.textContent === ' ') {
+                    logoCharBase[i] = null;
+                    continue;
+                }
+                var r = ch.getBoundingClientRect();
+                logoCharBase[i] = {
+                    bx: r.left + r.width * 0.5 - acx,
+                    by: r.top + r.height * 0.5 - acy
+                };
+            }
+        }
+
+        function initMouse() {
             document.addEventListener('mousemove', function(e) {
                 mouseX = e.clientX / (window.innerWidth || 1);
                 mouseY = e.clientY / (window.innerHeight || 1);
-            });
-
-            var nodes = document.querySelectorAll('.parallax-node');
-
-            function tick() {
-                smoothX += (mouseX - smoothX) * 0.045;
-                smoothY += (mouseY - smoothY) * 0.045;
-
-                var targetPx = (smoothX - 0.5) * (window.innerWidth || 800);
-                var targetPy = (smoothY - 0.5) * (window.innerHeight || 600);
-                parallaxX += (targetPx - parallaxX) * 0.05;
-                parallaxY += (targetPy - parallaxY) * 0.05;
-
-                for (var i = 0; i < nodes.length; i++) {
-                    var depth = parseFloat(nodes[i].getAttribute('data-depth')) || 0.02;
-                    nodes[i].style.marginLeft = Math.round(parallaxX * depth) + 'px';
-                    nodes[i].style.marginTop = Math.round(parallaxY * depth) + 'px';
-                }
-                requestAnimationFrame(tick);
-            }
-            tick();
+            }, false);
         }
 
-        function tickLogoLife() {
+        function updateLogo(t) {
             var logo = document.getElementById('logo');
             if (!logo) return;
 
-            var t = Date.now() * 0.001;
-            var breathX = Math.sin(t * 0.55) * 2 + Math.cos(t * 0.31) * 1;
-            var breathY = Math.cos(t * 0.48) * 2.5 + Math.sin(t * 0.37) * 1.2;
+            var breathX = Math.sin(t * 0.55) * 2 + Math.cos(t * 0.31);
+            var breathY = Math.cos(t * 0.48) * 2.5 + Math.sin(t * 0.37);
 
-            if (!logo.className || logo.className.indexOf('fly-up') === -1) {
-                logo.style.marginLeft = breathX.toFixed(2) + 'px';
-                logo.style.marginTop = breathY.toFixed(2) + 'px';
+            if (logo.className.indexOf('fly-up') === -1) {
+                logo.style.marginLeft = breathX.toFixed(1) + 'px';
+                logo.style.marginTop = breathY.toFixed(1) + 'px';
             }
 
-            if (Date.now() - logoMagnetStart >= LOGO_MAGNET_DELAY) logoMagnetReady = true;
+            if (Date.now() - logoMagnetStart < LOGO_MAGNET_DELAY) return;
+            logoMagnetReady = true;
+            if (!logoChars.length || !logoCharBase.length) return;
 
-            if (logoMagnetReady && logoChars.length) {
-                var mx = smoothX * (window.innerWidth || 800);
-                var my = smoothY * (window.innerHeight || 600);
-                for (var i = 0; i < logoChars.length; i++) {
-                    var ch = logoChars[i];
-                    if (ch.innerHTML === '&nbsp;' || ch.textContent === ' ') continue;
+            var anchor = document.querySelector('.logo-anchor');
+            if (!anchor) return;
+            var ar = anchor.getBoundingClientRect();
+            var acx = ar.left + ar.width * 0.5;
+            var acy = ar.top + ar.height * 0.5;
+            var mx = smoothX * (window.innerWidth || 800);
+            var my = smoothY * (window.innerHeight || 600);
+            var i, ch, base, cx, cy, dx, dy, dist, pull, tx, ty, lx, ly;
 
-                    var floatX = Math.sin(t * 0.9 + i * 0.7) * 0.6;
-                    var floatY = Math.cos(t * 0.75 + i * 0.55) * 0.8;
+            for (i = 0; i < logoChars.length; i++) {
+                ch = logoChars[i];
+                base = logoCharBase[i];
+                if (!base) continue;
 
-                    var rect = ch.getBoundingClientRect();
-                    var cx = rect.left + rect.width * 0.5;
-                    var cy = rect.top + rect.height * 0.5;
-                    var dx = mx - cx;
-                    var dy = my - cy;
-                    var dist = Math.sqrt(dx * dx + dy * dy);
-                    var maxDist = 400;
-                    var pull = Math.max(0, 1 - dist / maxDist);
-                    pull = pull * pull * (3 - 2 * pull);
+                cx = acx + base.bx;
+                cy = acy + base.by;
+                dx = mx - cx;
+                dy = my - cy;
+                dist = Math.sqrt(dx * dx + dy * dy);
+                pull = Math.max(0, 1 - dist / 400);
+                pull = pull * pull * (3 - 2 * pull);
 
-                    var tx = dx * pull * 0.24;
-                    var ty = dy * pull * 0.24;
-                    ch._ox += (tx - ch._ox) * 0.12;
-                    ch._oy += (ty - ch._oy) * 0.12;
+                tx = dx * pull * 0.24;
+                ty = dy * pull * 0.24;
+                ch._ox += (tx - ch._ox) * 0.12;
+                ch._oy += (ty - ch._oy) * 0.12;
 
-                    ch.style.left = (ch._ox + floatX).toFixed(1) + 'px';
-                    ch.style.top = (ch._oy + floatY).toFixed(1) + 'px';
-                }
+                lx = ch._ox + Math.sin(t * 0.9 + i * 0.7) * 0.5;
+                ly = ch._oy + Math.cos(t * 0.75 + i * 0.55) * 0.7;
+                ch.style.left = lx.toFixed(1) + 'px';
+                ch.style.top = ly.toFixed(1) + 'px';
             }
-            requestAnimationFrame(tickLogoLife);
+        }
+
+        function masterTick(now) {
+            if (!animRunning) return;
+            requestAnimationFrame(masterTick);
+
+            if (!masterTick._last) masterTick._last = 0;
+            if (now - masterTick._last < 33) return;
+            masterTick._last = now;
+
+            smoothX += (mouseX - smoothX) * 0.1;
+            smoothY += (mouseY - smoothY) * 0.1;
+
+            drawFx();
+            updateLogo(now * 0.001);
         }
 
         function initHudTelemetry() {
@@ -807,18 +759,17 @@
         }
 
         function triggerExit() {
+            animRunning = false;
             document.getElementById('logo').className = 'logo-container fly-up';
             document.getElementById('logoZone').className = 'logo-zone exit-fade';
             var fl = document.getElementById('flashLayer');
-            if (fl) fl.className = 'flash-layer exit-fade parallax-node';
+            if (fl) fl.className = 'flash-layer exit-fade';
             var tl = document.getElementById('tapeLayer');
-            if (tl) tl.className = 'tape-layer exit-fade parallax-node';
+            if (tl) tl.className = 'tape-layer exit-fade';
             var sf = document.getElementById('sceneFrame');
-            if (sf) sf.className = 'scene-frame exit-fade parallax-node';
+            if (sf) sf.className = 'scene-frame exit-fade';
             var glass = document.getElementById('glassCanvas');
             if (glass) glass.className = 'exit-fade';
-            var rain = document.getElementById('rainCanvas');
-            if (rain) rain.className = 'exit-fade';
             var vig = document.getElementById('vignette');
             if (vig) vig.className = 'vignette exit-fade';
             document.getElementById('disclaimer').style.opacity = '0';
@@ -841,13 +792,18 @@
         function GameDetails() {}
 
         initFlashes();
-        initRainFall();
-        initGlassDrops();
+        resizeFx();
+        if (window.addEventListener) {
+            window.addEventListener('resize', function() {
+                resizeFx();
+                setTimeout(cacheLogoCharPositions, 80);
+            });
+        }
         initEdgeCarousel();
         initLogoLetters();
-        initParallax();
+        initMouse();
         initHudTelemetry();
-        tickLogoLife();
+        requestAnimationFrame(masterTick);
 
         if (!isIntroUrl) initPhraseRotator();
     </script>
