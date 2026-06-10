@@ -69,56 +69,102 @@
         /* ── Оградительные ленты ── */
         .tape-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 3; pointer-events: none; overflow: hidden;
-            transition: opacity 1.5s ease;
+            z-index: 3; pointer-events: none; overflow: visible;
         }
-        .tape-layer.exit-fade { opacity: 0; }
 
         .police-tape {
             position: absolute;
-            width: 360%;
-            height: 34px;
-            left: -130%;
-            background: repeating-linear-gradient(
-                -42deg,
-                #d4a800 0px, #d4a800 16px,
-                #111 16px, #111 32px
-            );
-            box-shadow: 0 3px 18px rgba(0,0,0,0.55);
-            opacity: 0.78;
+            left: 50%;
+            height: 42px;
+            margin-top: -21px;
+            transform-origin: center center;
+            opacity: 0.92;
+            transition: opacity 0.55s ease;
         }
-        .police-tape span {
+        .tape-body {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                -43deg,
+                #f0c800 0px, #f0c800 19px,
+                #080808 19px, #080808 38px
+            );
+            box-shadow:
+                0 3px 10px rgba(0,0,0,0.65),
+                0 12px 36px rgba(0,0,0,0.4),
+                inset 0 2px 0 rgba(255,255,255,0.28),
+                inset 0 -2px 0 rgba(0,0,0,0.4);
+        }
+        .tape-body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(255,80,60,0.55), transparent);
+            opacity: 0.7;
+        }
+        .tape-body::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(255,80,60,0.55), transparent);
+            opacity: 0.7;
+        }
+        .tape-shine {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(180deg,
+                rgba(255,255,255,0.22) 0%,
+                rgba(255,255,255,0.06) 38%,
+                transparent 58%,
+                rgba(0,0,0,0.1) 100%);
+            pointer-events: none;
+        }
+        .tape-edge {
+            position: absolute;
+            top: 0; width: 2px; height: 100%;
+            background: rgba(0,0,0,0.25);
+            pointer-events: none;
+        }
+        .tape-edge.l { left: 0; }
+        .tape-edge.r { right: 0; }
+        .tape-text {
             display: block;
+            position: relative;
             width: 100%; height: 100%;
-            line-height: 34px;
+            line-height: 42px;
             font-family: 'Oswald', sans-serif;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 600;
-            letter-spacing: 0.35em;
-            color: rgba(0,0,0,0.82);
+            letter-spacing: 0.38em;
+            color: rgba(0,0,0,0.88);
             white-space: nowrap;
             overflow: hidden;
             text-transform: uppercase;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.15);
         }
         .tape-a {
-            top: 36%;
-            margin-top: -17px;
+            top: 50%;
             transform: rotate(-26deg);
             animation: tapeSwayA 7s ease-in-out infinite;
         }
         .tape-b {
             top: 50%;
-            margin-top: -17px;
             transform: rotate(24deg);
             animation: tapeSwayB 8.5s ease-in-out infinite;
         }
+        .police-tape.exit-out {
+            animation: none !important;
+            opacity: 0;
+            pointer-events: none;
+        }
         @keyframes tapeSwayA {
-            0%, 100% { margin-top: -17px; }
-            50% { margin-top: -11px; }
+            0%, 100% { margin-top: -21px; }
+            50% { margin-top: -14px; }
         }
         @keyframes tapeSwayB {
-            0%, 100% { margin-top: -17px; }
-            50% { margin-top: -23px; }
+            0%, 100% { margin-top: -21px; }
+            50% { margin-top: -28px; }
         }
 
         .vignette {
@@ -234,21 +280,45 @@
 
         .logo-container {
             position: relative;
-            transition: opacity 1s ease, margin-top 1.4s ease;
+            padding: 18px 28px 14px;
+            transition: opacity 0.55s ease;
         }
         .logo-container.fly-up { margin-top: -200px; opacity: 0; }
 
+        .logo-back-glow {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse 80% 60% at 50% 45%,
+                rgba(160,185,220,0.1) 0%, transparent 72%);
+            pointer-events: none;
+        }
+        .logo-pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px; letter-spacing: 0.42em;
+            color: rgba(255,255,255,0.32); margin-bottom: 10px;
+            text-transform: uppercase;
+        }
         .logo {
             font-family: 'Oswald', sans-serif;
-            font-size: clamp(44px, 7.5vw, 88px);
-            font-weight: 600; letter-spacing: 0.14em; color: #fafafa;
-            line-height: 1.1; text-align: center; white-space: nowrap;
+            font-size: clamp(46px, 7.8vw, 92px);
+            font-weight: 700; letter-spacing: 0.16em;
+            line-height: 1.05; text-align: center; white-space: nowrap;
         }
-        .logo-char { display: inline-block; position: relative; }
+        .logo-char { display: inline-block; position: relative; color: rgba(245,245,248,0.96); }
+        .logo-char.accent { color: rgba(195,215,245,0.98); }
+        .logo-char.dim { color: rgba(255,255,255,0.42); font-weight: 500; }
         .logo-line {
-            width: min(180px, 36vw); height: 1px; margin: 16px auto 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            width: min(220px, 42vw); height: 1px; margin: 14px auto 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
         }
+        .logo-ticks span {
+            position: absolute; width: 14px; height: 14px;
+            border-color: rgba(255,255,255,0.22); border-style: solid; border-width: 0;
+        }
+        .logo-ticks span:nth-child(1) { top: 8px; left: 8px; border-top-width: 1px; border-left-width: 1px; }
+        .logo-ticks span:nth-child(2) { top: 8px; right: 8px; border-top-width: 1px; border-right-width: 1px; }
+        .logo-ticks span:nth-child(3) { bottom: 8px; left: 8px; border-bottom-width: 1px; border-left-width: 1px; }
+        .logo-ticks span:nth-child(4) { bottom: 8px; right: 8px; border-bottom-width: 1px; border-right-width: 1px; }
 
         .phrase-zone {
             position: absolute; top: 52%; left: 0; width: 100%;
@@ -266,10 +336,37 @@
             box-shadow: 0 0 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.04);
             text-align: center;
         }
+        .protocol-card {
+            position: relative; width: 100%;
+            padding: 26px 30px 22px;
+            background: linear-gradient(168deg, rgba(16,18,22,0.94), rgba(7,8,11,0.9));
+            border: 1px solid rgba(255,255,255,0.14);
+            box-shadow: 0 12px 48px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05);
+            text-align: center;
+        }
+        .protocol-corner {
+            position: absolute; width: 18px; height: 18px;
+            border-color: rgba(255,255,255,0.28); border-style: solid; border-width: 0;
+        }
+        .protocol-corner.tl { top: 10px; left: 10px; border-top-width: 1px; border-left-width: 1px; }
+        .protocol-corner.tr { top: 10px; right: 10px; border-top-width: 1px; border-right-width: 1px; }
+        .protocol-corner.bl { bottom: 10px; left: 10px; border-bottom-width: 1px; border-left-width: 1px; }
+        .protocol-corner.br { bottom: 10px; right: 10px; border-bottom-width: 1px; border-right-width: 1px; }
+        .protocol-stripe {
+            position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(220,60,50,0.65), transparent);
+        }
         .card-tag {
             font-family: 'JetBrains Mono', monospace;
             font-size: 8px; letter-spacing: 0.38em; color: rgba(200,200,200,0.38);
             text-transform: uppercase; margin-bottom: 12px;
+        }
+        .card-tag.warn { color: rgba(220,100,90,0.75); }
+        .card-tag.warn::before {
+            content: ''; display: inline-block;
+            width: 5px; height: 5px; border-radius: 50%;
+            background: rgba(220,70,60,0.9); margin-right: 8px;
+            vertical-align: middle;
         }
         .phrase-text {
             font-size: clamp(13px, 1.5vw, 15px); font-weight: 300;
@@ -299,20 +396,22 @@
 
         .disclaimer-title {
             font-family: 'Oswald', sans-serif;
-            font-size: clamp(18px, 2.2vw, 24px);
-            font-weight: 600; letter-spacing: 0.14em; color: #fff; margin-bottom: 14px;
+            font-size: clamp(20px, 2.4vw, 26px);
+            font-weight: 600; letter-spacing: 0.18em; color: #fff; margin-bottom: 16px;
         }
         .disclaimer-body {
-            font-size: clamp(12px, 1.35vw, 14px); line-height: 1.75;
-            color: rgba(190,190,190,0.92); font-weight: 300; text-align: center;
+            font-size: clamp(12px, 1.35vw, 14px); line-height: 1.72;
+            color: rgba(175,178,185,0.95); font-weight: 400; text-align: center;
         }
-        .disclaimer-body strong { color: #fff; font-weight: 600; }
+        .disclaimer-body strong { color: #ececec; font-weight: 600; }
         .disclaimer-divider {
-            height: 1px; margin: 16px 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            height: 1px; margin: 18px 0 14px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.14), transparent);
         }
         .disclaimer-foot {
-            font-size: 11px; color: rgba(130,130,130,0.7); font-weight: 300;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px; letter-spacing: 0.12em;
+            color: rgba(120,125,135,0.85); font-weight: 400;
         }
 
         .enter-wrap {
@@ -323,83 +422,113 @@
 
         .enter-btn {
             display: inline-block; position: relative;
-            width: 220px; height: 56px; padding: 0;
+            width: 240px; height: 52px; padding: 0;
             background: transparent; border: none; cursor: pointer;
             opacity: 0; pointer-events: none;
-            vertical-align: top; transition: opacity 0.65s ease;
+            vertical-align: top; transition: opacity 0.5s ease;
         }
         .enter-btn.show { opacity: 1; pointer-events: auto; }
 
         .enter-btn-inner {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(8,8,10,0.95);
-            border: 1px solid rgba(255,255,255,0.22);
+            background: linear-gradient(180deg, rgba(24,26,30,0.97), rgba(10,11,14,0.97));
+            border: 1px solid rgba(255,255,255,0.26);
+            box-shadow: 0 8px 28px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07);
         }
-        .enter-btn:hover .enter-btn-inner { border-color: rgba(255,255,255,0.5); }
+        .enter-btn:hover .enter-btn-inner {
+            border-color: rgba(255,255,255,0.48);
+            box-shadow: 0 10px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.12);
+        }
+        .enter-btn-bar {
+            position: absolute; bottom: 0; left: 12%; right: 12%; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(200,215,235,0.45), transparent);
+        }
 
         .enter-btn-label {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            font-family: 'Oswald', sans-serif; font-size: 22px;
-            font-weight: 500; color: #f0f0f0;
-            line-height: 56px; text-align: center;
-            white-space: nowrap; letter-spacing: 0.2em;
+            font-family: 'Oswald', sans-serif; font-size: 20px;
+            font-weight: 500; color: #ededed;
+            line-height: 52px; text-align: center;
+            white-space: nowrap; letter-spacing: 0.28em;
         }
         .enter-arrow {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 15px; opacity: 0.65; margin-left: 10px; letter-spacing: 0;
+            font-size: 14px; opacity: 0.55; margin-left: 12px; letter-spacing: 0;
         }
 
         .enter-btn-corners span {
-            position: absolute; width: 10px; height: 10px;
-            border-color: rgba(255,255,255,0.5); border-style: solid; border-width: 0;
+            position: absolute; width: 12px; height: 12px;
+            border-color: rgba(255,255,255,0.38); border-style: solid; border-width: 0;
         }
-        .enter-btn-corners span:nth-child(1) { top: 4px; left: 4px; border-top-width: 1px; border-left-width: 1px; }
-        .enter-btn-corners span:nth-child(2) { top: 4px; right: 4px; border-top-width: 1px; border-right-width: 1px; }
-        .enter-btn-corners span:nth-child(3) { bottom: 4px; left: 4px; border-bottom-width: 1px; border-left-width: 1px; }
-        .enter-btn-corners span:nth-child(4) { bottom: 4px; right: 4px; border-bottom-width: 1px; border-right-width: 1px; }
+        .enter-btn-corners span:nth-child(1) { top: 5px; left: 5px; border-top-width: 1px; border-left-width: 1px; }
+        .enter-btn-corners span:nth-child(2) { top: 5px; right: 5px; border-top-width: 1px; border-right-width: 1px; }
+        .enter-btn-corners span:nth-child(3) { bottom: 5px; left: 5px; border-bottom-width: 1px; border-left-width: 1px; }
+        .enter-btn-corners span:nth-child(4) { bottom: 5px; right: 5px; border-bottom-width: 1px; border-right-width: 1px; }
 
         .load-panel { display: none !important; }
+
+        .ui-fade {
+            transition: opacity 0.55s ease;
+        }
+        .ui-fade.exit-out { opacity: 0; pointer-events: none; }
+
+        body.is-exiting .logo-zone.exit-out .logo-container { opacity: 0; }
+        body.is-exiting .flash-layer.exit-out .flash-red,
+        body.is-exiting .flash-layer.exit-out .flash-blue { animation: none; opacity: 0 !important; }
     </style>
 </head>
 <body>
-    <div class="flash-layer" id="flashLayer">
+    <div class="flash-layer ui-fade" id="flashLayer">
         <div class="flash-red" id="flashRed"></div>
         <div class="flash-blue" id="flashBlue"></div>
     </div>
 
     <div class="tape-layer" id="tapeLayer">
-        <div class="police-tape tape-a">
-            <span>POLICE LINE DO NOT CROSS /// Z-CITY RPH /// PERMADEATH ZONE /// DO NOT ENTER /// POLICE LINE DO NOT CROSS /// Z-CITY RPH ///</span>
+        <div class="police-tape tape-a" id="tapeA">
+            <div class="tape-body">
+                <div class="tape-shine"></div>
+                <div class="tape-edge l"></div>
+                <div class="tape-edge r"></div>
+                <span class="tape-text">POLICE LINE DO NOT CROSS /// Z-CITY RPH /// PERMADEATH ZONE /// DO NOT ENTER /// POLICE LINE DO NOT CROSS /// Z-CITY RPH /// PERMADEATH ZONE ///</span>
+            </div>
         </div>
-        <div class="police-tape tape-b">
-            <span>CRIME SCENE /// Z-CITY RPH /// NO RETURN /// CRIME SCENE /// Z-CITY RPH /// NO RETURN /// CRIME SCENE /// Z-CITY RPH ///</span>
+        <div class="police-tape tape-b" id="tapeB">
+            <div class="tape-body">
+                <div class="tape-shine"></div>
+                <div class="tape-edge l"></div>
+                <div class="tape-edge r"></div>
+                <span class="tape-text">CRIME SCENE /// Z-CITY RPH /// NO RETURN /// CRIME SCENE /// Z-CITY RPH /// NO RETURN /// CRIME SCENE /// Z-CITY RPH /// NO RETURN ///</span>
+            </div>
         </div>
     </div>
 
-    <div class="vignette" id="vignette"></div>
-    <div class="letterbox top"></div>
-    <div class="letterbox bottom"></div>
-    <canvas id="glassCanvas"></canvas>
+    <div class="vignette ui-fade" id="vignette"></div>
+    <div class="letterbox top ui-fade" id="letterboxTop"></div>
+    <div class="letterbox bottom ui-fade" id="letterboxBottom"></div>
+    <canvas id="glassCanvas" class="ui-fade"></canvas>
 
-    <div class="scene-frame" id="sceneFrame">
+    <div class="scene-frame ui-fade" id="sceneFrame">
         <div class="hud-bracket tl"></div>
         <div class="hud-bracket tr"></div>
         <div class="hud-bracket bl"></div>
         <div class="hud-bracket br"></div>
     </div>
 
-    <div class="edge-marquee top" id="edgeTop"></div>
-    <div class="edge-marquee bottom" id="edgeBottom"></div>
-    <div class="edge-marquee left" id="edgeLeft"></div>
-    <div class="edge-marquee right" id="edgeRight"></div>
+    <div class="edge-marquee top ui-fade" id="edgeTop"></div>
+    <div class="edge-marquee bottom ui-fade" id="edgeBottom"></div>
+    <div class="edge-marquee left ui-fade" id="edgeLeft"></div>
+    <div class="edge-marquee right ui-fade" id="edgeRight"></div>
 
-    <div class="hud-top"><span class="hud-dot"></span>Z-CITY NET // SECURE CHANNEL</div>
-    <div class="hud-bottom" id="hudCoords">X:0000 Y:0000 // SYNC</div>
+    <div class="hud-top ui-fade" id="hudTop"><span class="hud-dot"></span>Z-CITY NET // SECURE CHANNEL</div>
+    <div class="hud-bottom ui-fade" id="hudCoords">X:0000 Y:0000 // SYNC</div>
 
-    <div class="logo-zone" id="logoZone">
+    <div class="logo-zone ui-fade" id="logoZone">
         <div class="logo-anchor">
             <div class="logo-block">
                 <div class="logo-container" id="logo">
+                    <div class="logo-back-glow"></div>
+                    <div class="logo-ticks"><span></span><span></span><span></span><span></span></div>
+                    <div class="logo-pre">Z-CITY // RPH</div>
                     <div class="logo" id="logoText">Z-CITY RPH</div>
                     <div class="logo-line"></div>
                 </div>
@@ -417,27 +546,33 @@
         </div>
     </div>
 
-    <div class="intro-stack" id="introStack">
+    <div class="intro-stack ui-fade" id="introStack">
         <div class="intro-inner">
-            <div class="disclaimer glass-card" id="disclaimer">
-                <div class="card-tag">// Протокол необратимости</div>
-                <div class="disclaimer-title">ВЫ ВХОДИТЕ В Z-CITY</div>
+            <div class="disclaimer protocol-card" id="disclaimer">
+                <div class="protocol-stripe"></div>
+                <div class="protocol-corner tl"></div>
+                <div class="protocol-corner tr"></div>
+                <div class="protocol-corner bl"></div>
+                <div class="protocol-corner br"></div>
+                <div class="card-tag warn">перед входом</div>
+                <div class="disclaimer-title">ВАЖНО ЗНАТЬ</div>
                 <div class="disclaimer-body">
-                    В этом городе <strong>смерть — не ошибка и не откат</strong>. Это конец. Ваш персонаж перестаёт существовать навсегда — без исключений, без возврата.<br><br>
-                    Новая жизнь — <strong>другой человек</strong>: другое имя, другая история, другая одежда. Всё, что вы построили, исчезает с последним вдохом.<br><br>
-                    Каждое решение — ваша ответственность. <strong>Город не прощает.</strong>
+                    Умер — персонаж удаляется. <strong>Полностью.</strong> Новый заход — другой человек, другое имя, другая история.<br><br>
+                    Откатов нет. Админы не восстанавливают. Спорить с этим бессмысленно — так устроен сервер.<br><br>
+                    Остаёшься — играешь сам. <strong>Каждый выбор на тебе.</strong>
                 </div>
                 <div class="disclaimer-divider"></div>
-                <div class="disclaimer-foot">Нажимая кнопку, вы принимаете условия permadeath-сервера.</div>
+                <div class="disclaimer-foot">Нажимая «Войти», ты это принимаешь.</div>
             </div>
         </div>
     </div>
 
-    <div class="enter-wrap" id="enterWrap">
+    <div class="enter-wrap ui-fade" id="enterWrap">
         <button class="enter-btn" id="enterBtn" onclick="onEnterClick()">
             <div class="enter-btn-inner">
                 <div class="enter-btn-corners"><span></span><span></span><span></span><span></span></div>
                 <div class="enter-btn-label">ВОЙТИ<span class="enter-arrow">→</span></div>
+                <div class="enter-btn-bar"></div>
             </div>
         </button>
     </div>
@@ -485,95 +620,109 @@
         function drawRainStreak(ctx, s) {
             var ex = s.x + s.dx * s.len;
             var ey = s.y + s.dy * s.len;
-            ctx.strokeStyle = 'rgba(185,205,228,' + s.a + ')';
-            ctx.lineWidth = s.w;
             ctx.lineCap = 'round';
+            ctx.strokeStyle = 'rgba(160,180,205,' + (s.a * 0.38) + ')';
+            ctx.lineWidth = s.w * 2.6;
             ctx.beginPath();
             ctx.moveTo(s.x, s.y);
             ctx.lineTo(ex, ey);
             ctx.stroke();
+            ctx.strokeStyle = 'rgba(210,225,240,' + s.a + ')';
+            ctx.lineWidth = s.w;
+            ctx.beginPath();
+            ctx.moveTo(s.x + s.dx * s.len * 0.08, s.y + s.dy * s.len * 0.08);
+            ctx.lineTo(ex, ey);
+            ctx.stroke();
+        }
+
+        function drawGlassBead(ctx, x, y, r) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.scale(1.7, 0.42);
+            ctx.fillStyle = 'rgba(80,110,140,0.07)';
+            ctx.beginPath();
+            ctx.arc(0, r * 0.15, r * 1.6, 0, 6.28318);
+            ctx.fill();
+            ctx.scale(1 / 1.7, 1 / 0.42);
+            ctx.scale(1.25, 0.58);
+            ctx.fillStyle = 'rgba(115,145,175,0.28)';
+            ctx.beginPath();
+            ctx.arc(0, 0, r, 0, 6.28318);
+            ctx.fill();
+            ctx.fillStyle = 'rgba(255,255,255,0.58)';
+            ctx.beginPath();
+            ctx.arc(-r * 0.36, -r * 0.32, r * 0.17, 0, 6.28318);
+            ctx.fill();
+            ctx.fillStyle = 'rgba(40,60,80,0.2)';
+            ctx.beginPath();
+            ctx.arc(0, r * 0.35, r * 0.55, 0, 3.14159);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function drawGlassSlide(ctx, d) {
+            var x = d.x, y = d.y, r = d.r;
+            var trail = Math.min(d.vy * 5 + r * 1.5, 14);
+            ctx.fillStyle = 'rgba(120,155,185,0.12)';
+            ctx.fillRect(x - r * 0.15, y + r * 0.1, r * 0.3, trail);
+            ctx.fillStyle = 'rgba(145,175,205,0.34)';
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, 6.28318);
+            ctx.fill();
+            ctx.fillStyle = 'rgba(255,255,255,0.52)';
+            ctx.beginPath();
+            ctx.arc(x - r * 0.32, y - r * 0.28, r * 0.2, 0, 6.28318);
+            ctx.fill();
+            ctx.fillStyle = 'rgba(35,55,75,0.22)';
+            ctx.beginPath();
+            ctx.arc(x, y + r * 0.55, r * 0.42, 0, 3.14159);
+            ctx.fill();
         }
 
         function drawGlassDrop(ctx, d) {
-            var x = d.x, y = d.y, r = d.r;
-
             if (d.type === 'bead') {
-                ctx.save();
-                ctx.translate(x, y);
-                ctx.scale(1.2, 0.62);
-                ctx.beginPath();
-                ctx.arc(0, 0, r, 0, 6.28318);
-                ctx.fillStyle = 'rgba(130,165,195,0.22)';
-                ctx.fill();
-                ctx.beginPath();
-                ctx.arc(-r * 0.28, -r * 0.22, r * 0.32, 0, 6.28318);
-                ctx.fillStyle = 'rgba(255,255,255,0.38)';
-                ctx.fill();
-                ctx.restore();
-                return;
+                drawGlassBead(ctx, d.x, d.y, d.r);
+            } else {
+                drawGlassSlide(ctx, d);
             }
-
-            if (d.vy > 0.35) {
-                var tLen = Math.min(d.vy * 7, r * 6 + 4);
-                ctx.strokeStyle = 'rgba(140,175,205,' + Math.min(0.32, d.vy * 0.14) + ')';
-                ctx.lineWidth = Math.max(0.35, r * 0.38);
-                ctx.lineCap = 'round';
-                ctx.beginPath();
-                ctx.moveTo(x, y + r * 0.2);
-                ctx.lineTo(x + d.vx * 10, y + tLen);
-                ctx.stroke();
-            }
-
-            ctx.save();
-            ctx.translate(x, y);
-            ctx.beginPath();
-            ctx.moveTo(0, -r * 1.05);
-            ctx.quadraticCurveTo(r * 0.9, -r * 0.15, 0, r * 1.0);
-            ctx.quadraticCurveTo(-r * 0.9, -r * 0.15, 0, -r * 1.05);
-            ctx.fillStyle = 'rgba(105,140,170,0.34)';
-            ctx.fill();
-            ctx.beginPath();
-            ctx.moveTo(0, -r * 0.55);
-            ctx.quadraticCurveTo(r * 0.35, -r * 0.35, 0, r * 0.15);
-            ctx.quadraticCurveTo(-r * 0.35, -r * 0.35, 0, -r * 0.55);
-            ctx.fillStyle = 'rgba(255,255,255,0.42)';
-            ctx.fill();
-            ctx.restore();
         }
 
         function buildFxParticles() {
             rainStreaks = [];
             glassDrops = [];
-            var count = Math.floor(fxW / 10);
-            if (count < 55) count = 55;
-            if (count > 90) count = 90;
-            for (var i = 0; i < count; i++) {
-                var near = Math.random() > 0.5;
+            var rainCount = Math.floor(fxW / 7);
+            if (rainCount < 72) rainCount = 72;
+            if (rainCount > 118) rainCount = 118;
+            var i, layer, s;
+            for (i = 0; i < rainCount; i++) {
+                layer = Math.random();
+                s = layer > 0.58 ? 'far' : (layer > 0.26 ? 'mid' : 'near');
                 rainStreaks.push({
                     x: Math.random() * fxW,
                     y: Math.random() * fxH,
-                    len: near ? Math.random() * 16 + 9 : Math.random() * 26 + 12,
-                    speed: near ? Math.random() * 12 + 16 : Math.random() * 9 + 11,
-                    w: near ? Math.random() * 0.7 + 0.45 : Math.random() * 0.45 + 0.25,
-                    a: near ? Math.random() * 0.12 + 0.07 : Math.random() * 0.06 + 0.025,
-                    dx: -0.16,
+                    len: s === 'near' ? Math.random() * 16 + 12 : (s === 'mid' ? Math.random() * 22 + 16 : Math.random() * 32 + 20),
+                    speed: s === 'near' ? Math.random() * 16 + 20 : (s === 'mid' ? Math.random() * 12 + 15 : Math.random() * 9 + 10),
+                    w: s === 'near' ? Math.random() * 0.65 + 0.55 : (s === 'mid' ? Math.random() * 0.48 + 0.35 : Math.random() * 0.32 + 0.2),
+                    a: s === 'near' ? Math.random() * 0.14 + 0.11 : (s === 'mid' ? Math.random() * 0.1 + 0.065 : Math.random() * 0.06 + 0.03),
+                    dx: -0.14,
                     dy: 1
                 });
             }
-            var dropCount = Math.floor((fxW * fxH) / 6200);
-            if (dropCount < 55) dropCount = 55;
-            if (dropCount > 110) dropCount = 110;
-            for (var j = 0; j < dropCount; j++) {
-                var bead = Math.random() < 0.32;
-                var r = bead ? Math.random() * 0.85 + 0.35 : Math.random() * 2.6 + 1.0;
+            var dropCount = Math.floor((fxW * fxH) / 16000);
+            if (dropCount < 18) dropCount = 18;
+            if (dropCount > 38) dropCount = 38;
+            for (i = 0; i < dropCount; i++) {
+                var roll = Math.random();
+                var isBead = roll < 0.78;
+                var r = isBead ? Math.random() * 0.7 + 0.35 : Math.random() * 1.8 + 0.85;
                 var bias = Math.random();
                 glassDrops.push({
-                    type: bead ? 'bead' : 'slide',
+                    type: isBead ? 'bead' : 'slide',
                     x: Math.random() * fxW,
-                    y: bias * bias * fxH * 0.9,
+                    y: bias * bias * fxH * 0.82 + fxH * 0.04,
                     r: r,
-                    vy: bead ? Math.random() * 0.14 + 0.04 : Math.random() * 1.2 + 0.55,
-                    vx: Math.random() * 0.07 - 0.035
+                    vy: isBead ? Math.random() * 0.05 + 0.01 : Math.random() * 0.75 + 0.35,
+                    vx: Math.random() * 0.05 - 0.025
                 });
             }
         }
@@ -611,12 +760,12 @@
                 drawGlassDrop(fxCtx, d);
                 d.y += d.vy;
                 d.x += d.vx;
-                if (d.type === 'slide' && d.vy < 2.4) d.vy += 0.012;
+                if (d.type === 'slide' && d.vy < 1.6) d.vy += 0.006;
                 if (d.y > fxH + d.r * 3) {
-                    d.y = -d.r * 2;
+                    d.y = -d.r * 2 - Math.random() * 40;
                     d.x = Math.random() * fxW;
                     if (d.type === 'slide') {
-                        d.vy = Math.random() * 1.2 + 0.55;
+                        d.vy = Math.random() * 0.75 + 0.35;
                     }
                 }
             }
@@ -644,8 +793,13 @@
             if (!logo) return;
             var text = (logo.textContent || 'Z-CITY RPH').replace(/\s+/g, ' ').trim();
             var html = '';
-            for (var i = 0; i < text.length; i++) {
-                html += '<span class="logo-char">' + (text[i] === ' ' ? '&nbsp;' : text[i]) + '</span>';
+            var ci, ch, cls;
+            for (ci = 0; ci < text.length; ci++) {
+                ch = text[ci];
+                cls = 'logo-char';
+                if (ch === '-') cls += ' dim';
+                if (ch === 'R' || ch === 'P' || ch === 'H') cls += ' accent';
+                html += '<span class="' + cls + '">' + (ch === ' ' ? '&nbsp;' : ch) + '</span>';
             }
             logo.innerHTML = html;
             logoChars = logo.getElementsByTagName('span');
@@ -793,33 +947,70 @@
                 btn.className = 'enter-btn show';
             }
 
-            setTimeout(function() { disclaimer.className = 'disclaimer glass-card show'; }, 30);
+            setTimeout(function() { disclaimer.className = 'disclaimer protocol-card show'; }, 30);
             setTimeout(revealBtn, READ_DELAY_MS + 800);
         }
 
-        function triggerExit() {
+        var EXIT_SEQUENCE = [
+            'tapeA',
+            'tapeB',
+            'enterWrap',
+            'introStack',
+            'logoZone',
+            'hudCoords',
+            'hudTop',
+            'edgeTop',
+            'edgeBottom',
+            'edgeLeft',
+            'edgeRight',
+            'sceneFrame',
+            'glassCanvas',
+            'flashLayer',
+            'vignette',
+            'letterboxTop',
+            'letterboxBottom'
+        ];
+
+        function addExitClass(id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            if (el.className.indexOf('exit-out') === -1) {
+                el.className = el.className + ' exit-out';
+            }
+        }
+
+        function resizeTapes() {
+            var w = window.innerWidth || 800;
+            var h = window.innerHeight || 600;
+            var diag = Math.sqrt(w * w + h * h);
+            var tapeLen = Math.ceil(diag * 2.15);
+            var tapes = document.querySelectorAll('.police-tape');
+            var i;
+            for (i = 0; i < tapes.length; i++) {
+                tapes[i].style.width = tapeLen + 'px';
+                tapes[i].style.marginLeft = (-tapeLen * 0.5) + 'px';
+            }
+        }
+
+        function runExitSequence(done) {
             animRunning = false;
-            document.getElementById('logo').className = 'logo-container fly-up';
-            document.getElementById('logoZone').className = 'logo-zone exit-fade';
-            var fl = document.getElementById('flashLayer');
-            if (fl) fl.className = 'flash-layer exit-fade';
-            var tl = document.getElementById('tapeLayer');
-            if (tl) tl.className = 'tape-layer exit-fade';
-            var sf = document.getElementById('sceneFrame');
-            if (sf) sf.className = 'scene-frame exit-fade';
-            var glass = document.getElementById('glassCanvas');
-            if (glass) glass.className = 'exit-fade';
-            var vig = document.getElementById('vignette');
-            if (vig) vig.className = 'vignette exit-fade';
-            document.getElementById('disclaimer').style.opacity = '0';
-            document.getElementById('enterBtn').style.opacity = '0';
+            document.body.className = 'mode-intro is-exiting';
+            var i;
+            for (i = 0; i < EXIT_SEQUENCE.length; i++) {
+                addExitClass(EXIT_SEQUENCE[i]);
+            }
+            setTimeout(function() {
+                if (done) done();
+            }, 580);
         }
 
         function onEnterClick() {
             if (enterLocked) return;
             enterLocked = true;
-            triggerExit();
-            if (window.gmod && window.gmod.onEnter) window.gmod.onEnter();
+            if (window.gmod && window.gmod.onEnterStart) window.gmod.onEnterStart();
+            runExitSequence(function() {
+                if (window.gmod && window.gmod.onEnter) window.gmod.onEnter();
+            });
         }
 
         function setProgress(pct) {}
@@ -831,9 +1022,11 @@
         function GameDetails() {}
 
         initFlashes();
+        resizeTapes();
         resizeFx();
         if (window.addEventListener) {
             window.addEventListener('resize', function() {
+                resizeTapes();
                 resizeFx();
                 setTimeout(cacheLogoCharPositions, 80);
             });
