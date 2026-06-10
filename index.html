@@ -30,38 +30,40 @@
         .flash-layer.exit-fade { opacity: 0; }
 
         .flash-red, .flash-blue {
-            position: absolute; top: -10%; height: 120%;
-            width: 65%; opacity: 0;
-            transition: opacity 1.1s ease;
+            position: absolute; top: -12%; height: 124%;
+            width: 58%; opacity: 0;
         }
-        .flash-red { left: -8%; }
-        .flash-blue { right: -8%; }
-
-        .flash-red.on {
-            opacity: 1;
-            background: radial-gradient(ellipse 95% 80% at 18% 48%,
-                rgba(255, 45, 45, 0.5) 0%,
-                rgba(200, 15, 15, 0.22) 42%,
-                rgba(80, 0, 0, 0.06) 65%,
-                transparent 82%);
-            animation: breatheRed 2.8s ease-in-out infinite;
+        .flash-red {
+            left: 2%;
+            background: radial-gradient(ellipse 88% 78% at 34% 46%,
+                rgba(255, 30, 30, 0.78) 0%,
+                rgba(220, 10, 10, 0.42) 32%,
+                rgba(120, 0, 0, 0.14) 58%,
+                transparent 78%);
+            animation: strobeRed 0.68s ease-out infinite;
         }
-        .flash-blue.on {
-            opacity: 1;
-            background: radial-gradient(ellipse 95% 80% at 82% 48%,
-                rgba(45, 85, 255, 0.5) 0%,
-                rgba(15, 40, 200, 0.22) 42%,
-                rgba(0, 15, 80, 0.06) 65%,
-                transparent 82%);
-            animation: breatheBlue 2.8s ease-in-out infinite;
+        .flash-blue {
+            right: 2%;
+            background: radial-gradient(ellipse 88% 78% at 66% 46%,
+                rgba(35, 75, 255, 0.78) 0%,
+                rgba(10, 35, 210, 0.42) 32%,
+                rgba(0, 12, 90, 0.14) 58%,
+                transparent 78%);
+            animation: strobeBlue 0.68s ease-out infinite;
         }
-        @keyframes breatheRed {
-            0%, 100% { opacity: 0.55; }
-            50% { opacity: 0.92; }
+        @keyframes strobeBlue {
+            0%   { opacity: 0; }
+            6%   { opacity: 0.98; }
+            14%  { opacity: 0.55; }
+            24%  { opacity: 0; }
+            100% { opacity: 0; }
         }
-        @keyframes breatheBlue {
-            0%, 100% { opacity: 0.55; }
-            50% { opacity: 0.92; }
+        @keyframes strobeRed {
+            0%, 46% { opacity: 0; }
+            52%     { opacity: 0.98; }
+            60%     { opacity: 0.55; }
+            70%     { opacity: 0; }
+            100%    { opacity: 0; }
         }
 
         /* ── Оградительные ленты ── */
@@ -74,9 +76,9 @@
 
         .police-tape {
             position: absolute;
-            width: 240%;
+            width: 360%;
             height: 34px;
-            left: -70%;
+            left: -130%;
             background: repeating-linear-gradient(
                 -42deg,
                 #d4a800 0px, #d4a800 16px,
@@ -105,9 +107,9 @@
             animation: tapeSwayA 7s ease-in-out infinite;
         }
         .tape-b {
-            top: 54%;
+            top: 50%;
             margin-top: -17px;
-            transform: rotate(22deg);
+            transform: rotate(24deg);
             animation: tapeSwayB 8.5s ease-in-out infinite;
         }
         @keyframes tapeSwayA {
@@ -361,7 +363,7 @@
 </head>
 <body>
     <div class="flash-layer" id="flashLayer">
-        <div class="flash-red on" id="flashRed"></div>
+        <div class="flash-red" id="flashRed"></div>
         <div class="flash-blue" id="flashBlue"></div>
     </div>
 
@@ -478,61 +480,100 @@
             "ONE LIFE — ONE CHANCE"
         ];
 
-        function initFlashes() {
-            var red = document.getElementById('flashRed');
-            var blue = document.getElementById('flashBlue');
-            var showRed = true;
-            setInterval(function() {
-                showRed = !showRed;
-                if (showRed) {
-                    red.className = 'flash-red on';
-                    blue.className = 'flash-blue';
-                } else {
-                    red.className = 'flash-red';
-                    blue.className = 'flash-blue on';
-                }
-            }, 1400);
+        function initFlashes() {}
+
+        function drawRainStreak(ctx, s) {
+            var ex = s.x + s.dx * s.len;
+            var ey = s.y + s.dy * s.len;
+            ctx.strokeStyle = 'rgba(185,205,228,' + s.a + ')';
+            ctx.lineWidth = s.w;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(s.x, s.y);
+            ctx.lineTo(ex, ey);
+            ctx.stroke();
         }
 
-        function drawWaterDrop(ctx, x, y, r) {
-            ctx.beginPath();
-            ctx.arc(x, y, r, 0, 6.28318);
-            ctx.fillStyle = 'rgba(185, 205, 225, 0.32)';
-            ctx.fill();
-            if (r > 0.7) {
+        function drawGlassDrop(ctx, d) {
+            var x = d.x, y = d.y, r = d.r;
+
+            if (d.type === 'bead') {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.scale(1.2, 0.62);
                 ctx.beginPath();
-                ctx.arc(x - r * 0.32, y - r * 0.32, r * 0.28, 0, 6.28318);
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.arc(0, 0, r, 0, 6.28318);
+                ctx.fillStyle = 'rgba(130,165,195,0.22)';
                 ctx.fill();
+                ctx.beginPath();
+                ctx.arc(-r * 0.28, -r * 0.22, r * 0.32, 0, 6.28318);
+                ctx.fillStyle = 'rgba(255,255,255,0.38)';
+                ctx.fill();
+                ctx.restore();
+                return;
             }
+
+            if (d.vy > 0.35) {
+                var tLen = Math.min(d.vy * 7, r * 6 + 4);
+                ctx.strokeStyle = 'rgba(140,175,205,' + Math.min(0.32, d.vy * 0.14) + ')';
+                ctx.lineWidth = Math.max(0.35, r * 0.38);
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(x, y + r * 0.2);
+                ctx.lineTo(x + d.vx * 10, y + tLen);
+                ctx.stroke();
+            }
+
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.beginPath();
+            ctx.moveTo(0, -r * 1.05);
+            ctx.quadraticCurveTo(r * 0.9, -r * 0.15, 0, r * 1.0);
+            ctx.quadraticCurveTo(-r * 0.9, -r * 0.15, 0, -r * 1.05);
+            ctx.fillStyle = 'rgba(105,140,170,0.34)';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(0, -r * 0.55);
+            ctx.quadraticCurveTo(r * 0.35, -r * 0.35, 0, r * 0.15);
+            ctx.quadraticCurveTo(-r * 0.35, -r * 0.35, 0, -r * 0.55);
+            ctx.fillStyle = 'rgba(255,255,255,0.42)';
+            ctx.fill();
+            ctx.restore();
         }
 
         function buildFxParticles() {
             rainStreaks = [];
             glassDrops = [];
-            var count = Math.floor(fxW / 14);
-            if (count < 40) count = 40;
-            if (count > 75) count = 75;
+            var count = Math.floor(fxW / 10);
+            if (count < 55) count = 55;
+            if (count > 90) count = 90;
             for (var i = 0; i < count; i++) {
+                var near = Math.random() > 0.5;
                 rainStreaks.push({
                     x: Math.random() * fxW,
                     y: Math.random() * fxH,
-                    len: Math.random() * 12 + 5,
-                    speed: Math.random() * 8 + 6,
-                    a: Math.random() * 0.1 + 0.05
+                    len: near ? Math.random() * 16 + 9 : Math.random() * 26 + 12,
+                    speed: near ? Math.random() * 12 + 16 : Math.random() * 9 + 11,
+                    w: near ? Math.random() * 0.7 + 0.45 : Math.random() * 0.45 + 0.25,
+                    a: near ? Math.random() * 0.12 + 0.07 : Math.random() * 0.06 + 0.025,
+                    dx: -0.16,
+                    dy: 1
                 });
             }
-            var dropCount = Math.floor((fxW * fxH) / 5500);
-            if (dropCount < 70) dropCount = 70;
-            if (dropCount > 140) dropCount = 140;
+            var dropCount = Math.floor((fxW * fxH) / 6200);
+            if (dropCount < 55) dropCount = 55;
+            if (dropCount > 110) dropCount = 110;
             for (var j = 0; j < dropCount; j++) {
+                var bead = Math.random() < 0.32;
+                var r = bead ? Math.random() * 0.85 + 0.35 : Math.random() * 2.6 + 1.0;
                 var bias = Math.random();
                 glassDrops.push({
+                    type: bead ? 'bead' : 'slide',
                     x: Math.random() * fxW,
-                    y: bias * bias * fxH,
-                    r: Math.random() * 1.6 + 0.5,
-                    vy: Math.random() * 0.28 + 0.08,
-                    vx: Math.random() * 0.04 - 0.02
+                    y: bias * bias * fxH * 0.9,
+                    r: r,
+                    vy: bead ? Math.random() * 0.14 + 0.04 : Math.random() * 1.2 + 0.55,
+                    vx: Math.random() * 0.07 - 0.035
                 });
             }
         }
@@ -555,30 +596,28 @@
             if (!fxCtx) return;
             var i, s, d;
             fxCtx.clearRect(0, 0, fxW, fxH);
-            fxCtx.lineCap = 'round';
             for (i = 0; i < rainStreaks.length; i++) {
                 s = rainStreaks[i];
-                fxCtx.strokeStyle = 'rgba(175,195,220,' + s.a + ')';
-                fxCtx.lineWidth = 0.5;
-                fxCtx.beginPath();
-                fxCtx.moveTo(s.x, s.y);
-                fxCtx.lineTo(s.x - 1, s.y + s.len);
-                fxCtx.stroke();
+                drawRainStreak(fxCtx, s);
                 s.y += s.speed;
-                s.x -= 0.5;
-                if (s.y > fxH + 10) {
-                    s.y = -s.len;
+                s.x += s.speed * s.dx;
+                if (s.y > fxH + 16) {
+                    s.y = -s.len - Math.random() * 30;
                     s.x = Math.random() * fxW;
                 }
             }
             for (i = 0; i < glassDrops.length; i++) {
                 d = glassDrops[i];
-                drawWaterDrop(fxCtx, d.x, d.y, d.r);
+                drawGlassDrop(fxCtx, d);
                 d.y += d.vy;
                 d.x += d.vx;
-                if (d.y > fxH + 8) {
-                    d.y = -6;
+                if (d.type === 'slide' && d.vy < 2.4) d.vy += 0.012;
+                if (d.y > fxH + d.r * 3) {
+                    d.y = -d.r * 2;
                     d.x = Math.random() * fxW;
+                    if (d.type === 'slide') {
+                        d.vy = Math.random() * 1.2 + 0.55;
+                    }
                 }
             }
         }
