@@ -2,1042 +2,217 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Z-CITY RPH</title>
+    <title>Z-CITY RPH // LOADING SCREEN</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=IBM+Plex+Sans:wght@300;400;600&family=JetBrains+Mono:wght@300;400&display=swap');
 
         :root {
-            --fg: #ececec;
-            --muted: rgba(180,180,180,0.55);
-            --line: rgba(255,255,255,0.12);
+            --bg-dark: #070709;
+            --accent-red: #ff3333;
+            --accent-blue: #0066ff;
+            --text-main: #f0f0f2;
+            --text-muted: rgba(240, 240, 242, 0.4);
+            --border-color: rgba(255, 255, 255, 0.05);
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         html, body {
             width: 100%; height: 100%; overflow: hidden;
-            background: #000; color: var(--fg);
+            background: var(--bg-dark); color: var(--text-main);
             font-family: 'IBM Plex Sans', sans-serif;
-            cursor: default; user-select: none;
+            user-select: none; cursor: default;
         }
 
-        /* ── Фон: чистая тьма + мигалки ── */
-        .flash-layer {
+        /* Фоновая сетка и эффекты */
+        .grid-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 2; pointer-events: none;
-            transition: opacity 1.8s ease;
-        }
-        .flash-layer.exit-fade { opacity: 0; }
-
-        .flash-red, .flash-blue {
-            position: absolute; top: -12%; height: 124%;
-            width: 58%; opacity: 0;
-        }
-        .flash-red {
-            left: 2%;
-            background: radial-gradient(ellipse 88% 78% at 34% 46%,
-                rgba(255, 30, 30, 0.78) 0%,
-                rgba(220, 10, 10, 0.42) 32%,
-                rgba(120, 0, 0, 0.14) 58%,
-                transparent 78%);
-            animation: strobeRed 0.68s ease-out infinite;
-        }
-        .flash-blue {
-            right: 2%;
-            background: radial-gradient(ellipse 88% 78% at 66% 46%,
-                rgba(35, 75, 255, 0.78) 0%,
-                rgba(10, 35, 210, 0.42) 32%,
-                rgba(0, 12, 90, 0.14) 58%,
-                transparent 78%);
-            animation: strobeBlue 0.68s ease-out infinite;
-        }
-        @keyframes strobeBlue {
-            0%   { opacity: 0; }
-            6%   { opacity: 0.98; }
-            14%  { opacity: 0.55; }
-            24%  { opacity: 0; }
-            100% { opacity: 0; }
-        }
-        @keyframes strobeRed {
-            0%, 46% { opacity: 0; }
-            52%     { opacity: 0.98; }
-            60%     { opacity: 0.55; }
-            70%     { opacity: 0; }
-            100%    { opacity: 0; }
+            background-image: linear-gradient(var(--border-color) 1px, transparent 1px),
+                              linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 40px 40px; z-index: 1; pointer-events: none;
+            opacity: 0.5;
         }
 
-        /* ── Оградительные ленты ── */
-        .tape-layer {
+        .scanlines {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 3; pointer-events: none; overflow: visible;
-        }
-
-        .police-tape {
-            position: absolute;
-            left: 50%;
-            height: 42px;
-            margin-top: -21px;
-            transform-origin: center center;
-            opacity: 0.92;
-            transition: opacity 0.55s ease;
-        }
-        .tape-body {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(
-                -43deg,
-                #f0c800 0px, #f0c800 19px,
-                #080808 19px, #080808 38px
-            );
-            box-shadow:
-                0 3px 10px rgba(0,0,0,0.65),
-                0 12px 36px rgba(0,0,0,0.4),
-                inset 0 2px 0 rgba(255,255,255,0.28),
-                inset 0 -2px 0 rgba(0,0,0,0.4);
-        }
-        .tape-body::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; height: 3px;
-            background: linear-gradient(90deg, transparent, rgba(255,80,60,0.55), transparent);
-            opacity: 0.7;
-        }
-        .tape-body::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0; right: 0; height: 3px;
-            background: linear-gradient(90deg, transparent, rgba(255,80,60,0.55), transparent);
-            opacity: 0.7;
-        }
-        .tape-shine {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(180deg,
-                rgba(255,255,255,0.22) 0%,
-                rgba(255,255,255,0.06) 38%,
-                transparent 58%,
-                rgba(0,0,0,0.1) 100%);
-            pointer-events: none;
-        }
-        .tape-edge {
-            position: absolute;
-            top: 0; width: 2px; height: 100%;
-            background: rgba(0,0,0,0.25);
-            pointer-events: none;
-        }
-        .tape-edge.l { left: 0; }
-        .tape-edge.r { right: 0; }
-        .tape-text {
-            display: block;
-            position: relative;
-            width: 100%; height: 100%;
-            line-height: 42px;
-            font-family: 'Oswald', sans-serif;
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.38em;
-            color: rgba(0,0,0,0.88);
-            white-space: nowrap;
-            overflow: hidden;
-            text-transform: uppercase;
-            text-shadow: 0 1px 0 rgba(255,255,255,0.15);
-        }
-        .tape-a {
-            top: 50%;
-            transform: rotate(-26deg);
-            animation: tapeSwayA 7s ease-in-out infinite;
-        }
-        .tape-b {
-            top: 50%;
-            transform: rotate(24deg);
-            animation: tapeSwayB 8.5s ease-in-out infinite;
-        }
-        .police-tape.exit-out {
-            animation: none !important;
-            opacity: 0;
-            pointer-events: none;
-        }
-        @keyframes tapeSwayA {
-            0%, 100% { margin-top: -21px; }
-            50% { margin-top: -14px; }
-        }
-        @keyframes tapeSwayB {
-            0%, 100% { margin-top: -21px; }
-            50% { margin-top: -28px; }
+            background: linear-gradient(rgba(18, 18, 18, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 4px, 6px 100%; z-index: 2; pointer-events: none;
         }
 
         .vignette {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 4; pointer-events: none;
-            background: radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.72) 100%);
-            transition: opacity 1.5s ease;
-        }
-        .vignette.exit-fade { opacity: 0; }
-
-        .letterbox {
-            position: fixed; left: 0; width: 100%; height: 5vh;
-            z-index: 5; pointer-events: none; background: #000;
-        }
-        .letterbox.top { top: 0; }
-        .letterbox.bottom { bottom: 0; }
-
-        #glassCanvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 8; pointer-events: none;
-            transition: opacity 1.5s ease;
-        }
-        #glassCanvas.exit-fade { opacity: 0; }
-
-        .scene-frame {
-            position: fixed; top: 14px; left: 14px; right: 14px; bottom: 14px;
-            z-index: 20; pointer-events: none;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: opacity 1.5s ease;
-        }
-        .scene-frame.exit-fade { opacity: 0; }
-
-        .hud-bracket {
-            position: absolute; width: 28px; height: 28px;
-            border-color: rgba(255,255,255,0.22); border-style: solid; border-width: 0;
-        }
-        .hud-bracket.tl { top: 0; left: 0; border-top-width: 1px; border-left-width: 1px; }
-        .hud-bracket.tr { top: 0; right: 0; border-top-width: 1px; border-right-width: 1px; }
-        .hud-bracket.bl { bottom: 0; left: 0; border-bottom-width: 1px; border-left-width: 1px; }
-        .hud-bracket.br { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px; }
-
-        .edge-marquee {
-            position: fixed; z-index: 22; pointer-events: none; overflow: hidden;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: clamp(11px, 1.2vw, 14px);
-            letter-spacing: 0.2em;
-            color: rgba(255,255,255,0.34);
-            text-transform: uppercase;
-        }
-        .edge-marquee.top { top: 0; left: 0; right: 0; height: 18px; line-height: 18px; }
-        .edge-marquee.bottom { bottom: 0; left: 0; right: 0; height: 18px; line-height: 18px; }
-        .edge-marquee.left { left: 0; top: 20px; bottom: 20px; width: 18px; }
-        .edge-marquee.right { right: 0; top: 20px; bottom: 20px; width: 18px; }
-
-        .edge-track-h {
-            display: inline-block; white-space: nowrap;
-            animation: scrollH 55s linear infinite;
-        }
-        .edge-track-h.rev { animation-direction: reverse; animation-duration: 62s; }
-        @keyframes scrollH {
-            0% { margin-left: 0; }
-            100% { margin-left: -50%; }
-        }
-        .edge-track-v {
-            display: inline-block; writing-mode: vertical-rl;
-            text-orientation: mixed; white-space: nowrap;
-            animation: scrollV 48s linear infinite;
-        }
-        .edge-track-v.rev { animation-direction: reverse; animation-duration: 58s; }
-        @keyframes scrollV {
-            0% { margin-top: 0; }
-            100% { margin-top: -50%; }
+            background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.85) 100%);
+            z-index: 3; pointer-events: none;
         }
 
-        .hud-top {
-            position: fixed; top: 22px; left: 0; width: 100%;
-            z-index: 25; text-align: center;
-            font-family: 'JetBrains Mono', monospace; font-size: 9px;
-            letter-spacing: 0.28em; color: var(--muted); text-transform: uppercase;
-        }
-        .hud-dot {
-            display: inline-block; width: 4px; height: 4px; border-radius: 50%;
-            background: #fff; margin-right: 8px; vertical-align: middle;
-            animation: dotBlink 2s ease-in-out infinite;
-        }
-        @keyframes dotBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
-
-        .hud-bottom {
-            position: fixed; bottom: 24px; left: 0; width: 100%;
-            z-index: 25; text-align: center;
-            font-family: 'JetBrains Mono', monospace; font-size: 8px;
-            letter-spacing: 0.18em; color: rgba(255,255,255,0.22);
+        /* Контейнер интерфейса */
+        .hud-container {
+            position: relative; width: 100%; height: 100%;
+            padding: 50px; z-index: 10;
+            display: flex; flex-direction: column; justify-content: space-between;
         }
 
-        body.mode-intro .phrase-zone { display: none !important; }
-        body:not(.mode-intro) .intro-stack { display: none !important; }
-        body:not(.mode-intro) .enter-wrap { display: none !important; }
-
-        .logo-zone {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 30; pointer-events: none;
-            transition: opacity 1s ease;
-        }
-        .logo-zone.exit-fade { opacity: 0; }
-
-        .logo-anchor {
-            position: absolute; top: 30%; left: 0; width: 100%;
-            text-align: center;
-        }
-        body.mode-intro .logo-anchor { top: 16%; }
-
-        .logo-block { display: inline-block; text-align: center; }
-
-        .logo-container {
-            position: relative;
-            padding: 18px 28px 14px;
-            transition: opacity 0.55s ease;
-        }
-        .logo-container.fly-up { margin-top: -200px; opacity: 0; }
-
-        .logo-back-glow {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(ellipse 80% 60% at 50% 45%,
-                rgba(160,185,220,0.1) 0%, transparent 72%);
-            pointer-events: none;
-        }
-        .logo-pre {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 8px; letter-spacing: 0.42em;
-            color: rgba(255,255,255,0.32); margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-        .logo {
-            font-family: 'Oswald', sans-serif;
-            font-size: clamp(46px, 7.8vw, 92px);
-            font-weight: 700; letter-spacing: 0.16em;
-            line-height: 1.05; text-align: center; white-space: nowrap;
-        }
-        .logo-char { display: inline-block; position: relative; color: rgba(245,245,248,0.96); }
-        .logo-char.accent { color: rgba(195,215,245,0.98); }
-        .logo-char.dim { color: rgba(255,255,255,0.42); font-weight: 500; }
-        .logo-line {
-            width: min(220px, 42vw); height: 1px; margin: 14px auto 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-        }
-        .logo-ticks span {
-            position: absolute; width: 14px; height: 14px;
-            border-color: rgba(255,255,255,0.22); border-style: solid; border-width: 0;
-        }
-        .logo-ticks span:nth-child(1) { top: 8px; left: 8px; border-top-width: 1px; border-left-width: 1px; }
-        .logo-ticks span:nth-child(2) { top: 8px; right: 8px; border-top-width: 1px; border-right-width: 1px; }
-        .logo-ticks span:nth-child(3) { bottom: 8px; left: 8px; border-bottom-width: 1px; border-left-width: 1px; }
-        .logo-ticks span:nth-child(4) { bottom: 8px; right: 8px; border-bottom-width: 1px; border-right-width: 1px; }
-
-        .phrase-zone {
-            position: absolute; top: 52%; left: 0; width: 100%;
-            text-align: center; z-index: 28;
-        }
-        .phrase-inner {
-            display: inline-block; width: min(640px, 90vw); text-align: center;
+        /* Верхняя панель */
+        .hud-header {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 2px;
         }
 
-        .glass-card {
-            position: relative; width: 100%;
-            padding: 22px 28px 20px;
-            background: linear-gradient(145deg, rgba(12,12,14,0.94), rgba(6,6,8,0.9));
-            border: 1px solid var(--line);
-            box-shadow: 0 0 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.04);
-            text-align: center;
-        }
-        .protocol-card {
-            position: relative; width: 100%;
-            padding: 26px 30px 22px;
-            background: linear-gradient(168deg, rgba(16,18,22,0.94), rgba(7,8,11,0.9));
-            border: 1px solid rgba(255,255,255,0.14);
-            box-shadow: 0 12px 48px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05);
-            text-align: center;
-        }
-        .protocol-corner {
-            position: absolute; width: 18px; height: 18px;
-            border-color: rgba(255,255,255,0.28); border-style: solid; border-width: 0;
-        }
-        .protocol-corner.tl { top: 10px; left: 10px; border-top-width: 1px; border-left-width: 1px; }
-        .protocol-corner.tr { top: 10px; right: 10px; border-top-width: 1px; border-right-width: 1px; }
-        .protocol-corner.bl { bottom: 10px; left: 10px; border-bottom-width: 1px; border-left-width: 1px; }
-        .protocol-corner.br { bottom: 10px; right: 10px; border-bottom-width: 1px; border-right-width: 1px; }
-        .protocol-stripe {
-            position: absolute; top: 0; left: 0; right: 0; height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(220,60,50,0.65), transparent);
-        }
-        .card-tag {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 8px; letter-spacing: 0.38em; color: rgba(200,200,200,0.38);
-            text-transform: uppercase; margin-bottom: 12px;
-        }
-        .card-tag.warn { color: rgba(220,100,90,0.75); }
-        .card-tag.warn::before {
-            content: ''; display: inline-block;
-            width: 5px; height: 5px; border-radius: 50%;
-            background: rgba(220,70,60,0.9); margin-right: 8px;
-            vertical-align: middle;
-        }
-        .phrase-text {
-            font-size: clamp(13px, 1.5vw, 15px); font-weight: 300;
-            line-height: 1.7; color: rgba(205,205,205,0.9);
-            min-height: 2.8em; transition: opacity 0.6s ease;
-        }
-        .phrase-text.fade-out { opacity: 0; }
-        .phrase-num {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 8px; letter-spacing: 0.22em; color: rgba(255,255,255,0.18);
-            margin-top: 14px;
+        .hud-header .left-meta, .hud-header .right-meta {
+            color: var(--text-muted); text-transform: uppercase;
         }
 
-        .intro-stack {
-            position: absolute; top: 46%; left: 0; width: 100%;
-            text-align: center; z-index: 55;
-        }
-        .intro-inner {
-            display: inline-block; width: min(680px, 92vw); text-align: center;
+        .hud-header span { color: var(--text-main); font-weight: 600; }
+
+        /* Центр: Логотип и подсказки */
+        .hud-center {
+            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
         }
 
-        .disclaimer {
-            width: 100%; opacity: 0; margin-top: 12px;
-            transition: opacity 0.7s ease;
-        }
-        .disclaimer.show { opacity: 1; }
-
-        .disclaimer-title {
-            font-family: 'Oswald', sans-serif;
-            font-size: clamp(20px, 2.4vw, 26px);
-            font-weight: 600; letter-spacing: 0.18em; color: #fff; margin-bottom: 16px;
-        }
-        .disclaimer-body {
-            font-size: clamp(12px, 1.35vw, 14px); line-height: 1.72;
-            color: rgba(175,178,185,0.95); font-weight: 400; text-align: center;
-        }
-        .disclaimer-body strong { color: #ececec; font-weight: 600; }
-        .disclaimer-divider {
-            height: 1px; margin: 18px 0 14px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.14), transparent);
-        }
-        .disclaimer-foot {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 9px; letter-spacing: 0.12em;
-            color: rgba(120,125,135,0.85); font-weight: 400;
+        .main-logo {
+            font-family: 'Oswald', sans-serif; font-size: 90px; font-weight: 700;
+            letter-spacing: 15px; text-transform: uppercase; color: var(--text-main);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            animation: logo-flicker 4s infinite;
         }
 
-        .enter-wrap {
-            position: fixed; bottom: 58px; left: 0; width: 100%;
-            text-align: center; z-index: 65;
-            pointer-events: none;
+        .sub-logo {
+            font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 8px;
+            color: var(--accent-red); text-transform: uppercase; margin-top: -10px; margin-bottom: 40px;
         }
 
-        .enter-btn {
-            display: inline-block; position: relative;
-            width: 240px; height: 52px; padding: 0;
-            background: transparent; border: none; cursor: pointer;
-            opacity: 0; pointer-events: none;
-            vertical-align: top; transition: opacity 0.5s ease;
-        }
-        .enter-btn.show { opacity: 1; pointer-events: auto; }
-
-        .enter-btn-inner {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(180deg, rgba(24,26,30,0.97), rgba(10,11,14,0.97));
-            border: 1px solid rgba(255,255,255,0.26);
-            box-shadow: 0 8px 28px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07);
-        }
-        .enter-btn:hover .enter-btn-inner {
-            border-color: rgba(255,255,255,0.48);
-            box-shadow: 0 10px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.12);
-        }
-        .enter-btn-bar {
-            position: absolute; bottom: 0; left: 12%; right: 12%; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(200,215,235,0.45), transparent);
+        .tip-box {
+            max-width: 600px; min-height: 50px;
+            font-size: 14px; font-weight: 300; color: rgba(255,255,255,0.7);
+            line-height: 1.6; border-left: 2px solid var(--accent-red);
+            padding-left: 20px; text-align: left; transition: opacity 0.4s ease;
         }
 
-        .enter-btn-label {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            font-family: 'Oswald', sans-serif; font-size: 20px;
-            font-weight: 500; color: #ededed;
-            line-height: 52px; text-align: center;
-            white-space: nowrap; letter-spacing: 0.28em;
-        }
-        .enter-arrow {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px; opacity: 0.55; margin-left: 12px; letter-spacing: 0;
+        /* Нижняя панель: Прогресс бар */
+        .hud-footer {
+            display: flex; flex-direction: column; gap: 15px;
         }
 
-        .enter-btn-corners span {
-            position: absolute; width: 12px; height: 12px;
-            border-color: rgba(255,255,255,0.38); border-style: solid; border-width: 0;
+        .status-wrapper {
+            display: flex; justify-content: space-between;
+            font-family: 'JetBrains Mono', monospace; font-size: 11px;
+            text-transform: uppercase; color: var(--text-muted);
         }
-        .enter-btn-corners span:nth-child(1) { top: 5px; left: 5px; border-top-width: 1px; border-left-width: 1px; }
-        .enter-btn-corners span:nth-child(2) { top: 5px; right: 5px; border-top-width: 1px; border-right-width: 1px; }
-        .enter-btn-corners span:nth-child(3) { bottom: 5px; left: 5px; border-bottom-width: 1px; border-left-width: 1px; }
-        .enter-btn-corners span:nth-child(4) { bottom: 5px; right: 5px; border-bottom-width: 1px; border-right-width: 1px; }
 
-        .load-panel { display: none !important; }
+        .current-status { color: var(--text-main); font-weight: 400; }
 
-        .ui-fade {
-            transition: opacity 0.55s ease;
+        .progress-bar-container {
+            width: 100%; height: 4px; background: rgba(255,255,255,0.03);
+            position: relative; border-radius: 2px; overflow: hidden;
         }
-        .ui-fade.exit-out { opacity: 0; pointer-events: none; }
 
-        body.is-exiting .logo-zone.exit-out .logo-container { opacity: 0; }
-        body.is-exiting .flash-layer.exit-out .flash-red,
-        body.is-exiting .flash-layer.exit-out .flash-blue { animation: none; opacity: 0 !important; }
+        .progress-bar-fill {
+            height: 100%; width: 0%; background: var(--text-main);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            transition: width 0.2s ease-out;
+        }
+
+        @keyframes logo-flicker {
+            0%, 100% { opacity: 1; }
+            41% { opacity: 1; }
+            42% { opacity: 0.85; }
+            43% { opacity: 1; }
+            88% { opacity: 1; }
+            89% { opacity: 0.9; }
+            90% { opacity: 1; }
+        }
     </style>
 </head>
 <body>
-    <div class="flash-layer ui-fade" id="flashLayer">
-        <div class="flash-red" id="flashRed"></div>
-        <div class="flash-blue" id="flashBlue"></div>
-    </div>
 
-    <div class="tape-layer" id="tapeLayer">
-        <div class="police-tape tape-a" id="tapeA">
-            <div class="tape-body">
-                <div class="tape-shine"></div>
-                <div class="tape-edge l"></div>
-                <div class="tape-edge r"></div>
-                <span class="tape-text">POLICE LINE DO NOT CROSS /// Z-CITY RPH /// PERMADEATH ZONE /// DO NOT ENTER /// POLICE LINE DO NOT CROSS /// Z-CITY RPH /// PERMADEATH ZONE ///</span>
+    <div class="grid-overlay"></div>
+    <div class="scanlines"></div>
+    <div class="vignette"></div>
+
+    <div class="hud-container">
+        <div class="hud-header">
+            <div class="left-meta">
+                SYS: <span id="protocol">SECURE FEED</span><br>
+                LOC: <span id="map-name">LOADING MAP...</span>
+            </div>
+            <div class="right-meta" style="text-align: right;">
+                SIGNAL: <span style="color: #22c55e;">ONLINE</span><br>
+                EST. TIME: <span>VARIABLE</span>
             </div>
         </div>
-        <div class="police-tape tape-b" id="tapeB">
-            <div class="tape-body">
-                <div class="tape-shine"></div>
-                <div class="tape-edge l"></div>
-                <div class="tape-edge r"></div>
-                <span class="tape-text">CRIME SCENE /// Z-CITY RPH /// NO RETURN /// CRIME SCENE /// Z-CITY RPH /// NO RETURN /// CRIME SCENE /// Z-CITY RPH /// NO RETURN ///</span>
-            </div>
+
+        <div class="hud-center">
+            <div class="main-logo">Z-City</div>
+            <div class="sub-logo">Tactical Roleplay Project</div>
+            <div class="tip-box" id="tip-text">Инициализация систем безопасности...</div>
         </div>
-    </div>
 
-    <div class="vignette ui-fade" id="vignette"></div>
-    <div class="letterbox top ui-fade" id="letterboxTop"></div>
-    <div class="letterbox bottom ui-fade" id="letterboxBottom"></div>
-    <canvas id="glassCanvas" class="ui-fade"></canvas>
-
-    <div class="scene-frame ui-fade" id="sceneFrame">
-        <div class="hud-bracket tl"></div>
-        <div class="hud-bracket tr"></div>
-        <div class="hud-bracket bl"></div>
-        <div class="hud-bracket br"></div>
-    </div>
-
-    <div class="edge-marquee top ui-fade" id="edgeTop"></div>
-    <div class="edge-marquee bottom ui-fade" id="edgeBottom"></div>
-    <div class="edge-marquee left ui-fade" id="edgeLeft"></div>
-    <div class="edge-marquee right ui-fade" id="edgeRight"></div>
-
-    <div class="hud-top ui-fade" id="hudTop"><span class="hud-dot"></span>Z-CITY NET // SECURE CHANNEL</div>
-    <div class="hud-bottom ui-fade" id="hudCoords">X:0000 Y:0000 // SYNC</div>
-
-    <div class="logo-zone ui-fade" id="logoZone">
-        <div class="logo-anchor">
-            <div class="logo-block">
-                <div class="logo-container" id="logo">
-                    <div class="logo-back-glow"></div>
-                    <div class="logo-ticks"><span></span><span></span><span></span><span></span></div>
-                    <div class="logo-pre">Z-CITY // RPH</div>
-                    <div class="logo" id="logoText">Z-CITY RPH</div>
-                    <div class="logo-line"></div>
-                </div>
+        <div class="hud-footer">
+            <div class="status-wrapper">
+                <div class="current-status" id="status-text">Ожидание ответа от сервера...</div>
+                <div class="progress-pct" id="pct-text">0%</div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-fill"></div>
             </div>
         </div>
     </div>
-
-    <div class="phrase-zone" id="phrasePanel">
-        <div class="phrase-inner">
-            <div class="glass-card">
-                <div class="card-tag">// Системное предупреждение</div>
-                <div class="phrase-text" id="phraseText"></div>
-                <div class="phrase-num" id="phraseNum">01 / 10</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="intro-stack ui-fade" id="introStack">
-        <div class="intro-inner">
-            <div class="disclaimer protocol-card" id="disclaimer">
-                <div class="protocol-stripe"></div>
-                <div class="protocol-corner tl"></div>
-                <div class="protocol-corner tr"></div>
-                <div class="protocol-corner bl"></div>
-                <div class="protocol-corner br"></div>
-                <div class="card-tag warn">перед входом</div>
-                <div class="disclaimer-title">ВАЖНО ЗНАТЬ</div>
-                <div class="disclaimer-body">
-                    Умер — персонаж удаляется. <strong>Полностью.</strong> Новый заход — другой человек, другое имя, другая история.<br><br>
-                    Откатов нет. Админы не восстанавливают. Спорить с этим бессмысленно — так устроен сервер.<br><br>
-                    Остаёшься — играешь сам. <strong>Каждый выбор на тебе.</strong>
-                </div>
-                <div class="disclaimer-divider"></div>
-                <div class="disclaimer-foot">Нажимая «Войти», ты это принимаешь.</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="enter-wrap ui-fade" id="enterWrap">
-        <button class="enter-btn" id="enterBtn" onclick="onEnterClick()">
-            <div class="enter-btn-inner">
-                <div class="enter-btn-corners"><span></span><span></span><span></span><span></span></div>
-                <div class="enter-btn-label">ВОЙТИ<span class="enter-arrow">→</span></div>
-                <div class="enter-btn-bar"></div>
-            </div>
-        </button>
-    </div>
-
-    <div class="load-panel" id="loadPanel" style="display:none"></div>
 
     <script>
-        var isIntro = false, enterLocked = false;
-        var isIntroUrl = (window.location.search || '').indexOf('mode=intro') !== -1;
-        var mouseX = 0.5, mouseY = 0.5, smoothX = 0.5, smoothY = 0.5;
-        var animRunning = true;
-        var rainStreaks = [], glassDrops = [];
-        var fxCanvas = null, fxCtx = null, fxW = 0, fxH = 0;
-        var logoCharBase = [];
-        var READ_DELAY_MS = 2000;
-        var LOGO_MAGNET_DELAY = 1000;
-        var logoChars = [], logoMagnetReady = false, logoMagnetStart = Date.now(), logoLettersReady = false;
-
-        var PHRASES = [
-            "Смерть здесь необратима. Ваш персонаж перестаёт существовать — навсегда.",
-            "Новая жизнь — другой человек: другое имя, другая одежда, другая история.",
-            "Каждое решение имеет последствия. Думайте, прежде чем нажать на курок.",
-            "Город не прощает импульсивных поступков. Ответственность — только ваша.",
-            "Permadeath — не откат. Это конец. Без исключений.",
-            "Всё, что вы построили, может исчезнуть за секунду.",
-            "Не играйте с чужими жизнями. Здесь это стоит всего.",
-            "Один необдуманный шаг — и персонаж станет чужой памятью.",
-            "Вы несёте полную ответственность за судьбу того, кем играете.",
-            "Z-City не даёт вторых шансов. Только последствия."
+        // Динамическая ротация подсказок
+        const tips = [
+            "Смерть на улицах Z-City — это необратимая потеря вашей текущей личности. Тщательно взвешивайте риски.",
+            "Камеры AXON записывают все правонарушения. Попытка скрыться от SWAT приведет к объявлению плана перехвата.",
+            "Не доверяйте темноте переулков. В темных зонах полиция реагирует на вызовы значительно медленнее.",
+            "Поддерживайте связь с фракцией. Одиночки без прикрытия быстро становятся целями для местных банд.",
+            "Уважайте правила ролевой игры. Каждое ваше действие формирует историю этого города."
         ];
 
-        var EDGE_ITEMS = [
-            "PERMADEATH PROTOCOL ACTIVE",
-            "NEURAL LINK STANDBY",
-            "Z-CITY RPH // ROLEPLAY",
-            "NO SECOND CHANCES",
-            "DEATH IS FINAL",
-            "SECURE CHANNEL OPEN",
-            "CITY WATCHES",
-            "ONE LIFE — ONE CHANCE"
-        ];
+        let currentTipIndex = 0;
+        const tipElement = document.getElementById("tip-text");
 
-        function initFlashes() {}
+        setInterval(() => {
+            tipElement.style.opacity = 0;
+            setTimeout(() => {
+                currentTipIndex = (currentTipIndex + 1) % tips.length;
+                tipElement.innerText = tips[currentTipIndex];
+                tipElement.style.opacity = 1;
+            }, 400);
+        }, 7000);
 
-        function drawRainStreak(ctx, s) {
-            var ex = s.x + s.dx * s.len;
-            var ey = s.y + s.dy * s.len;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = 'rgba(160,180,205,' + (s.a * 0.38) + ')';
-            ctx.lineWidth = s.w * 2.6;
-            ctx.beginPath();
-            ctx.moveTo(s.x, s.y);
-            ctx.lineTo(ex, ey);
-            ctx.stroke();
-            ctx.strokeStyle = 'rgba(210,225,240,' + s.a + ')';
-            ctx.lineWidth = s.w;
-            ctx.beginPath();
-            ctx.moveTo(s.x + s.dx * s.len * 0.08, s.y + s.dy * s.len * 0.08);
-            ctx.lineTo(ex, ey);
-            ctx.stroke();
+        // Интеграция с движком Garry's Mod
+        let totalFiles = 100;
+        let filesNeeded = 0;
+
+        function SetStatusChanged(status) {
+            document.getElementById("status-text").innerText = status;
         }
 
-        function drawGlassBead(ctx, x, y, r) {
-            ctx.save();
-            ctx.translate(x, y);
-            ctx.scale(1.7, 0.42);
-            ctx.fillStyle = 'rgba(80,110,140,0.07)';
-            ctx.beginPath();
-            ctx.arc(0, r * 0.15, r * 1.6, 0, 6.28318);
-            ctx.fill();
-            ctx.scale(1 / 1.7, 1 / 0.42);
-            ctx.scale(1.25, 0.58);
-            ctx.fillStyle = 'rgba(115,145,175,0.28)';
-            ctx.beginPath();
-            ctx.arc(0, 0, r, 0, 6.28318);
-            ctx.fill();
-            ctx.fillStyle = 'rgba(255,255,255,0.58)';
-            ctx.beginPath();
-            ctx.arc(-r * 0.36, -r * 0.32, r * 0.17, 0, 6.28318);
-            ctx.fill();
-            ctx.fillStyle = 'rgba(40,60,80,0.2)';
-            ctx.beginPath();
-            ctx.arc(0, r * 0.35, r * 0.55, 0, 3.14159);
-            ctx.fill();
-            ctx.restore();
+        function SetFilesTotal(total) {
+            totalFiles = Math.max(total, 1);
         }
 
-        function drawGlassSlide(ctx, d) {
-            var x = d.x, y = d.y, r = d.r;
-            var trail = Math.min(d.vy * 5 + r * 1.5, 14);
-            ctx.fillStyle = 'rgba(120,155,185,0.12)';
-            ctx.fillRect(x - r * 0.15, y + r * 0.1, r * 0.3, trail);
-            ctx.fillStyle = 'rgba(145,175,205,0.34)';
-            ctx.beginPath();
-            ctx.arc(x, y, r, 0, 6.28318);
-            ctx.fill();
-            ctx.fillStyle = 'rgba(255,255,255,0.52)';
-            ctx.beginPath();
-            ctx.arc(x - r * 0.32, y - r * 0.28, r * 0.2, 0, 6.28318);
-            ctx.fill();
-            ctx.fillStyle = 'rgba(35,55,75,0.22)';
-            ctx.beginPath();
-            ctx.arc(x, y + r * 0.55, r * 0.42, 0, 3.14159);
-            ctx.fill();
+        function SetFilesNeeded(needed) {
+            filesNeeded = Math.max(needed, 0);
+            updateProgress();
         }
 
-        function drawGlassDrop(ctx, d) {
-            if (d.type === 'bead') {
-                drawGlassBead(ctx, d.x, d.y, d.r);
-            } else {
-                drawGlassSlide(ctx, d);
-            }
+        function DownloadingFile(fileName) {
+            document.getElementById("status-text").innerText = "Загрузка: " + fileName;
         }
 
-        function buildFxParticles() {
-            rainStreaks = [];
-            glassDrops = [];
-            var rainCount = Math.floor(fxW / 7);
-            if (rainCount < 72) rainCount = 72;
-            if (rainCount > 118) rainCount = 118;
-            var i, layer, s;
-            for (i = 0; i < rainCount; i++) {
-                layer = Math.random();
-                s = layer > 0.58 ? 'far' : (layer > 0.26 ? 'mid' : 'near');
-                rainStreaks.push({
-                    x: Math.random() * fxW,
-                    y: Math.random() * fxH,
-                    len: s === 'near' ? Math.random() * 16 + 12 : (s === 'mid' ? Math.random() * 22 + 16 : Math.random() * 32 + 20),
-                    speed: s === 'near' ? Math.random() * 16 + 20 : (s === 'mid' ? Math.random() * 12 + 15 : Math.random() * 9 + 10),
-                    w: s === 'near' ? Math.random() * 0.65 + 0.55 : (s === 'mid' ? Math.random() * 0.48 + 0.35 : Math.random() * 0.32 + 0.2),
-                    a: s === 'near' ? Math.random() * 0.14 + 0.11 : (s === 'mid' ? Math.random() * 0.1 + 0.065 : Math.random() * 0.06 + 0.03),
-                    dx: -0.14,
-                    dy: 1
-                });
-            }
-            var dropCount = Math.floor((fxW * fxH) / 16000);
-            if (dropCount < 18) dropCount = 18;
-            if (dropCount > 38) dropCount = 38;
-            for (i = 0; i < dropCount; i++) {
-                var roll = Math.random();
-                var isBead = roll < 0.78;
-                var r = isBead ? Math.random() * 0.7 + 0.35 : Math.random() * 1.8 + 0.85;
-                var bias = Math.random();
-                glassDrops.push({
-                    type: isBead ? 'bead' : 'slide',
-                    x: Math.random() * fxW,
-                    y: bias * bias * fxH * 0.82 + fxH * 0.04,
-                    r: r,
-                    vy: isBead ? Math.random() * 0.05 + 0.01 : Math.random() * 0.75 + 0.35,
-                    vx: Math.random() * 0.05 - 0.025
-                });
-            }
+        function GameDetails(serverName, mapName, maxPlayers, gamemode) {
+            document.getElementById("map-name").innerText = mapName;
         }
 
-        function resizeFx() {
-            fxCanvas = document.getElementById('glassCanvas');
-            if (!fxCanvas) return;
-            fxCtx = fxCanvas.getContext('2d');
-            if (!fxCtx) return;
-            fxW = window.innerWidth || 800;
-            fxH = window.innerHeight || 600;
-            var scale = 0.72;
-            fxCanvas.width = Math.floor(fxW * scale);
-            fxCanvas.height = Math.floor(fxH * scale);
-            fxCtx.setTransform(scale, 0, 0, scale, 0, 0);
-            buildFxParticles();
+        function updateProgress() {
+            let downloaded = totalFiles - filesNeeded;
+            let pct = Math.floor((downloaded / totalFiles) * 100);
+            pct = Math.min(Math.max(pct, 0), 100);
+
+            document.getElementById("progress-fill").style.width = pct + "%";
+            document.getElementById("pct-text").innerText = pct + "%";
         }
-
-        function drawFx() {
-            if (!fxCtx) return;
-            var i, s, d;
-            fxCtx.clearRect(0, 0, fxW, fxH);
-            for (i = 0; i < rainStreaks.length; i++) {
-                s = rainStreaks[i];
-                drawRainStreak(fxCtx, s);
-                s.y += s.speed;
-                s.x += s.speed * s.dx;
-                if (s.y > fxH + 16) {
-                    s.y = -s.len - Math.random() * 30;
-                    s.x = Math.random() * fxW;
-                }
-            }
-            for (i = 0; i < glassDrops.length; i++) {
-                d = glassDrops[i];
-                drawGlassDrop(fxCtx, d);
-                d.y += d.vy;
-                d.x += d.vx;
-                if (d.type === 'slide' && d.vy < 1.6) d.vy += 0.006;
-                if (d.y > fxH + d.r * 3) {
-                    d.y = -d.r * 2 - Math.random() * 40;
-                    d.x = Math.random() * fxW;
-                    if (d.type === 'slide') {
-                        d.vy = Math.random() * 0.75 + 0.35;
-                    }
-                }
-            }
-        }
-
-        function initEdgeCarousel() {
-            function buildLine(items, sep) {
-                var s = '';
-                for (var r = 0; r < 2; r++) {
-                    for (var i = 0; i < items.length; i++) s += items[i] + sep;
-                }
-                return s;
-            }
-            var sep = '  ///  ';
-            var line = buildLine(EDGE_ITEMS, sep);
-            document.getElementById('edgeTop').innerHTML = '<div class="edge-track-h">' + line + '</div>';
-            document.getElementById('edgeBottom').innerHTML = '<div class="edge-track-h rev">' + line + '</div>';
-            document.getElementById('edgeLeft').innerHTML = '<div class="edge-track-v">' + line + '</div>';
-            document.getElementById('edgeRight').innerHTML = '<div class="edge-track-v rev">' + line + '</div>';
-        }
-
-        function initLogoLetters() {
-            if (logoLettersReady) return;
-            var logo = document.getElementById('logoText');
-            if (!logo) return;
-            var text = (logo.textContent || 'Z-CITY RPH').replace(/\s+/g, ' ').trim();
-            var html = '';
-            var ci, ch, cls;
-            for (ci = 0; ci < text.length; ci++) {
-                ch = text[ci];
-                cls = 'logo-char';
-                if (ch === '-') cls += ' dim';
-                if (ch === 'R' || ch === 'P' || ch === 'H') cls += ' accent';
-                html += '<span class="' + cls + '">' + (ch === ' ' ? '&nbsp;' : ch) + '</span>';
-            }
-            logo.innerHTML = html;
-            logoChars = logo.getElementsByTagName('span');
-            for (var j = 0; j < logoChars.length; j++) {
-                logoChars[j]._ox = 0;
-                logoChars[j]._oy = 0;
-                logoChars[j]._bx = 0;
-                logoChars[j]._by = 0;
-            }
-            logoLettersReady = true;
-            setTimeout(cacheLogoCharPositions, 50);
-        }
-
-        function cacheLogoCharPositions() {
-            var anchor = document.querySelector('.logo-anchor');
-            if (!anchor || !logoChars.length) return;
-            var ar = anchor.getBoundingClientRect();
-            var acx = ar.left + ar.width * 0.5;
-            var acy = ar.top + ar.height * 0.5;
-            logoCharBase = [];
-            for (var i = 0; i < logoChars.length; i++) {
-                var ch = logoChars[i];
-                if (ch.innerHTML === '&nbsp;' || ch.textContent === ' ') {
-                    logoCharBase[i] = null;
-                    continue;
-                }
-                var r = ch.getBoundingClientRect();
-                logoCharBase[i] = {
-                    bx: r.left + r.width * 0.5 - acx,
-                    by: r.top + r.height * 0.5 - acy
-                };
-            }
-        }
-
-        function initMouse() {
-            document.addEventListener('mousemove', function(e) {
-                mouseX = e.clientX / (window.innerWidth || 1);
-                mouseY = e.clientY / (window.innerHeight || 1);
-            }, false);
-        }
-
-        function updateLogo(t) {
-            var logo = document.getElementById('logo');
-            if (!logo) return;
-
-            var breathX = Math.sin(t * 0.55) * 2 + Math.cos(t * 0.31);
-            var breathY = Math.cos(t * 0.48) * 2.5 + Math.sin(t * 0.37);
-
-            if (logo.className.indexOf('fly-up') === -1) {
-                logo.style.marginLeft = breathX.toFixed(1) + 'px';
-                logo.style.marginTop = breathY.toFixed(1) + 'px';
-            }
-
-            if (Date.now() - logoMagnetStart < LOGO_MAGNET_DELAY) return;
-            logoMagnetReady = true;
-            if (!logoChars.length || !logoCharBase.length) return;
-
-            var anchor = document.querySelector('.logo-anchor');
-            if (!anchor) return;
-            var ar = anchor.getBoundingClientRect();
-            var acx = ar.left + ar.width * 0.5;
-            var acy = ar.top + ar.height * 0.5;
-            var mx = smoothX * (window.innerWidth || 800);
-            var my = smoothY * (window.innerHeight || 600);
-            var i, ch, base, cx, cy, dx, dy, dist, pull, tx, ty, lx, ly;
-
-            for (i = 0; i < logoChars.length; i++) {
-                ch = logoChars[i];
-                base = logoCharBase[i];
-                if (!base) continue;
-
-                cx = acx + base.bx;
-                cy = acy + base.by;
-                dx = mx - cx;
-                dy = my - cy;
-                dist = Math.sqrt(dx * dx + dy * dy);
-                pull = Math.max(0, 1 - dist / 400);
-                pull = pull * pull * (3 - 2 * pull);
-
-                tx = dx * pull * 0.24;
-                ty = dy * pull * 0.24;
-                ch._ox += (tx - ch._ox) * 0.12;
-                ch._oy += (ty - ch._oy) * 0.12;
-
-                lx = ch._ox + Math.sin(t * 0.9 + i * 0.7) * 0.5;
-                ly = ch._oy + Math.cos(t * 0.75 + i * 0.55) * 0.7;
-                ch.style.left = lx.toFixed(1) + 'px';
-                ch.style.top = ly.toFixed(1) + 'px';
-            }
-        }
-
-        function masterTick(now) {
-            if (!animRunning) return;
-            requestAnimationFrame(masterTick);
-
-            if (!masterTick._last) masterTick._last = 0;
-            if (now - masterTick._last < 33) return;
-            masterTick._last = now;
-
-            smoothX += (mouseX - smoothX) * 0.1;
-            smoothY += (mouseY - smoothY) * 0.1;
-
-            drawFx();
-            updateLogo(now * 0.001);
-        }
-
-        function initHudTelemetry() {
-            var el = document.getElementById('hudCoords');
-            setInterval(function() {
-                el.textContent = 'X:' + ('0000' + Math.floor(Math.random() * 9999)).slice(-4) +
-                    ' Y:' + ('0000' + Math.floor(Math.random() * 9999)).slice(-4) + ' // SYNC';
-            }, 1100);
-        }
-
-        function initPhraseRotator() {
-            var el = document.getElementById('phraseText');
-            var num = document.getElementById('phraseNum');
-            if (!el) return;
-            var idx = Math.floor(Math.random() * PHRASES.length);
-            el.textContent = PHRASES[idx];
-            num.textContent = (idx + 1 < 10 ? '0' : '') + (idx + 1) + ' / ' + PHRASES.length;
-            setInterval(function() {
-                el.className = 'phrase-text fade-out';
-                setTimeout(function() {
-                    idx = (idx + 1) % PHRASES.length;
-                    el.textContent = PHRASES[idx];
-                    num.textContent = (idx + 1 < 10 ? '0' : '') + (idx + 1) + ' / ' + PHRASES.length;
-                    el.className = 'phrase-text';
-                }, 600);
-            }, 5600);
-        }
-
-        function initIntro() {
-            if (isIntro) return;
-            isIntro = true;
-            document.body.className = 'mode-intro';
-
-            var disclaimer = document.getElementById('disclaimer');
-            var btn = document.getElementById('enterBtn');
-            var btnReady = false;
-
-            function revealBtn() {
-                if (btnReady) return;
-                btnReady = true;
-                btn.className = 'enter-btn show';
-            }
-
-            setTimeout(function() { disclaimer.className = 'disclaimer protocol-card show'; }, 30);
-            setTimeout(revealBtn, READ_DELAY_MS + 800);
-        }
-
-        var EXIT_SEQUENCE = [
-            'tapeA',
-            'tapeB',
-            'enterWrap',
-            'introStack',
-            'logoZone',
-            'hudCoords',
-            'hudTop',
-            'edgeTop',
-            'edgeBottom',
-            'edgeLeft',
-            'edgeRight',
-            'sceneFrame',
-            'glassCanvas',
-            'flashLayer',
-            'vignette',
-            'letterboxTop',
-            'letterboxBottom'
-        ];
-
-        function addExitClass(id) {
-            var el = document.getElementById(id);
-            if (!el) return;
-            if (el.className.indexOf('exit-out') === -1) {
-                el.className = el.className + ' exit-out';
-            }
-        }
-
-        function resizeTapes() {
-            var w = window.innerWidth || 800;
-            var h = window.innerHeight || 600;
-            var diag = Math.sqrt(w * w + h * h);
-            var tapeLen = Math.ceil(diag * 2.15);
-            var tapes = document.querySelectorAll('.police-tape');
-            var i;
-            for (i = 0; i < tapes.length; i++) {
-                tapes[i].style.width = tapeLen + 'px';
-                tapes[i].style.marginLeft = (-tapeLen * 0.5) + 'px';
-            }
-        }
-
-        function runExitSequence(done) {
-            animRunning = false;
-            document.body.className = 'mode-intro is-exiting';
-            var i;
-            for (i = 0; i < EXIT_SEQUENCE.length; i++) {
-                addExitClass(EXIT_SEQUENCE[i]);
-            }
-            setTimeout(function() {
-                if (done) done();
-            }, 580);
-        }
-
-        function onEnterClick() {
-            if (enterLocked) return;
-            enterLocked = true;
-            if (window.gmod && window.gmod.onEnterStart) window.gmod.onEnterStart();
-            runExitSequence(function() {
-                if (window.gmod && window.gmod.onEnter) window.gmod.onEnter();
-            });
-        }
-
-        function setProgress(pct) {}
-        function SetStatusChanged(s) {}
-        function SetFilesTotal(t) {}
-        function SetFilesNeeded(n) {}
-        function DownloadingFile(f) {}
-        function updateFileProgress() {}
-        function GameDetails() {}
-
-        initFlashes();
-        resizeTapes();
-        resizeFx();
-        if (window.addEventListener) {
-            window.addEventListener('resize', function() {
-                resizeTapes();
-                resizeFx();
-                setTimeout(cacheLogoCharPositions, 80);
-            });
-        }
-        initEdgeCarousel();
-        initLogoLetters();
-        initMouse();
-        initHudTelemetry();
-        requestAnimationFrame(masterTick);
-
-        if (!isIntroUrl) initPhraseRotator();
     </script>
 </body>
 </html>
